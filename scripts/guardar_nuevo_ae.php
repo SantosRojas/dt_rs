@@ -24,7 +24,7 @@ $observaciones = $_POST["newobservaciones"];
 $estadors = $_POST["newestadors"];  
 $ucreacion = $_POST["newucreacion"];
 
-$sql_insert01 = "INSERT INTO Sdt_RegistroSanitario VALUES(:ArtID, :codigo, :rs, :resolucion, :emision, :aprobacion, :vencimiento, :estadors, :observaciones, getdate(), :ucreacion, null, null)";
+$sql_insert01 = "INSERT INTO Sdt_RegistroSanitario_AE VALUES(:ArtID, :codigo, :rs, :resolucion, :emision, :aprobacion, :vencimiento, :estadors, :observaciones, getdate(), :ucreacion, null, null)";
 		
 // Preparar la sentencia
 $stmt = $conn->prepare($sql_insert01);

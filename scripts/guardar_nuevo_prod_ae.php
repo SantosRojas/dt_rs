@@ -15,10 +15,9 @@ $conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 // Recoge los datos del formulario
 $codigo = $_POST["newcodigo"];
 $descripcion = $_POST["newdescripcion"];
-$tipo = $_POST["newtipo"];  
 $ucreacion = $_POST["newucreacion"];
 
-$sql_insert01 = "INSERT INTO Sdt_Articulos (ArtCodigo, ArtDescripcion, ArtTipo, ArtFechaCreacion, ArtUsuarioCreacion) VALUES(:codigo, :descripcion, :tipo, getdate(), :ucreacion)";
+$sql_insert01 = "INSERT INTO Sdt_Articulos_AE (ArtCodigo_AE, ArtDescripcion_AE, FechaCreacion_AE, UsuarioCreacion_AE) VALUES(:codigo, :descripcion, getdate(), :ucreacion)";
 		
 // Preparar la sentencia
 $stmt = $conn->prepare($sql_insert01);
@@ -26,7 +25,6 @@ $stmt = $conn->prepare($sql_insert01);
 // Vincular los parámetros
 $stmt->bindParam(':codigo', $codigo);
 $stmt->bindParam(':descripcion', $descripcion);
-$stmt->bindParam(':tipo', $tipo);
 $stmt->bindParam(':ucreacion', $ucreacion);
 
 // Verificar si la preparación de la sentencia fue exitosa

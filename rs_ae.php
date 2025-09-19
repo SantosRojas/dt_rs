@@ -317,6 +317,7 @@ $arttipo = $_GET['arttipo'];
 												<th class="text-center">ESTERIL</th>
 												<th class="text-center">ETIQUETA</th>
 												<th class="text-center">NumeroIFU</th>
+												<th class="text-center">GMDN_UMDNS</th>
 												<th class="text-center">PROBLEMA_DIMENCIONES</th>
 												<th class="text-center">OBSERVACIONES</th>
 												<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
@@ -404,14 +405,6 @@ $arttipo = $_GET['arttipo'];
 												<div class="row">
 													<div class="col-md-3">
 														<div class="form-group">
-															<label for="arttipo">Tipo de Producto</label>
-															<select class="form-control form-select" id="arttipo" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> disabled <?php } ?>>
-																<option value="PRODUCTO AE">PRODUCTO AE</option>
-															</select>
-														</div>
-													</div>
-													<div class="col-md-3">
-														<div class="form-group">
 															<label for="origen">Origen</label>
 															<input type="text" class="form-control" id="origen" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
 														</div>
@@ -430,9 +423,7 @@ $arttipo = $_GET['arttipo'];
 															<input type="text" class="form-control" id="lugarfab" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
 														</div>
 													</div>
-												</div>
-												<div class="row">
-													<div class="col-md-2">
+													<div class="col-md-3">
 														<div class="form-group">
 															<label for="nivelriesgo">Nivel de Riesgo</label>
 															<select class="form-control form-select" id="nivelriesgo"
@@ -447,8 +438,11 @@ $arttipo = $_GET['arttipo'];
 															</select>
 														</div>
 													</div>
+												</div>
+
+												<div class="row">
 													
-													<div class="col-md-2">
+													<div class="col-md-3">
 														<div class="form-group">
 															<label for="exoneracioncm">Exoneracion CM</label>
 															<input type="text" class="form-control" id="exoneracioncm"
@@ -456,7 +450,7 @@ $arttipo = $_GET['arttipo'];
 																<?php } ?>>
 														</div>
 													</div>
-													<div class="col-md-2">
+													<div class="col-md-3">
 														<div class="form-group">
 															<label for="esterilidad">¿Es Esteril?</label>
 															<select class="form-control form-select" id="esterilidad"
@@ -477,20 +471,30 @@ $arttipo = $_GET['arttipo'];
 												
 													<div class="col-md-3">
 														<div class="form-group">
-															<label for="barracj">C&oacute;digo EAN 14 (caja)</label>
+															<label for="ean14cj">C&oacute;digo EAN 14 (caja)</label>
 															<!-- C&oacute;digo de Barras (caja) -->
-															<input type="text" class="form-control" id="barracj" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
+															<input type="text" class="form-control" id="ean14cj" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
 														</div>
 													</div>
+
+			
 												</div>
 												
 												<div class="row">
-													
+
 													<div class="col-md-3">
 														<div class="form-group">
 															<label for="gtincj">C&oacute;digo GTIN</label>
 															<!-- C&oacute;digo GTIN (caja) -->
 															<input type="text" class="form-control" id="gtincj" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
+														</div>
+													</div>
+													
+													<div class="col-md-3">
+														<div class="form-group">
+															<label for="gmdn">C&oacute;digo GMDN</label>
+															<!-- C&oacute;digo GTIN (caja) -->
+															<input type="text" class="form-control" id="gmdn" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
 														</div>
 													</div>
 
@@ -510,16 +514,23 @@ $arttipo = $_GET['arttipo'];
 														</div>
 													</div>
 													
-													
 												</div>
 
 												<div class="row">
-													<div class="col-md-7">
+													<div class="col-md-6">
+														<div class="form-group">
+															<label for="cambae">Cambios AE</label>
+															<!-- C&oacute;digo GTIN (caja) -->
+															<input type="text" class="form-control" id="cambae" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
+														</div>
+													</div>
+
+													<div class="col-md-6">
 														<!-- textarea -->
 														<div class="form-group">
-															<label for="proyecto">Etiqueta</label>
+															<label for="etiqueta">Etiqueta</label>
 															<textarea class="form-control" rows="5"
-																placeholder="Importado por B. Braun Me..." id="proyecto" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>></textarea>
+																placeholder="Importado por B. Braun Me..." id="etiqueta" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>></textarea>
 														</div>
 												</div>
 												</div>
@@ -839,7 +850,7 @@ $arttipo = $_GET['arttipo'];
 	<!-- ./modal -->
 	<!-- Button trigger modal -->
 	<button type="button" id="btnmasivomodal" name="btnmasivomodal" class="btn btn-primary" data-toggle="modal"
-		data-target="#modalproductomasivo" hidden>Masivo Modal</button>
+		data-target="#modalproductomasivo" hidden disabled>Masivo Modal</button>
 	<!-- modal -->
 	<div class="modal fade" id="modalproductomasivo" data-backdrop="static" data-keyboard="false"
 		aria-labelledby="masivoModalLabel" aria-hidden="true">
@@ -923,7 +934,7 @@ $arttipo = $_GET['arttipo'];
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title">Registro de Nuevo de Producto</h4>
+					<h4 class="modal-title">Registro de Nuevo de Producto - AESCULAP</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -1029,7 +1040,7 @@ $arttipo = $_GET['arttipo'];
 							className: 'btn btn-warning',
 							action: function (e, dt, node, config) {
 								document.getElementById("btnmasivomodal").click();
-							}
+							},
 						},
 						'spacer',
 					<?php } ?>
@@ -1090,6 +1101,7 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'EsEsteril_AE'},
 					{ data: 'Etiqueta_AE' },
 					{ data: 'NumeroIFU_AE' },
+					{ data: 'Codigo_GMDN_UMDNS' },
 					{ data: 'ProblemaDimensiones_AE' },
 					{ data: 'RegObservacion_AE' }
 						<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
@@ -1161,7 +1173,7 @@ $arttipo = $_GET['arttipo'];
 					['5 filas', '10 filas', '15 filas', '20 filas']
 				],
 				responsive: true,
-				ajax: 'scripts/consultar_articulos.php',
+				ajax: 'scripts/consultar_articulos_ae.php',
 				columns: [
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtCodigo' },
@@ -1229,15 +1241,15 @@ $arttipo = $_GET['arttipo'];
 				$('#estadors').val(data.RegEstado_AE || '');
 				$('#observaciones').val(data.RegObservacion_AE || '');
 
-				// $('#creacion').val(data.RegFechaCreacion_AE);
-				// $('#ucreacion').val(data.RegUsuarioCreacion_AE);
-				// $('#modificacion').val(data.RegFechaModificacion_AE);
-				// $('#umodificacion').val(data.RegUsuarioModificacion_AE);
+				$('#creacion').val(data.RegFechaCreacion_AE);
+				$('#ucreacion').val(data.RegUsuarioCreacion_AE);
+				$('#modificacion').val(data.RegFechaModificacion_AE);
+				$('#umodificacion').val(data.RegUsuarioModificacion_AE);
 				
-				// $('#artcreacion').val(data.FechaCreacion_AE);
-				// $('#artucreacion').val(data.UsuarioCreacion_AE);
-				// $('#artmodificacion').val(data.FechaModificacion_AE);
-				// $('#artumodificacion').val(data.UsuarioModificacion_AE);
+				$('#artcreacion').val(data.FechaCreacion_AE);
+				$('#artucreacion').val(data.UsuarioCreacion_AE);
+				$('#artmodificacion').val(data.FechaModificacion_AE);
+				$('#artumodificacion').val(data.UsuarioModificacion_AE);
 
 				// Información del producto disponible
 				$('#arttipo').val('PRODUCTO AE'); // Valor fijo para productos AE
@@ -1255,18 +1267,10 @@ $arttipo = $_GET['arttipo'];
 
 
 				
-				// $('#proyecto').val(data.EsEsteril);
-				$('#gmdn').val('');
-				$('#proyecto').val(data.Etiqueta_AE || 'No tiene');
-				$('#esterilidad').val(data.EsEsteril_AE || 'No tiene');
-				$('#creacion').val('');
-				$('#ucreacion').val('');
-				$('#modificacion').val('');
-				$('#umodificacion').val('');
-				$('#artcreacion').val('');
-				$('#artucreacion').val('');
-				$('#artmodificacion').val('');
-				$('#artumodificacion').val('');
+				// $('#etiqueta').val(data.EsEsteril);
+				$('#gmdn').val(data.Codigo_GMDN_UMDNS || '');
+				$('#etiqueta').val(data.Etiqueta_AE || '');
+				$('#esterilidad').val(data.EsEsteril_AE || '');
 
 
 				// Después de obtener los datos
@@ -1346,7 +1350,7 @@ $arttipo = $_GET['arttipo'];
 				$('#estadors').val(data.RegEstadoVencimiento);
 				$('#gmdn').val(data.ArtCodigoGMDN);
 				$('#umdns').val(data.ArtCodigoUMDNS);
-				$('#proyecto').val(data.ArtProyectoRAAE);
+				$('#etiqueta').val(data.ArtProyectoRAAE);
 				$('#observaciones').val(data.RegObservaciones);
 
 				$('#creacion').val(data.RegFechaCreacion);
@@ -1373,9 +1377,8 @@ $arttipo = $_GET['arttipo'];
 				$('#labelalemania').val(data.ArtLabelAlemania);
 				$('#exoneracioncm').val(data.ArtExoneracionCM);
 				$('#barraun').val(data.ArtBarraUn);
-				$('#barracj').val(data.ArtBarraCj);
+				$('#ean14cj').val(data.ArtBarraCj);
 				$('#ean13un').val(data.ArtEAN13Un);
-				$('#ean14cj').val(data.ArtEAN14Cj);
 				$('#gtinun').val(data.ArtGTINUn);
 				$('#gtincj').val(data.ArtGTINCj);
 				$('#esterilidad').val(data.ArtProyecto);
@@ -1433,10 +1436,9 @@ $arttipo = $_GET['arttipo'];
 				var ArtID = data.DT_RowId;
 				ArtID = ArtID.split('_')[1];
 				var descripcion = data.ArtDescripcion;
-				var tipo = data.ArtTipo;
 
 				// Concatena los valores con " - "
-				var concatenado = codigo + " - " + descripcion + " [" + tipo + "] ";
+				var concatenado = codigo + " - " + descripcion;
 
 				// Asigna el valor concatenado al span con id="newartcoddes"
 				$('#newartcoddes').text(concatenado);
@@ -1501,7 +1503,6 @@ $arttipo = $_GET['arttipo'];
 				// Restablece el campo de entrada del archivo cuando se cierra el modal
 				$('#codprodcrea').val('');
 				$("#desprodcrea").val('');
-				$("#arttipocrea").val('PRODUCTO LINEA AVITUM');
 			});
 
 			$('#editModal').on('hidden.bs.modal', function () {
@@ -2055,7 +2056,9 @@ $arttipo = $_GET['arttipo'];
 			var ean14cj = $("#ean14cj").val() || '';
 			var gtincj = $("#gtincj").val() || '';
 			var gmdn = $("#gmdn").val() || '';
-			var proyecto = $("#proyecto").val() || '';
+			var etiqueta = $("#etiqueta").val() || '';
+			var nifu = $("#nifu").val() || '';
+			var pdimen = $("#pdimen").val() || '';
 
 			// Crear un objeto FormData para contener los datos del formulario y los archivos
 			var formData = new FormData();
@@ -2082,7 +2085,9 @@ $arttipo = $_GET['arttipo'];
 			formData.append('ean14cj', ean14cj);
 			formData.append('gtincj', gtincj);
 			formData.append('gmdn', gmdn);
-			formData.append('proyecto', proyecto);
+			formData.append('etiqueta', etiqueta);
+			formData.append('nifu', nifu);
+			formData.append('pdimen', pdimen);
 
 			// Añadir cada archivo de la lista archivosedit al objeto FormData
 			archivosedit.forEach(function (archivo) {
@@ -2145,7 +2150,12 @@ $arttipo = $_GET['arttipo'];
 
 							Toast.fire({
 								icon: 'success',
-								title: 'Registro actualizado con éxito.'
+								title: 'Registro actualizado con éxito.',
+								toast: true,
+								position: 'top-end',
+								showConfirmButton: false,
+								timer: 3000
+
 							})
 						} else {
 							var Toast = Swal.mixin({
@@ -2157,7 +2167,13 @@ $arttipo = $_GET['arttipo'];
 
 							Toast.fire({
 								icon: 'error',
-								title: 'Error en la operación.'
+								title: 'Error en la operación.',
+								text: data, // Aquí se muestra el mensaje que devuelve PHP
+								toast: true,
+								position: 'top-end',
+								showConfirmButton: false,
+								timer: 10000
+
 							})
 						}
 					}
@@ -2221,7 +2237,7 @@ $arttipo = $_GET['arttipo'];
 			} else {
 				// Enviar los datos al archivo PHP para guardar la orden
 				$.ajax({
-					url: "scripts/guardar_nuevo.php",
+					url: "scripts/guardar_nuevo_ae.php",
 					type: "POST",
 					data: formData,
 					processData: false,  // Indicar a jQuery que no procese los datos
@@ -2275,14 +2291,12 @@ $arttipo = $_GET['arttipo'];
 			// Obtener los datos del formulario
 			var newcodigo = $("#codprodcrea").val();
 			var newdescripcion = $("#desprodcrea").val();
-			var newtipo = $("#arttipocrea").val();
 			var newucreacion = '<?php echo $_SESSION['usuario']; ?>';
 
 			// Crear un objeto FormData para almacenar los archivos y los datos del formulario
 			var formData = new FormData();
 			formData.append('newcodigo', newcodigo);
 			formData.append('newdescripcion', newdescripcion);
-			formData.append('newtipo', newtipo);
 			formData.append('newucreacion', newucreacion);
 
 			// Verificar que los campos obligatorios no estén vacíos
@@ -2304,7 +2318,7 @@ $arttipo = $_GET['arttipo'];
 			} else {
 				// Enviar los datos al archivo PHP para guardar la orden
 				$.ajax({
-					url: "scripts/guardar_nuevo_prod.php",
+					url: "scripts/guardar_nuevo_prod_ae.php",
 					type: "POST",
 					data: formData,
 					processData: false,  // Indicar a jQuery que no procese los datos
@@ -2341,7 +2355,12 @@ $arttipo = $_GET['arttipo'];
 
 							Toast.fire({
 								icon: 'error',
-								title: 'Error en la operación.'
+								title: 'Error en la operación.',
+								text: data, // Aquí se muestra el mensaje que devuelve PHP
+								toast: true,
+								position: 'top-end',
+								showConfirmButton: false,
+								timer: 10000
 							})
 						}
 					}

@@ -16,7 +16,7 @@
  * Easy set variables
  */
 // DB table to use
-$table = "Sdt_Articulos_ae";
+$table = "Sdt_Articulos_AE";
 // Table's primary key
 $primaryKey = "ArtID_AE";
 // Array of database columns which should be read and sent back to DataTables.

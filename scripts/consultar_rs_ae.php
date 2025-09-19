@@ -83,6 +83,17 @@ $columns = [
             }
         },
     ],
+    [
+        "db" => "FechaModificacion_AE",
+        "dt" => "FechaModificacion_AE",
+        "formatter" => function ($d, $row) {
+            if($d=="" || $d==null){
+                return "";
+            } else {
+                return date("d/m/Y", strtotime($d));
+            }
+        },
+    ],
     ["db" => "RegUsuarioCreacion_AE", "dt" => "RegUsuarioCreacion_AE"],
     ["db" => "RegUsuarioModificacion_AE", "dt" => "RegUsuarioModificacion_AE"],
     ["db" => "UsuarioCreacion_AE", "dt" => "UsuarioCreacion_AE"],
@@ -96,11 +107,14 @@ $columns = [
     ["db" => "CodigoEAN_13", "dt" => "CodigoEAN_13"],
     ["db" => "CodigoEAN_14", "dt" => "CodigoEAN_14"],
     ["db" => "CodigoGTIN", "dt" => "CodigoGTIN"],
+    ["db" => "Codigo_GMDN_UMDNS","dt" => "Codigo_GMDN_UMDNS"],
     ["db" => "Etiqueta_AE", "dt" => "Etiqueta_AE"],
     ["db" => "EsEsteril_AE", "dt" => "EsEsteril_AE"],
     ["db" => "NumeroIFU_AE", "dt" => "NumeroIFU_AE"],
     ["db" => "ProblemaDimensiones_AE", "dt" => "ProblemaDimensiones_AE"],
-    ["db" => "RegObservacion_AE", "dt" => "RegObservacion_AE"]
+    ["db" => "RegObservacion_AE", "dt" => "RegObservacion_AE"],
+    ["db" => "Rutas", "dt" => "Rutas"],
+    //agregar CAMBIOS_AE
 ];
 $sql_details = [
     "user" => "sa_bbmpe",

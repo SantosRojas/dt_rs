@@ -17,6 +17,21 @@ $modalID = $_POST["modalID"];
 $ArtID = $_POST["ArtID"];
 $codigo = $_POST["codigo"];
 $descripcion = $_POST["descripcion"];
+$fabricante = $_POST["fabricante"];    
+$lugarfab = $_POST["lugarfab"];    
+$origen = $_POST["origen"];    
+$nivelriesgo = $_POST["nivelriesgo"];    
+$gmdn = $_POST["gmdn"];    
+$etiqueta = $_POST["etiqueta"];    
+$esterilidad = $_POST["esterilidad"];    
+$nifu = $_POST["nifu"];     
+$ean13un = $_POST["ean13un"];    
+$ean14cj = $_POST["ean14cj"];    
+$gtincj = $_POST["gtincj"];
+//agregar cambios_ae    
+$exoneracioncm = $_POST["exoneracioncm"];    
+$pdimen = $_POST["pdimen"];     
+
 $rs = $_POST["rs"];
 $resolucion = $_POST["resolucion"];
 $emision = $_POST["emision"];
@@ -26,20 +41,8 @@ $observaciones = $_POST["observaciones"];
 $estadors = $_POST["estadors"];    
 $usuariomod = $_POST["usuariomod"];    
 
-$origen = $_POST["origen"];    
-$fabricante = $_POST["fabricante"];    
-$lugarfab = $_POST["lugarfab"];    
-$nivelriesgo = $_POST["nivelriesgo"];    
-$exoneracioncm = $_POST["exoneracioncm"];    
-$proyectoart = $_POST["proyectoart"];    
-$ean13un = $_POST["ean13un"];    
-$ean14cj = $_POST["ean14cj"];    
-$gtincj = $_POST["gtincj"];    
-$gmdn = $_POST["gmdn"];    
-$proyecto = $_POST["proyecto"];    
-$proveedor = $_POST["proveedor"];    
 
-$sql_update01 = 'UPDATE Sdt_RegistroSanitario_ae SET RegNumero_AE = :rs, RegResolucion_AE = :resolucion, RegFechaEmision_AE = :emision, '
+$sql_update01 = 'UPDATE Sdt_RegistroSanitario_AE SET RegNumero_AE = :rs, RegResolucion_AE = :resolucion, RegFechaEmision_AE = :emision, '
 		. 'RegFechaAprobacion_AE = :aprobacion, RegFechaVencimiento_AE = :vencimiento, RegEstado_AE = :estadors, '
 		. 'RegObservacion_AE = :observaciones, RegUsuarioModificacion_AE = :usuariomod, RegFechaModificacion_AE = getdate() where RegID_AE = :modalID';
 				
@@ -47,7 +50,7 @@ $sql_update01 = 'UPDATE Sdt_RegistroSanitario_ae SET RegNumero_AE = :rs, RegReso
 $stmt = $conn->prepare($sql_update01);
 
 // Vincular los parámetros
-$stmt->bindParam(':rs', $rs);
+$stmt->bindParam(':rs', $rs); //NUMERO DE REGISTRO
 $stmt->bindParam(':resolucion', $resolucion);
 $stmt->bindParam(':emision', $emision);
 $stmt->bindParam(':aprobacion', $aprobacion);
@@ -70,16 +73,19 @@ if ($stmt->execute()) {
 	$sql_update02 = 'UPDATE [dbo].[Sdt_Articulos_ae]
 	   SET [ArtDescripcion_AE] = :descripcion
 		  ,[ArtFabricante_AE] = :fabricante
-		  ,[ArtPaisOrigen_AE] = :origen
 		  ,[ArtLugarFabricacion_AE] = :lugarfab
+		  ,[ArtPaisOrigen_AE] = :origen
 		  ,[NivelRiesgoPeru_AE] = :nivelriesgo
-		  ,[ExoneracionCM_AE] = :exoneracioncm
+		  ,[Codigo_GMDN_UMDNS] = :gmdn
+		  ,[Etiqueta_AE] = :etiqueta
+		  ,[EsEsteril_AE] = :esterilidad
+		  ,[NumeroIFU_AE] = :nifu
 		  ,[CodigoEAN_13] = :ean13un
 		  ,[CodigoEAN_14] = :ean14cj
 		  ,[CodigoGTIN] = :gtincj
-		  ,[EsEsteril_AE] = :proyectoart
-		  ,[Codigo_GMDN_UMDNS] = :gmdn
-		  ,[Etiqueta_AE] = :proyecto
+		--   agregarcambios AE
+		  ,[ExoneracionCM_AE] = :exoneracioncm
+		  ,[ProblemaDimensiones_AE] = :pdimen
 		  ,[FechaModificacion_AE] = getdate()
 		  ,[UsuarioModificacion_AE] = :usuariomod
 	WHERE [ArtId_AE] = :ArtID';	
@@ -99,9 +105,11 @@ if ($stmt->execute()) {
 	$stmt1->bindParam(':ean13un', $ean13un);
 	$stmt1->bindParam(':ean14cj', $ean14cj);
 	$stmt1->bindParam(':gtincj', $gtincj);
-	$stmt1->bindParam(':proyectoart', $proyectoart);
+	$stmt1->bindParam(':esterilidad', $esterilidad);
 	$stmt1->bindParam(':gmdn', $gmdn);
-	$stmt1->bindParam(':proyecto', $proyecto);
+	$stmt1->bindParam(':nifu', $nifu);
+	$stmt1->bindParam(':pdimen', $pdimen);
+	$stmt1->bindParam(':etiqueta', $etiqueta);
 	$stmt1->bindParam(':usuariomod', $usuariomod);
 	$stmt1->bindParam(':ArtID', $ArtID);
 		
