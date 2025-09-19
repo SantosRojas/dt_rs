@@ -1,0 +1,4 @@
+plugins/
+reports/
+dist/
+*.pdf
