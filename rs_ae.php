@@ -142,9 +142,9 @@ $arttipo = $_GET['arttipo'];
 								</p>
 							</a>
 							<ul class="nav nav-treeview">
-								<li class="nav-item menu-open">
+								<li class="nav-item <?= $arttipo !='PRODUCTO AE' ? 'menu-open' : '' ?>">
 									<a href="#" class="nav-link active">
-										<i class="far fa-circle nav-icon"></i>
+										<i class="far fa-circle nav-icon <?= $arttipo !='PRODUCTO AE' ? 'text-danger' : '' ?>"></i>
 										<p>
 											Registros Sanitarios HC
 											<i class="right fas fa-angle-left"></i>
@@ -220,9 +220,9 @@ $arttipo = $_GET['arttipo'];
 									</ul>
 								</li>
 
-								<li class="nav-item menu-open">
+								<li class="nav-item <?= $arttipo =='PRODUCTO AE' ? 'menu-open' : '' ?>">
 									<a href="#" class="nav-link active">
-										<i class="far fa-circle nav-icon"></i>
+										<i class="far fa-circle nav-icon <?= $arttipo =='PRODUCTO AE' ? 'text-danger' : '' ?>"></i>
 										<p>
 											Registros Sanitarios AE
 											<i class="right fas fa-angle-left"></i>
@@ -318,6 +318,7 @@ $arttipo = $_GET['arttipo'];
 												<th class="text-center">ETIQUETA</th>
 												<th class="text-center">NumeroIFU</th>
 												<th class="text-center">GMDN_UMDNS</th>
+												<th class="text-center">CAMBIOS_AE</th>
 												<th class="text-center">PROBLEMA_DIMENCIONES</th>
 												<th class="text-center">OBSERVACIONES</th>
 												<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
@@ -1048,11 +1049,13 @@ $arttipo = $_GET['arttipo'];
 						extend: 'print',
 						className: 'btn btn-primary',
 						orientation: 'landscape',
+						titleAttr:'Imprimir',
 						text: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">  <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"/>  <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/></svg>'
 					},
 					'spacer',
 					{
 						extend: 'excel',
+						titleAttr:'Descargar excel',
 						className: 'btn btn-primary',
 						text: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">  <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64z"/></svg>'
 					}
@@ -1102,6 +1105,7 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'Etiqueta_AE' },
 					{ data: 'NumeroIFU_AE' },
 					{ data: 'Codigo_GMDN_UMDNS' },
+					{ data: 'Cambios_AE' },
 					{ data: 'ProblemaDimensiones_AE' },
 					{ data: 'RegObservacion_AE' }
 						<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
@@ -1262,6 +1266,7 @@ $arttipo = $_GET['arttipo'];
 				$('#ean14cj').val(data.CodigoEAN_14 || '');
 				$('#gtinun').val(data.CodigoGTIN || '');
 				$('#gtincj').val(data.CodigoGTIN || '');
+				$('#cambae').val(data.Cambios_AE || '');
 				$('#nifu').val(data.NumeroIFU_AE || '');
 				$('#pdimen').val(data.ProblemaDimensiones_AE || '');
 
@@ -1888,10 +1893,10 @@ $arttipo = $_GET['arttipo'];
 
 					// Enviar los datos al archivo PHP para guardar la orden
 					if (query_update1 !== "") {
-						promises.push($.post("scripts/guardar_edit_masivo.php", { query_update1: query_update1 }));
+						promises.push($.post("scripts/guardar_edit_masivo_ae.php", { query_update1: query_update1 }));
 					}
 					if (query_update2 !== "") {
-						promises.push($.post("scripts/guardar_edit_masivo.php", { query_update2: query_update2 }));
+						promises.push($.post("scripts/guardar_edit_masivo_ae.php", { query_update2: query_update2 }));
 					}
 				}
 
@@ -2058,6 +2063,7 @@ $arttipo = $_GET['arttipo'];
 			var gmdn = $("#gmdn").val() || '';
 			var etiqueta = $("#etiqueta").val() || '';
 			var nifu = $("#nifu").val() || '';
+			var cambae = $("#cambae").val() || '';
 			var pdimen = $("#pdimen").val() || '';
 
 			// Crear un objeto FormData para contener los datos del formulario y los archivos
@@ -2087,6 +2093,7 @@ $arttipo = $_GET['arttipo'];
 			formData.append('gmdn', gmdn);
 			formData.append('etiqueta', etiqueta);
 			formData.append('nifu', nifu);
+			formData.append('cambae', cambae);
 			formData.append('pdimen', pdimen);
 
 			// Añadir cada archivo de la lista archivosedit al objeto FormData

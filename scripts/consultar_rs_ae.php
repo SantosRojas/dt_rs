@@ -73,8 +73,30 @@ $columns = [
         },
     ],
     [
+        "db" => "RegFechaCreacion_AE",
+        "dt" => "RegFechaCreacion_AE",
+        "formatter" => function ($d, $row) {
+            if($d=="" || $d==null){
+                return "";
+            } else {
+                return date("d/m/Y", strtotime($d));
+            }
+        },
+    ],
+    [
         "db" => "RegFechaModificacion_AE",
         "dt" => "RegFechaModificacion_AE",
+        "formatter" => function ($d, $row) {
+            if($d=="" || $d==null){
+                return "";
+            } else {
+                return date("d/m/Y", strtotime($d));
+            }
+        },
+    ],
+    [
+        "db" => "FechaCreacion_AE",
+        "dt" => "FechaCreacion_AE",
         "formatter" => function ($d, $row) {
             if($d=="" || $d==null){
                 return "";
@@ -111,6 +133,7 @@ $columns = [
     ["db" => "Etiqueta_AE", "dt" => "Etiqueta_AE"],
     ["db" => "EsEsteril_AE", "dt" => "EsEsteril_AE"],
     ["db" => "NumeroIFU_AE", "dt" => "NumeroIFU_AE"],
+    ["db" => "Cambios_AE", "dt" => "Cambios_AE"],
     ["db" => "ProblemaDimensiones_AE", "dt" => "ProblemaDimensiones_AE"],
     ["db" => "RegObservacion_AE", "dt" => "RegObservacion_AE"],
     ["db" => "Rutas", "dt" => "Rutas"],

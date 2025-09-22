@@ -121,7 +121,7 @@
 									</p>
 								</a>
 							</li>
-							<li class="nav-item menu-open">
+							<li class="nav-item <?= $arttipo !='PRODUCTO AE' ? 'menu-open' : '' ?>">
 								<a href="#" class="nav-link active">
 									<i class="nav-icon fas fa-chart-pie"></i>
 									<p>
@@ -132,7 +132,7 @@
 								<ul class="nav nav-treeview">
 									<li class="nav-item menu-open">
 										<a href="#" class="nav-link active">
-											<i class="far fa-circle nav-icon"></i>
+											<i class="far fa-circle nav-icon <?= $arttipo !='PRODUCTO AE' ? 'text-danger' : '' ?>"></i>
 											<p>
 												Registros Sanitarios HC
 												<i class="right fas fa-angle-left"></i>
@@ -178,9 +178,9 @@
 										</ul>
 									</li>
 
-									<li class="nav-item menu-open">
+									<li class="nav-item <?= $arttipo =='PRODUCTO AE' ? 'menu-open' : '' ?>">
 										<a href="#" class="nav-link active">
-											<i class="far fa-circle nav-icon"></i>
+											<i class="far fa-circle nav-icon <?= $arttipo =='PRODUCTO AE' ? 'text-danger' : '' ?>"></i>
 											<p>
 												Registros Sanitarios AE
 												<i class="right fas fa-angle-left"></i>

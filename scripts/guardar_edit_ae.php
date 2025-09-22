@@ -28,7 +28,7 @@ $nifu = $_POST["nifu"];
 $ean13un = $_POST["ean13un"];    
 $ean14cj = $_POST["ean14cj"];    
 $gtincj = $_POST["gtincj"];
-//agregar cambios_ae    
+$cambae = $_POST["cambae"];
 $exoneracioncm = $_POST["exoneracioncm"];    
 $pdimen = $_POST["pdimen"];     
 
@@ -83,7 +83,7 @@ if ($stmt->execute()) {
 		  ,[CodigoEAN_13] = :ean13un
 		  ,[CodigoEAN_14] = :ean14cj
 		  ,[CodigoGTIN] = :gtincj
-		--   agregarcambios AE
+		  ,[Cambios_AE] = :cambae
 		  ,[ExoneracionCM_AE] = :exoneracioncm
 		  ,[ProblemaDimensiones_AE] = :pdimen
 		  ,[FechaModificacion_AE] = getdate()
@@ -108,6 +108,7 @@ if ($stmt->execute()) {
 	$stmt1->bindParam(':esterilidad', $esterilidad);
 	$stmt1->bindParam(':gmdn', $gmdn);
 	$stmt1->bindParam(':nifu', $nifu);
+	$stmt1->bindParam(':cambae', $cambae);
 	$stmt1->bindParam(':pdimen', $pdimen);
 	$stmt1->bindParam(':etiqueta', $etiqueta);
 	$stmt1->bindParam(':usuariomod', $usuariomod);
