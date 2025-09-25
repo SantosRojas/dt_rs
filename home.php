@@ -155,7 +155,7 @@
 										</a>
 										<ul class="nav nav-treeview">
 											<li class="nav-item">
-												<a href="rs_ae.php" class="nav-link">
+												<a href="rs_ae.php?arttipo=PRODUCTO AE" class="nav-link">
 													<i class="far fa-dot-circle nav-icon"></i>
 													<p>Producto AESCULAP </p>
 												</a>

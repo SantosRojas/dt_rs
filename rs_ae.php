@@ -74,6 +74,18 @@ $arttipo = $_GET['arttipo'];
 			text-overflow: ellipsis;
 			max-width: 250px;
 		}
+
+		/* Hace que el mouse sea pointer y resalta la celda */
+		td.copy-etiqueta {
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		td.copy-etiqueta:hover {
+			background: #e0ffe0; /* Color de fondo al pasar el mouse (puedes cambiarlo) */
+			font-weight: bold;   /* Opcional: pone el texto en negrita */
+		}
+
 	</style>
 </head>
 
@@ -298,6 +310,7 @@ $arttipo = $_GET['arttipo'];
 											<tr>
 												<th class="text-center">ID</th>
 												<th class="text-center">ARTID</th>
+												<th><input type="checkbox" id="selectAll"></th>
 												<th class="text-center">C&Oacute;DIGO</th>
 												<th class="text-center">DESCRIPCI&Oacute;N</th>
 												<th class="text-center">REGISTRO SANITARIO</th>
@@ -827,7 +840,7 @@ $arttipo = $_GET['arttipo'];
 								<div class="input-group">
 									<input type="file" class="form-control" id="inputFile"
 										aria-describedby="inputFileAdd" aria-label="Upload">
-									<button onclick="agregarArchivo()" class="btn btn-outline-secondary" type="button"
+									<button onclick="agregarArchivo('#inputFile','#listaArchivos')" class="btn btn-outline-secondary" type="button"
 										id="inputFileAdd">Agregar archivo</button>
 								</div>
 							</div>
@@ -848,10 +861,136 @@ $arttipo = $_GET['arttipo'];
 			</div>
 		</div>
 	</div>
+
+	<!-- MODAL DE EDICION DE RS PARA VARIOS ARTICULOS -->
+	<button type="button" id="btn-edit-several" name="btn-edit-several" class="btn btn-primary" data-toggle="modal"
+		data-target="#modal-edit-several" hidden>Edit Several articles</button>
+
+	<div class="modal fade" id ="modal-edit-several" data-backdrop="static" data-keyboard="false"
+		aria-labelledby="modal-edit-several-label" aria-hidden="true">
+
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Actualizar Registro sanitario</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<div class="modal-body">
+					<div class="row">
+						<table id="tb-selected-articles" class="table-striped display compact"
+							style="width:100%">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>C&oacute;digo</th>
+									<th>Descripci&oacute;n</th>
+									<th>RESOLUCION / OFICIO</th>
+									<th>EMISION</th>
+									<th>APROBACION</th>
+									<th>VENCIMIENTO</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="new-rs">Registro Sanitario</label>
+								<input type="text" class="form-control" id="new-rs">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="new-resolution">Resoluci&oacute;n / Oficio</label>
+								<input type="text" class="form-control" id="new-resolution">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="new-emition">Emision</label>
+								<input type="date" class="form-control" id="new-emit">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="new-aprobal">Aprobaci&oacute;n</label>
+								<input type="date" class="form-control" id="new-aprobal">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="new-expired-date">Vencimiento</label>
+								<input type="date" class="form-control" id="new-expired-date">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="new-state">Estado Vencimiento</label>
+								<select class="form-control form-select" id="new-state">
+									<option value="BAJA">BAJA</option>
+									<option value="RENOVACION">EN RENOVACI&Oacute;N</option>
+									<option value="TRAMITE">EN TR&Aacute;MITE</option>
+									<option value="PRORROGADO">PRORROGADO</option>
+									<option value="VENCIDO">VENCIDO</option>
+									<option value="VENCE 1 MES">VENCE 1 MES</option>
+									<option value="VENCE 2 MESES">VENCE 2 MESES</option>
+									<option value="VENCE 3 MESES">VENCE 3 MESES</option>
+									<option value="VIGENTE" selected>VIGENTE</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<!-- textarea -->
+							<div class="form-group">
+								<label for="new-observation">Observaciones / GetRA</label>
+								<textarea class="form-control" rows="3" placeholder="Observaciones"
+									id="new-observation"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="input-file">Documentos Adjuntos</label>
+								<div class="input-group">
+									<input type="file" class="form-control" id="input-file"
+										aria-describedby="input-file-add" aria-label="Upload">
+									<button onclick="agregarArchivo('#input-file','#list-files')" class="btn btn-outline-secondary" type="button"
+										id="input-file-add">Agregar archivo</button>
+								</div>
+							</div>
+							<ul id="list-files"></ul>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer d-flex justify-content-between">
+					<!--button type="button" class="btn btn-danger" onclick="eliminar()">Eliminar Registro</button-->
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					<div>
+						<button type="button" class="btn-close" data-dismiss="modal" data-target="#newModal"
+							aria-label="Close" id="modseveralcierra" hidden></button>
+						<button type="button" class="btn btn-success" onclick="update_several()">Actualizar
+							Registro</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- ./modal -->
 	<!-- Button trigger modal -->
-	<button type="button" id="btnmasivomodal" name="btnmasivomodal" class="btn btn-primary" data-toggle="modal"
-		data-target="#modalproductomasivo" hidden disabled>Masivo Modal</button>
+	<!-- <button type="button" id="btnmasivomodal" name="btnmasivomodal" class="btn btn-primary" data-toggle="modal"
+		data-target="#modalproductomasivo" hidden disabled>Masivo Modal</button> -->
+	<!-- modal -->
+	
 	<!-- modal -->
 	<div class="modal fade" id="modalproductomasivo" data-backdrop="static" data-keyboard="false"
 		aria-labelledby="masivoModalLabel" aria-hidden="true">
@@ -1011,6 +1150,7 @@ $arttipo = $_GET['arttipo'];
 	<!-- Excel -->
 	<script src="plugins/excel/xlsx.full.min.js"></script>
 	<script>
+		let tablaModal; // definición global
 		$(document).ready(function () {
 			var table = $('#registrosanitario').DataTable({
 				dom: '<"top"Bf>rt<"bottom"lip><"clear">',
@@ -1037,10 +1177,10 @@ $arttipo = $_GET['arttipo'];
 						},
 						'spacer',
 						{
-							text: '<i class="fas fa-upload"></i>&nbsp;Actualización Masiva',
+							text: '<i class="fas fa-upload"></i>&nbsp;Editar Registros',
 							className: 'btn btn-warning',
 							action: function (e, dt, node, config) {
-								document.getElementById("btnmasivomodal").click();
+								document.getElementById("btn-edit-several").click();
 							},
 						},
 						'spacer',
@@ -1062,7 +1202,7 @@ $arttipo = $_GET['arttipo'];
 				],
 				//responsive: true,
 				fixedColumns: {
-					left: 2
+					left: 3
 						<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>, right: 1<?php } ?>
 				},
 				scrollX: true,
@@ -1085,6 +1225,12 @@ $arttipo = $_GET['arttipo'];
 				columns: [
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
+					{
+						data: null,
+						render: function (data, type, row) {
+							return `<input type="checkbox" class="selectRow" value="${row.id}">`;
+						}
+					},
 					{ data: 'ArtCodigo_AE' },
 					{ data: 'ArtDescripcion_AE' },
 					{ data: 'RegNumero_AE' },
@@ -1102,7 +1248,7 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'CodigoEAN_13' },
 					{ data: 'CodigoGTIN' },
 					{ data: 'EsEsteril_AE'},
-					{ data: 'Etiqueta_AE' },
+					{ data: 'Etiqueta_AE',className: 'copy-etiqueta' },
 					{ data: 'NumeroIFU_AE' },
 					{ data: 'Codigo_GMDN_UMDNS' },
 					{ data: 'Cambios_AE' },
@@ -1117,23 +1263,18 @@ $arttipo = $_GET['arttipo'];
 						}
 						<?php } ?>
 				],
+				
 				columnDefs: [
+					{ orderable: false, targets: 2 }, // La columna 3 no será ordenable
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-							{
-							"targets": 19, // column for edit button (0-18 columns + edit button = 19)
-							"className": "text-center",
-							"width": "4%"
-						},
-					<?php } ?>
-						{
-						"targets": [17, 18], // Etiqueta_AE y RegObservacion_AE columns for truncation
-						"render": function (data, type, row) {
-							return type === 'display' && data && data.length > 50 ?
-								data.substr(0, 50) + '...' :
-								data || '';
-						}
+					{
+						targets: -1, // Última columna (botón de edición)
+						className: "text-center",
+						width: "4%"
 					}
-				],
+					<?php } ?>
+				]
+				,
 				rowCallback: function (row, data, index) {
 					if (data['RegEstado_AE'] == 'RENOVACION') {
 						$(row).css('background-color', '#5DDBBC');
@@ -1166,10 +1307,104 @@ $arttipo = $_GET['arttipo'];
 				processing: true,
 				serverSide: true
 			});
+			
+			// Evento para seleccionar/deseleccionar todos
+			$('#selectAll').on('click', function () {
+			const isChecked = $(this).is(':checked');
+			$('.selectRow').prop('checked', isChecked);
+			});
+
+			tablaModal = $('#tb-selected-articles').DataTable({
+				destroy: true, // permite reinicializar
+				data: [],
+				columns: [
+					{ title: "ID", visible:false},
+					{ title: "Código" },
+					{ title: "Descripción" },
+					{ title: "RESOLUCION" },
+					{ title: "EMISION" },
+					{ title: "APROBACION" },
+					{ title: "VENCIMIENTO" }
+				],
+				});
+
+			$('#btn-edit-several').on('click', function () {
+				let datos = [];
+
+				table.rows().every(function () {
+				const fila = this.node();
+				const chk = $(fila).find('.selectRow');
+
+
+
+				if (chk.is(':checked')) {
+					const data = this.data(); // es un objeto
+					datos.push([
+					data.DT_RowId,
+					data.ArtCodigo_AE,
+					data.ArtDescripcion_AE,
+					data.RegResolucion_AE,
+					data.RegFechaEmision_AE,
+					data.RegFechaAprobacion_AE,
+					data.RegFechaVencimiento_AE,
+					]);
+				}
+				});
+
+
+
+				tablaModal.clear().rows.add(datos).draw();
+
+				//borramos los campos del formulario
+				$("#new-rs").val("")
+				$("#new-resolution").val("")
+				$("#new-emition").val("")
+				$("#new-aprobal").val("")
+				$("#new-expired-date").val("")
+				$("#new-state").val("VIGENTE")
+				$("#new-observation").val("")
+
+			});
+
+
+			// copy feature
+			$('#registrosanitario tbody').on('click', 'td.copy-etiqueta', function () {
+					var etiqueta = $(this).text().trim();
+
+					// Copiar al portapapeles
+					navigator.clipboard.writeText(etiqueta).then(function() {
+						var Toast = Swal.mixin({
+								toast: true,
+								position: 'top-end',
+								showConfirmButton: false,
+								timer: 3000
+							});
+
+							Toast.fire({
+								icon: 'success',
+								title: 'Etiqueta copiada.'
+							})
+					}).catch(function(err) {
+						var Toast = Swal.mixin({
+								toast: true,
+								position: 'top-end',
+								showConfirmButton: false,
+								timer: 3000
+							});
+
+							Toast.fire({
+								icon: 'error',
+								title: 'Error al copiar la etiqueta.'
+							})
+					});
+				});
+
 
 			$('input[name=filtro1]').on('change', function () {
 				table.ajax.reload();
 			});
+
+
 
 			var table2 = $('#dtnewproducto').DataTable({
 				lengthMenu: [
@@ -1179,7 +1414,7 @@ $arttipo = $_GET['arttipo'];
 				responsive: true,
 				ajax: 'scripts/consultar_articulos_ae.php',
 				columns: [
-					{ data: 'DT_RowId', "visible": false },
+					{ data: 'DT_RowId', "visible": false },	
 					{ data: 'ArtCodigo' },
 					{ data: 'ArtDescripcion' },
 					{
@@ -1310,6 +1545,9 @@ $arttipo = $_GET['arttipo'];
 				$('#rs').focus();
 
 			});
+
+			
+
 
 			// FUNCIÓN DE DOBLE CLIC TEMPORALMENTE DESHABILITADA
 			/*$('#registrosanitario tbody').on('dblclick', 'tr', function () {
@@ -1540,11 +1778,12 @@ $arttipo = $_GET['arttipo'];
 		});
 
 		var archivos = [];
+		
 
-		function eliminarArchivo(nombre) {
+		function eliminarArchivo(fileName,listFilesId) {
 			// Buscar el archivo en la lista de archivos
 			var indice = archivos.findIndex(function (archivo) {
-				return archivo.name === nombre;
+				return archivo.name === fileName;
 			});
 
 			// Si se encontró el archivo, eliminarlo de la lista
@@ -1553,15 +1792,15 @@ $arttipo = $_GET['arttipo'];
 			}
 
 			// Eliminar el elemento de lista correspondiente
-			var li = document.querySelector('#listaArchivos li[data-nombre="' + nombre + '"]');
+			var li = document.querySelector(listFilesId +' li[data-nombre="' + fileName + '"]');
 			if (li) {
 				li.parentNode.removeChild(li);
 			}
 		}
 
-		function agregarArchivo() {
+		function agregarArchivo(inputId,listFilesId) {
 			// Obtener el archivo del input
-			var archivo = document.querySelector('#inputFile').files[0];
+			var archivo = document.querySelector(inputId).files[0];
 
 			// Comprobar si el archivo está definido
 			if (!archivo) {
@@ -1591,7 +1830,7 @@ $arttipo = $_GET['arttipo'];
 			boton.className = 'btn btn-xs btn-danger';  // Añadir la clase al botón
 			boton.style.marginRight = '10px';  // Añadir un espacio de 10px entre el botón y el nombre
 			boton.onclick = function () {
-				eliminarArchivo(archivo.name);
+				eliminarArchivo(archivo.name,listFilesId);
 			};
 
 			// Crear un elemento i para el ícono de eliminación
@@ -1609,10 +1848,10 @@ $arttipo = $_GET['arttipo'];
 			li.setAttribute('data-nombre', archivo.name);
 
 			// Añadir el elemento de lista a la lista de archivos en el modal
-			document.querySelector('#listaArchivos').appendChild(li);
+			document.querySelector(listFilesId).appendChild(li);
 
 			// Limpiar la casilla del input
-			document.querySelector('#inputFile').value = null;
+			document.querySelector(inputId).value = null;
 			// Cambiar el texto del label
 			var label = document.querySelector('#labelinputfile');
 		}
@@ -1640,7 +1879,7 @@ $arttipo = $_GET['arttipo'];
 					var rutadel = '../' + ruta;
 
 					// Enviar los datos al archivo PHP para guardar la orden
-					$.post("scripts/eliminar_archivos.php", {
+					$.post("scripts/eliminar_archivos_ae.php", {
 						rutadel: rutadel
 					}, function (data) {
 						// Manejar la respuesta del servidor (puede ser un mensaje de éxito o error)
@@ -1887,6 +2126,7 @@ $arttipo = $_GET['arttipo'];
 					if (query_update1 === "UPDATE Sdt_Articulos SET , ArtUsuarioModificacion = '<?php echo $_SESSION['usuario']; ?>', ArtFechaModificacion = getdate() WHERE ArtComercializado='SI' AND ArtCodigo = '" + row[0] + "'") {
 						query_update1 = "";
 					}
+
 					if (query_update2 === "UPDATE Sdt_RegistroSanitario SET , RegUsuarioModificacion = '<?php echo $_SESSION['usuario']; ?>', RegFechaModificacion = getdate() WHERE ArtID = (SELECT ArtID FROM Sdt_Articulos WHERE ArtComercializado='SI' AND ArtCodigo = '" + row[0] + "'") {
 						query_update2 = "";
 					}
@@ -2033,8 +2273,131 @@ $arttipo = $_GET['arttipo'];
 			return "#" + (0x1000000 + (R > 0 ? R : 0) * 0x10000 + (G > 0 ? G : 0) * 0x100 + (B > 0 ? B : 0)).toString(16).slice(1);
 		}
 
+		function update_several(){
+			
+			let idsSelected = [];
+
+			tablaModal.rows().every(function () {
+			const data = this.data(); // data es un array si usaste rows.add([ ... ])
+			idsSelected.push(data[0].replace("ID_","")); // ID está en la primera columna
+			});
+
+			var newRs = $('#new-rs').val();
+			var newResolution = $('#new-resolution').val();
+			var newEmition = $('#new-emition').val();
+			var newAproval = $('#new-aprobal').val();
+			var newExpiredDate = $('#new-expired-date').val();
+			var newState = $('#new-state').val();
+			var newObservation = $('#new-observation').val();
+
+
+			console.log(idsSelected); // muestra los IDs en consola
+			
+			var formData = new FormData();
+
+			formData.append('idsSelected',idsSelected);
+			formData.append('newRs',newRs);
+			formData.append('newResolution',newResolution);
+			formData.append('newEmition',newEmition);
+			formData.append('newAproval',newAproval);
+			formData.append('newExpiredData',newExpiredDate);
+			formData.append('newState',newState);
+			formData.append('newObservation',newObservation)
+
+			// Añadir cada archivo de la lista archivosedit al objeto FormData
+			archivosedit.forEach(function (archivo) {
+				// Comprobar si el archivo tiene una propiedad 'ruta'
+				if (!archivo.ruta) {
+					// Si el archivo no tiene una propiedad 'ruta', entonces es un archivo real y se puede añadir a FormData
+					formData.append('archivos[]', archivo, archivo.name);
+				}
+			});
+
+			// Verificar que los campos obligatorios no estén vacíos
+			if (
+				newResolution.trim() === "" ||
+				newRs.trim() === ""  /* ||
+					emision.trim() === "" ||
+					aprobacion.trim() === "" ||
+					vencimiento.trim() === "" */
+			) {
+				// Mostrar un mensaje de advertencia si falta información
+				var Toast = Swal.mixin({
+					toast: true,
+					position: 'top-end',
+					showConfirmButton: false,
+					timer: 3000
+				});
+				Toast.fire({
+					icon: 'warning',
+					title: 'Es necesario completar toda la información.'
+				})
+			} else {
+
+				// Enviar los datos al archivo PHP para guardar la orden
+				$.ajax({
+					url: "scripts/save_several_edit.php",
+					type: "POST",
+					data: formData,
+					processData: false,  // Indicar a jQuery que no procese los datos
+					contentType: false,  // Indicar a jQuery que no establezca el tipo de contenido
+					success: function (data) {
+						// Manejar la respuesta del servidor (puede ser un mensaje de éxito o error)
+						if (data === "success") {
+							// Cerrar el modal
+							//$("#editModal").hide();
+							document.getElementById("modeditcierra").click();
+							// Limpiar la lista de archivos
+							archivosedit = [];
+							var listaArchivosEdit = document.querySelector('#listaArchivosEdit');
+							while (listaArchivosEdit.firstChild) {
+								listaArchivosEdit.removeChild(listaArchivosEdit.firstChild);
+							}
+							// Actualizar la tabla de órdenes (puedes recargar la tabla o hacerlo de otra manera)
+							$('#registrosanitario').DataTable().ajax.reload();
+
+							var Toast = Swal.mixin({
+								toast: true,
+								position: 'top-end',
+								showConfirmButton: false,
+								timer: 3000
+							});
+
+							Toast.fire({
+								icon: 'success',
+								title: 'Registro actualizado con éxito.',
+								toast: true,
+								position: 'top-end',
+								showConfirmButton: false,
+								timer: 3000
+
+							})
+						} else {
+							var Toast = Swal.mixin({
+								toast: true,
+								position: 'top-end',
+								showConfirmButton: false,
+								timer: 3000
+							});
+
+							Toast.fire({
+								icon: 'error',
+								title: 'Error en la operación.',
+								text: data, // Aquí se muestra el mensaje que devuelve PHP
+								toast: true,
+								position: 'top-end',
+								showConfirmButton: false,
+								timer: 10000
+
+							})
+						}
+					}
+				});
+			}
+
+		}
+
 		function guardar() {
-			console.log(modalID)
 
 			// Obtener los datos del formulario
 			var modalIDprev = $("#modalID").val();
@@ -2138,10 +2501,10 @@ $arttipo = $_GET['arttipo'];
 						if (data === "success") {
 							// Cerrar el modal
 							//$("#editModal").hide();
-							document.getElementById("modeditcierra").click();
+							document.getElementById("modseveralcierra").click();
 							// Limpiar la lista de archivos
 							archivosedit = [];
-							var listaArchivosEdit = document.querySelector('#listaArchivosEdit');
+							var listaArchivosEdit = document.querySelector('#list-files');
 							while (listaArchivosEdit.firstChild) {
 								listaArchivosEdit.removeChild(listaArchivosEdit.firstChild);
 							}

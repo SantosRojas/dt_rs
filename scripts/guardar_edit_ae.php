@@ -125,7 +125,7 @@ if ($stmt->execute()) {
 		// Éxito al guardar los cambios en articulos
 
 		// Preparar la sentencia para insertar en Std_RSDoc
-		$sql_insert02 = "INSERT INTO Std_RSDoc (RegID, Descripcion, Ruta, FechaCarga, UsuarioCarga, Estado) VALUES (:RegID, :Descripcion, :Ruta, getdate(), :UsuarioCarga, 'ACTIVO')";
+		$sql_insert02 = "INSERT INTO Std_RSDoc_AE (RegID, Descripcion, Ruta, FechaCarga, UsuarioCarga, Estado) VALUES (:RegID, :Descripcion, :Ruta, getdate(), :UsuarioCarga, 'ACTIVO')";
 		$stmt2 = $conn->prepare($sql_insert02);
 
 		// Manejar los archivos
