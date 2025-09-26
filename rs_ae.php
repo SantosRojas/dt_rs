@@ -41,8 +41,13 @@ $arttipo = $_GET['arttipo'];
 	<link rel="stylesheet" type="text/css" href="plugins/dt/css/jquery.dataTables.min.css">
 	<link rel="stylesheet" type="text/css" href="plugins/dt/css/fixedColumns.dataTables.min.css">
 	<link rel="stylesheet" type="text/css" href="plugins/dt/css/dataTables.dateTime.min.css">
+
 	<!-- SweetAlert2 -->
 	<link rel="stylesheet" type="text/css" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+
+	<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+
+	
 	<style>
 		#listaArchivos,
 		#listaArchivosEdit {
@@ -863,31 +868,37 @@ $arttipo = $_GET['arttipo'];
 	</div>
 
 	<!-- MODAL DE EDICION DE RS PARA VARIOS ARTICULOS -->
-	<button type="button" id="btn-edit-several" name="btn-edit-several" class="btn btn-primary" data-toggle="modal"
-		data-target="#modal-edit-several" hidden>Edit Several articles</button>
+	<!-- <button type="button" id="btn-edit-several" name="btn-edit-several" class="btn btn-primary" data-toggle="modal"
+		data-target="#modal-edit-several" hidden>Edit Several articles</button> -->
 
-	<div class="modal fade" id ="modal-edit-several" data-backdrop="static" data-keyboard="false"
-		aria-labelledby="modal-edit-several-label" aria-hidden="true">
+	<button type="button" id="btn-edit-several" name="btn-edit-several" class="btn btn-primary" hidden>
+		Edit Several Articles
+	</button>
 
-		<div class="modal-dialog modal-lg">
+
+	<div class="modal fade" id="modal-edit-several" 
+     data-bs-backdrop="static" data-bs-keyboard="false"
+     aria-labelledby="modal-edit-several-label" aria-hidden="true">
+
+
+		<div class="modal-dialog modal-xl">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title">Actualizar Registro sanitario</h4>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
 				</div>
 
 				<div class="modal-body">
-					<div class="row">
-						<table id="tb-selected-articles" class="table-striped display compact"
-							style="width:100%">
+					<div class="table-responsive row">
+						<table id="tb-selected-articles" class="display compact cell-border table-striped hover" style="width:100%">
 							<thead>
 								<tr>
 									<th>ID</th>
-									<th>C&oacute;digo</th>
-									<th>Descripci&oacute;n</th>
-									<th>RESOLUCION / OFICIO</th>
+									<th>CODIGO</th>
+									<th>DESCRIPCION</th>
+									<th>REGISTRO SANITARIO</th>
+									<th>RESOLUCION</th>
 									<th>EMISION</th>
 									<th>APROBACION</th>
 									<th>VENCIMIENTO</th>
@@ -911,7 +922,7 @@ $arttipo = $_GET['arttipo'];
 						<div class="col-md-4">
 							<div class="form-group">
 								<label for="new-emition">Emision</label>
-								<input type="date" class="form-control" id="new-emit">
+								<input type="date" class="form-control" id="new-emition">
 							</div>
 						</div>
 					</div>
@@ -973,10 +984,9 @@ $arttipo = $_GET['arttipo'];
 
 				<div class="modal-footer d-flex justify-content-between">
 					<!--button type="button" class="btn btn-danger" onclick="eliminar()">Eliminar Registro</button-->
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
 					<div>
-						<button type="button" class="btn-close" data-dismiss="modal" data-target="#newModal"
-							aria-label="Close" id="modseveralcierra" hidden></button>
 						<button type="button" class="btn btn-success" onclick="update_several()">Actualizar
 							Registro</button>
 					</div>
@@ -984,87 +994,6 @@ $arttipo = $_GET['arttipo'];
 			</div>
 		</div>
 	</div>
-
-	<!-- ./modal -->
-	<!-- Button trigger modal -->
-	<!-- <button type="button" id="btnmasivomodal" name="btnmasivomodal" class="btn btn-primary" data-toggle="modal"
-		data-target="#modalproductomasivo" hidden disabled>Masivo Modal</button> -->
-	<!-- modal -->
-	
-	<!-- modal -->
-	<div class="modal fade" id="modalproductomasivo" data-backdrop="static" data-keyboard="false"
-		aria-labelledby="masivoModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title">Actualizaci&oacute;n Masiva de Productos</h4>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="inputFileMasivo">Archivo de Carga Masiva</label>
-								<div class="input-group">
-									<input type="file" class="form-control" id="inputFileMasivo"
-										aria-describedby="inputFileMasivoAdd" accept=".xlsx, .xls" aria-label="Upload">
-									<button onclick="agregarArchivoMasivo()" class="btn btn-outline-secondary"
-										type="button" id="inputFileMasivoAdd" hidden><i class="fas fa-plus-square"></i>
-										Agregar archivo</button>
-								</div>
-							</div>
-							<!-- Nuevo elemento para el enlace de descarga -->
-							<div class="form-group">
-								<a href="reports/UpdateMasivoRS.xlsx" target="_blank" class="btn btn-success" download>
-									<i class="fas fa-download"></i> Descargar Plantilla de Carga Masiva
-								</a>
-							</div>
-							<ul id="listaArchivosMasivo"></ul>
-						</div>
-					</div>
-					<div class="row" hidden>
-						<table id="excelTable" border="1">
-							<thead>
-								<tr>
-									<th>ID</th>
-									<th>SKU</th>
-									<th>Cantidad</th>
-								</tr>
-							</thead>
-							<tbody>
-								<!-- Contenido de la tabla se agregará aquí -->
-							</tbody>
-						</table>
-					</div>
-					<div>
-						<p class="text-danger">- El proceso de actualizaci&oacute;n masiva requiere siempre información
-							en el campo ArtCodigo.</p>
-					</div>
-					<div>
-						<p class="text-danger">- El proceso de actualizaci&oacute;n masiva actualizar&aacute; solo
-							productos con la condici&oacute;n comercializado = "SI".</p>
-					</div>
-					<div>
-						<p class="text-danger">- El proceso de actualizaci&oacute;n masiva tomar&aacute; en cuenta
-							solamente los campos con informaci&oacute;n.</p>
-					</div>
-				</div>
-				<div class="modal-footer d-flex justify-content-between">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-					<button type="button" class="btn-close" data-dismiss="modal" data-target="#modalproductomasivo"
-						aria-label="Close" id="modalproductomasivocierra" hidden></button>
-					<div>
-						<button type="button" class="btn btn-success" onclick="cargamasiva()">Procesar Archivo</button>
-					</div>
-				</div>
-			</div>
-			<!-- /.modal-content -->
-		</div>
-		<!-- /.modal-dialog -->
-	</div>
-	<!-- /.modal -->
 	<!-- Button trigger modal -->
 	<button type="button" id="btncreamodal" name="btncreamodal" class="btn btn-primary" data-toggle="modal"
 		data-target="#modalproductocrea" hidden>Crea Producto</button>
@@ -1149,6 +1078,7 @@ $arttipo = $_GET['arttipo'];
 	<script src="plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
 	<!-- Excel -->
 	<script src="plugins/excel/xlsx.full.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 	<script>
 		let tablaModal; // definición global
 		$(document).ready(function () {
@@ -1177,7 +1107,7 @@ $arttipo = $_GET['arttipo'];
 						},
 						'spacer',
 						{
-							text: '<i class="fas fa-upload"></i>&nbsp;Editar Registros',
+							text: '<i class="fas fa-edit"></i>&nbsp;Editar Registros',
 							className: 'btn btn-warning',
 							action: function (e, dt, node, config) {
 								document.getElementById("btn-edit-several").click();
@@ -1314,13 +1244,22 @@ $arttipo = $_GET['arttipo'];
 			$('.selectRow').prop('checked', isChecked);
 			});
 
+			//Quitar el foco del modal para  evitar warning de accesibilidad
+			$('#modal-edit-several').on('hidden.bs.modal', function () {
+				document.activeElement.blur();   // quita foco al botￃﾳn
+				$('body').focus();               // fuerza foco en body
+			});
+
+
 			tablaModal = $('#tb-selected-articles').DataTable({
 				destroy: true, // permite reinicializar
 				data: [],
+				responsive: true,
 				columns: [
 					{ title: "ID", visible:false},
-					{ title: "Código" },
-					{ title: "Descripción" },
+					{ title: "CODIGO" },
+					{ title: "DESCRIPCION" },
+					{ title: "REGISTRO SANITARIO"},
 					{ title: "RESOLUCION" },
 					{ title: "EMISION" },
 					{ title: "APROBACION" },
@@ -1330,32 +1269,52 @@ $arttipo = $_GET['arttipo'];
 
 			$('#btn-edit-several').on('click', function () {
 				let datos = [];
+				let registrosSanitarios = new Set();
 
 				table.rows().every(function () {
-				const fila = this.node();
-				const chk = $(fila).find('.selectRow');
+					const fila = this.node();
+					const chk = $(fila).find('.selectRow');
 
+					if (chk.is(':checked')) {
+						const data = this.data();
+						registrosSanitarios.add(data.RegNumero_AE);
 
-
-				if (chk.is(':checked')) {
-					const data = this.data(); // es un objeto
-					datos.push([
-					data.DT_RowId,
-					data.ArtCodigo_AE,
-					data.ArtDescripcion_AE,
-					data.RegResolucion_AE,
-					data.RegFechaEmision_AE,
-					data.RegFechaAprobacion_AE,
-					data.RegFechaVencimiento_AE,
-					]);
-				}
+						datos.push([
+							data.DT_RowId,
+							data.ArtCodigo_AE,
+							data.ArtDescripcion_AE,
+							data.RegNumero_AE,
+							data.RegResolucion_AE,
+							data.RegFechaEmision_AE,
+							data.RegFechaAprobacion_AE,
+							data.RegFechaVencimiento_AE,
+						]);
+					}
 				});
 
+				// validaciones
+				if (datos.length === 0) {
+					Swal.fire({
+						icon: 'info',
+						title: 'Sin selección',
+						text: 'Debe seleccionar al menos un artículo.',
+					});
+					return;
+				}
 
+				if (registrosSanitarios.size > 1) {
+					Swal.fire({
+						icon: 'warning',
+						title: 'Atención',
+						text: 'Todos los registros deben tener el mismo Registro Sanitario.',
+					});
+					return;
+				}
 
+				// si todo esta bien: llenar tabla y abrir modal
 				tablaModal.clear().rows.add(datos).draw();
 
-				//borramos los campos del formulario
+				// limpiar formulario
 				$("#new-rs").val("")
 				$("#new-resolution").val("")
 				$("#new-emition").val("")
@@ -1364,7 +1323,11 @@ $arttipo = $_GET['arttipo'];
 				$("#new-state").val("VIGENTE")
 				$("#new-observation").val("")
 
+				// ￰abrir el modal manualmente
+				$('#modal-edit-several').modal('show');
 			});
+
+
 
 
 			// copy feature
@@ -2182,29 +2145,7 @@ $arttipo = $_GET['arttipo'];
 			$('#registrosanitario').DataTable().ajax.reload();
 		}
 
-		//***********************************************************************************			
-
-		//***********************************************************************************
-		// SECCIÓN PARA EL CONTROL DEL INPUT DE CARGA MASIVA DE PRODUCTOS EN EL MODAL
-		//***********************************************************************************
-
-		var archivosmasivo = [];
-
-		$('#modalproductomasivo').on('hidden.bs.modal', function () {
-
-			// Limpiar la lista de archivos
-			archivosmasivo = [];
-			var listaArchivosMasivo = document.querySelector('#listaArchivosMasivo');
-			while (listaArchivosMasivo.firstChild) {
-				listaArchivosMasivo.removeChild(listaArchivosMasivo.firstChild);
-			}
-
-			// Restablecer el texto del label
-			var label = document.querySelector('#labelinputfileMasivo');
-
-			// Limpiar la casilla del input
-			document.querySelector('#inputFileMasivo').value = null;
-		});
+		
 
 		function validarFormatoArchivo(nombre) {
 			var extensionesPermitidas = ['.xls', '.xlsx'];
@@ -2289,6 +2230,7 @@ $arttipo = $_GET['arttipo'];
 			var newExpiredDate = $('#new-expired-date').val();
 			var newState = $('#new-state').val();
 			var newObservation = $('#new-observation').val();
+			var usuariomod = '<?php echo $_SESSION['usuario']; ?>';
 
 
 			console.log(idsSelected); // muestra los IDs en consola
@@ -2300,12 +2242,13 @@ $arttipo = $_GET['arttipo'];
 			formData.append('newResolution',newResolution);
 			formData.append('newEmition',newEmition);
 			formData.append('newAproval',newAproval);
-			formData.append('newExpiredData',newExpiredDate);
+			formData.append('newExpiredDate',newExpiredDate);
 			formData.append('newState',newState);
-			formData.append('newObservation',newObservation)
+			formData.append('newObservation',newObservation);
+			formData.append('usuariomod',usuariomod);
 
 			// Añadir cada archivo de la lista archivosedit al objeto FormData
-			archivosedit.forEach(function (archivo) {
+			archivos.forEach(function (archivo) {
 				// Comprobar si el archivo tiene una propiedad 'ruta'
 				if (!archivo.ruta) {
 					// Si el archivo no tiene una propiedad 'ruta', entonces es un archivo real y se puede añadir a FormData
@@ -2333,6 +2276,10 @@ $arttipo = $_GET['arttipo'];
 					title: 'Es necesario completar toda la información.'
 				})
 			} else {
+				for (let pair of formData.entries()) {
+					console.log(pair[0]+ ': ' + pair[1]);
+				}
+
 
 				// Enviar los datos al archivo PHP para guardar la orden
 				$.ajax({
@@ -2345,11 +2292,12 @@ $arttipo = $_GET['arttipo'];
 						// Manejar la respuesta del servidor (puede ser un mensaje de éxito o error)
 						if (data === "success") {
 							// Cerrar el modal
-							//$("#editModal").hide();
-							document.getElementById("modeditcierra").click();
+							$('body').focus()
+
+							$('#modal-edit-several').modal('hide');
 							// Limpiar la lista de archivos
 							archivosedit = [];
-							var listaArchivosEdit = document.querySelector('#listaArchivosEdit');
+							var listaArchivosEdit = document.querySelector('#list-files');
 							while (listaArchivosEdit.firstChild) {
 								listaArchivosEdit.removeChild(listaArchivosEdit.firstChild);
 							}
@@ -2501,10 +2449,10 @@ $arttipo = $_GET['arttipo'];
 						if (data === "success") {
 							// Cerrar el modal
 							//$("#editModal").hide();
-							document.getElementById("modseveralcierra").click();
+							document.getElementById("modeditcierra").click();
 							// Limpiar la lista de archivos
 							archivosedit = [];
-							var listaArchivosEdit = document.querySelector('#list-files');
+							var listaArchivosEdit = document.querySelector('#listaArchivosEdit');
 							while (listaArchivosEdit.firstChild) {
 								listaArchivosEdit.removeChild(listaArchivosEdit.firstChild);
 							}

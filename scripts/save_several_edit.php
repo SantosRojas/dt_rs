@@ -16,18 +16,18 @@ try {
         $idsSelected = explode(',', $idsSelected);
     }
 
-    $rs           = $_POST["newRs"] ?? null;
-    $resolucion   = $_POST["newResolution"] ?? null;
-    $emision      = $_POST["newEmition"] ?? null;
-    $aprobacion   = $_POST["newAproval"] ?? null;
-    $vencimiento  = $_POST["newExpiredData"] ?? null;
-    $estadors     = $_POST["newState"] ?? null;
-    $observaciones= $_POST["newObservation"] ?? null;
-    $usuariomod   = $_POST["usuariomod"] ?? null;
+    $rs            = $_POST["newRs"] ?? null;
+    $resolucion    = $_POST["newResolution"] ?? null;
+    $emision       = $_POST["newEmition"] ?? null;
+    $aprobacion    = $_POST["newAproval"] ?? null;
+    $vencimiento   = $_POST["newExpiredDate"] ?? null;
+    $estadors      = $_POST["newState"] ?? null;
+    $observaciones = $_POST["newObservation"] ?? null;
+    $usuariomod    = $_POST["usuariomod"] ?? null;
 
     $conn->beginTransaction();
 
-    // Update
+    // --- UPDATE de los registros seleccionados ---
     $sql_update01 = 'UPDATE Sdt_RegistroSanitario_AE SET 
         RegNumero_AE = :rs, 
         RegResolucion_AE = :resolucion, 
@@ -42,11 +42,35 @@ try {
 
     $stmt = $conn->prepare($sql_update01);
 
-    // Insert archivos
-    $sql_insert02 = "INSERT INTO Std_RSDoc_AE (RegID, Descripcion, Ruta, FechaCarga, UsuarioCarga, Estado) 
-                     VALUES (:RegID, :Descripcion, :Ruta, getdate(), :UsuarioCarga, 'ACTIVO')";
+    // --- INSERT de archivos ---
+    $sql_insert02 = "INSERT INTO Std_RSDoc_AE 
+        (RegID, Descripcion, Ruta, FechaCarga, UsuarioCarga, Estado) 
+        VALUES (:RegID, :Descripcion, :Ruta, getdate(), :UsuarioCarga, 'ACTIVO')";
     $stmt2 = $conn->prepare($sql_insert02);
 
+    // Subir los archivos una sola vez y guardar rutas
+    $archivosSubidos = [];
+    if (!empty($_FILES['archivos']['name'][0])) {
+        $archivos = $_FILES['archivos'];
+        for ($i = 0; $i < count($archivos['name']); $i++) {
+            $nombreArchivo = $archivos['name'][$i];
+            $tmpArchivo    = $archivos['tmp_name'][$i];
+
+            if (!empty($tmpArchivo)) {
+                $nombreArchivoUnico = uniqid() . '-' . $nombreArchivo;
+                $ruta = "../upload/rs/" . $nombreArchivoUnico;
+
+                if (move_uploaded_file($tmpArchivo, $ruta)) {
+                    $archivosSubidos[] = [
+                        'Descripcion' => $nombreArchivo,
+                        'Ruta'        => $ruta
+                    ];
+                }
+            }
+        }
+    }
+
+    // Recorremos todos los IDs
     foreach ($idsSelected as $modalID) {
         // Ejecutar update
         $stmt->execute([
@@ -61,32 +85,24 @@ try {
             ':modalID'       => $modalID
         ]);
 
-        // Insertar archivos si existen
-        if (!empty($_FILES['archivos']['name'][0])) {
-            $archivos = $_FILES['archivos'];
-            for ($i = 0; $i < count($archivos['name']); $i++) {
-                $nombreArchivo = $archivos['name'][$i];
-                $tmpArchivo    = $archivos['tmp_name'][$i];
-                $nombreArchivoUnico = uniqid() . '-' . $nombreArchivo;
-                $ruta = "../upload/rs/" . $nombreArchivoUnico;
-
-                if (move_uploaded_file($tmpArchivo, $ruta)) {
-                    $stmt2->execute([
-                        ':RegID'       => $modalID,
-                        ':Descripcion' => $nombreArchivo,
-                        ':Ruta'        => $ruta,
-                        ':UsuarioCarga'=> $usuariomod
-                    ]);
-                }
-            }
+        // Insertar referencias de los archivos subidos
+        foreach ($archivosSubidos as $archivo) {
+            $stmt2->execute([
+                ':RegID'       => $modalID,
+                ':Descripcion' => $archivo['Descripcion'],
+                ':Ruta'        => $archivo['Ruta'],
+                ':UsuarioCarga'=> $usuariomod
+            ]);
         }
     }
 
     $conn->commit();
-    echo "Actualizaciￃﾳn completada correctamente.";
+    echo "success";
 
 } catch (PDOException $e) {
-    $conn->rollBack();
-    echo "Error en la conexiￃﾳn o ejecuciￃﾳn: " . $e->getMessage();
+    if ($conn->inTransaction()) {
+        $conn->rollBack();
+    }
+    echo "Error en la conexion o en la ejecucucion: " . $e->getMessage();
 }
 ?>
