@@ -1712,7 +1712,9 @@
 						var rutadel = '../' + ruta;
 						
 						 // Enviar los datos al archivo PHP para guardar la orden
-						 $.post("scripts/eliminar_archivos.php", {
+						 if(!archivosedit[indice].agregadoManualmente){
+							console.log("Eliminado del servidor, archivo: "+archivosedit[indice].name)
+							$.post("scripts/eliminar_archivos.php", {
 							 rutadel: rutadel
 						 }, function(data) {
 							 // Manejar la respuesta del servidor (puede ser un mensaje de éxito o error)
@@ -1745,6 +1747,7 @@
 								})
 							 }
 						 });
+						 }
 						//----------
 						
 						if (li) {

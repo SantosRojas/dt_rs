@@ -50,7 +50,8 @@ $arttipo = $_GET['arttipo'];
 	
 	<style>
 		#listaArchivos,
-		#listaArchivosEdit {
+		#listaArchivosEdit,
+		#list-files {
 			list-style-type: none;
 		}
 
@@ -365,7 +366,7 @@ $arttipo = $_GET['arttipo'];
 	<!-- Button trigger modal -->
 	<button type="button" id="btneditmodal" name="btneditmodal" class="btn btn-primary" data-toggle="modal"
 		data-target="#editModal" hidden>Edit Modal</button>
-	<!-- Modal -->
+	<!-- Modal para editar registro sanitario de forma unitaria -->
 	<div class="modal fade" id="editModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
 		aria-labelledby="editModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-xl">
@@ -627,7 +628,7 @@ $arttipo = $_GET['arttipo'];
 									<div class="input-group">
 										<input type="file" class="form-control" id="inputFileEdit"
 											aria-describedby="inputFileEditAdd" aria-label="Upload" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
-										<button onclick="agregarArchivoEdit()" class="btn btn-outline-secondary"
+										<button onclick="agregarArchivoEdit(null,'#inputFileEdit','#listaArchivosEdit')" class="btn btn-outline-secondary"
 											type="button" id="inputFileEditAdd" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> disabled <?php } ?>>Agregar archivo</button>
 									</div>
 								</div>
@@ -706,7 +707,7 @@ $arttipo = $_GET['arttipo'];
 	<!-- Button trigger modal -->
 	<button type="button" id="btnnewmodal" name="btnnewmodal" class="btn btn-primary" data-toggle="modal"
 		data-target="#newModal" hidden>New Modal</button>
-	<!-- Modal -->
+	<!-- MODAL DE NUEVO REGISTRO SANITARIO -->
 	<div class="modal fade" id="newModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
 		aria-labelledby="newModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-lg">
@@ -868,8 +869,6 @@ $arttipo = $_GET['arttipo'];
 	</div>
 
 	<!-- MODAL DE EDICION DE RS PARA VARIOS ARTICULOS -->
-	<!-- <button type="button" id="btn-edit-several" name="btn-edit-several" class="btn btn-primary" data-toggle="modal"
-		data-target="#modal-edit-several" hidden>Edit Several articles</button> -->
 
 	<button type="button" id="btn-edit-several" name="btn-edit-several" class="btn btn-primary" hidden>
 		Edit Several Articles
@@ -973,11 +972,12 @@ $arttipo = $_GET['arttipo'];
 								<div class="input-group">
 									<input type="file" class="form-control" id="input-file"
 										aria-describedby="input-file-add" aria-label="Upload">
-									<button onclick="agregarArchivo('#input-file','#list-files')" class="btn btn-outline-secondary" type="button"
+									<button onclick="agregarArchivoEdit(null,'#input-file','#list-files')" class="btn btn-outline-secondary" type="button"
 										id="input-file-add">Agregar archivo</button>
 								</div>
 							</div>
-							<ul id="list-files"></ul>
+							<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+									<ul id="list-files"></ul><?php } ?>
 						</div>
 					</div>
 				</div>
@@ -994,10 +994,12 @@ $arttipo = $_GET['arttipo'];
 			</div>
 		</div>
 	</div>
+
+
 	<!-- Button trigger modal -->
 	<button type="button" id="btncreamodal" name="btncreamodal" class="btn btn-primary" data-toggle="modal"
 		data-target="#modalproductocrea" hidden>Crea Producto</button>
-	<!-- modal -->
+	<!-- modal Para agregar nuevo producto-->
 	<div class="modal fade" id="modalproductocrea" data-backdrop="static" data-keyboard="false"
 		aria-labelledby="masivoModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-lg">
@@ -1246,7 +1248,12 @@ $arttipo = $_GET['arttipo'];
 
 			//Quitar el foco del modal para  evitar warning de accesibilidad
 			$('#modal-edit-several').on('hidden.bs.modal', function () {
-				document.activeElement.blur();   // quita foco al botￃﾳn
+				archivosedit = []
+				var listaArchivosEdit = document.querySelector('#list-files');
+				while (listaArchivosEdit.firstChild) {
+					listaArchivosEdit.removeChild(listaArchivosEdit.firstChild);
+				}
+				document.activeElement.blur();   // quita foco al boton
 				$('body').focus();               // fuerza foco en body
 			});
 
@@ -1271,6 +1278,9 @@ $arttipo = $_GET['arttipo'];
 				let datos = [];
 				let registrosSanitarios = new Set();
 
+				let rutas  = new Set()
+				console.log(rutas)
+				
 				table.rows().every(function () {
 					const fila = this.node();
 					const chk = $(fila).find('.selectRow');
@@ -1278,6 +1288,10 @@ $arttipo = $_GET['arttipo'];
 					if (chk.is(':checked')) {
 						const data = this.data();
 						registrosSanitarios.add(data.RegNumero_AE);
+						console.log(data.Rutas)
+						if(data.Rutas){
+							rutas.add(data.Rutas)
+						}
 
 						datos.push([
 							data.DT_RowId,
@@ -1291,6 +1305,7 @@ $arttipo = $_GET['arttipo'];
 						]);
 					}
 				});
+
 
 				// validaciones
 				if (datos.length === 0) {
@@ -1310,6 +1325,42 @@ $arttipo = $_GET['arttipo'];
 					});
 					return;
 				}
+
+				//Tratamiento de archivos:
+				// Después de obtener los datos
+
+				// Verifica si rutas es diferente de null
+				// if (rutas.size>0) {
+
+				// 	// Recorre cada ruta en la lista
+				// 	rutas.forEach(function (ruta) {
+				// 		// Elimina el '../' de la ruta
+				// 		var rutaLimpia = ruta.replace('../', '');
+
+				// 		// Encuentra la posición del primer guión
+				// 		var posicionGuion = rutaLimpia.indexOf('-');
+
+				// 		// Extrae el nombre del archivo después del primer guión
+				// 		var nombreArchivo = rutaLimpia.substring(posicionGuion + 1);
+
+				// 		// Crea un objeto de archivo ficticio con la ruta y el nombre
+				// 		var archivoFicticio = {
+				// 			name: nombreArchivo,
+				// 			ruta: rutaLimpia
+				// 		};
+
+				// 		// Llama a la función agregarArchivoEdit con el archivo ficticio
+				// 		agregarArchivoEdit(archivoFicticio,'#input-file','#list-files');
+
+			
+						
+				// 	});
+				// }
+
+
+				//PRUEBAS
+				agregarGrupoArchivosEdit(rutas)
+
 
 				// si todo esta bien: llenar tabla y abrir modal
 				tablaModal.clear().rows.add(datos).draw();
@@ -1511,119 +1562,6 @@ $arttipo = $_GET['arttipo'];
 
 			
 
-
-			// FUNCIÓN DE DOBLE CLIC TEMPORALMENTE DESHABILITADA
-			/*$('#registrosanitario tbody').on('dblclick', 'tr', function () {
-				
-				var data;
-				var tr = $(this).closest('tr'); // Encuentra la fila más cercana al botón de edición
-				//Este if corrige el bug de la asignación de data cuando el dt está en modo responsive
-				if ( tr.hasClass('child') ) {
-					// Si la fila es una fila hija (es decir, está en modo responsive), obtén los datos de la fila padre
-					data = table.row( tr.prev() ).data();
-				} else {
-					// Si no, obtén los datos de la fila normalmente
-					data = table.row( tr ).data();
-				}
-		
-				//console.log(data); // Aquí puedo manejar los datos como necesite					
-				// Abre el modal
-				document.getElementById("btneditmodal").click();
-				// Muestra los datos de la fila en el modal
-				$('#modalID').val(data.DT_RowId);
-				$('#ArtID').val(data.ArtID);
-				$('#codigo').val(data.ArtCodigo);
-				$('#descripcion').val(data.ArtDescripcion);
-		
-				var codigo = data.ArtCodigo;
-				var descripcion = data.ArtDescripcion;
-				var tipo = data.ArtTipo;
-		
-				// Concatena los valores con " - "
-				var concatenado = codigo + " - " + descripcion + " [" + tipo + "] ";
-		
-				// Asigna el valor concatenado al span con id="artcoddes"
-				$('#artcoddes').text(concatenado);
-		
-				$('#rs').val(data.RegNumero);
-				$('#resolucion').val(data.RegResolucion);
-		
-				// Convierte las fechas antes de asignarlas
-				$('#emision').val(convertirFecha(data.RegFechaEmision));
-				$('#aprobacion').val(convertirFecha(data.RegFechaAprobacion));
-				$('#vencimiento').val(convertirFecha(data.RegFechaVencimiento));
-		
-				$('#estadors').val(data.RegEstadoVencimiento);
-				$('#gmdn').val(data.ArtCodigoGMDN);
-				$('#umdns').val(data.ArtCodigoUMDNS);
-				$('#etiqueta').val(data.ArtProyectoRAAE);
-				$('#observaciones').val(data.RegObservaciones);
-
-				$('#creacion').val(data.RegFechaCreacion);
-				$('#ucreacion').val(data.RegUsuarioCreacion);
-				$('#modificacion').val(data.RegFechaModificacion);
-				$('#umodificacion').val(data.RegUsuarioModificacion);
-				
-				$('#artcreacion').val(data.ArtFechaCreacion);
-				$('#artucreacion').val(data.ArtUsuarioCreacion);
-				$('#artmodificacion').val(data.ArtFechaModificacion);
-				$('#artumodificacion').val(data.ArtUsuarioModificacion);
-				
-				//Informacion del producto
-				$('#arttipo').val(data.ArtTipo);
-				$('#fabricante').val(data.ArtFabricante);
-				$('#origen').val(data.ArtOrigen);
-				$('#lugarfab').val(data.ArtLugarFabricacion);
-				$('#formafarma').val(data.ArtFormaFarma);
-				$('#concentracion').val(data.ArtConcentracion);
-				$('#presentacion').val(data.ArtPresentacion);
-				$('#nivelriesgo').val(data.ArtNivelRiesgo);
-				$('#materialpcb').val(data.ArtMaterialPCB);
-				$('#comercializado').val(data.ArtComercializado);
-				$('#labelalemania').val(data.ArtLabelAlemania);
-				$('#exoneracioncm').val(data.ArtExoneracionCM);
-				$('#barraun').val(data.ArtBarraUn);
-				$('#ean14cj').val(data.ArtBarraCj);
-				$('#ean13un').val(data.ArtEAN13Un);
-				$('#gtinun').val(data.ArtGTINUn);
-				$('#gtincj').val(data.ArtGTINCj);
-				$('#esterilidad').val(data.ArtProyecto);
-				$('#proveedor').val(data.ArtProveedor);
-				$('#proveedordes').val(data.ArtProveedorDes);
-		
-				// Después de obtener los datos
-				var rutas = data.Rutas;
-
-				// Verifica si rutas es diferente de null
-				if (rutas) {
-					// Divide las rutas por comas para obtener una lista de rutas
-					var listaRutas = rutas.split(':');
-
-					// Recorre cada ruta en la lista
-					listaRutas.forEach(function(ruta) {
-						// Elimina el '../' de la ruta
-						var rutaLimpia = ruta.replace('../', '');
-
-						// Encuentra la posición del primer guión
-						var posicionGuion = rutaLimpia.indexOf('-');
-
-						// Extrae el nombre del archivo después del primer guión
-						var nombreArchivo = rutaLimpia.substring(posicionGuion + 1);
-
-						// Crea un objeto de archivo ficticio con la ruta y el nombre
-						var archivoFicticio = {
-							name: nombreArchivo,
-							ruta: rutaLimpia
-						};
-
-						// Llama a la función agregarArchivoEdit con el archivo ficticio
-						agregarArchivoEdit(archivoFicticio);
-					});
-				}
-				$('#rs').focus();
-		
-			}); */
-
 			//MODAL NUEVO REGISTRO SANITARIO
 			$('#dtnewproducto tbody').on('click', 'button.newbtn', function () {
 
@@ -1821,11 +1759,14 @@ $arttipo = $_GET['arttipo'];
 
 		var archivosedit = [];
 
-		function eliminarArchivoEdit(nombre, ruta) {
+		function eliminarArchivoEdit(nombre, ruta,listFilesEdit = '#listaArchivosEdit' ) {
+			
 			// Buscar el archivo en la lista de archivosedit
 			var indice = archivosedit.findIndex(function (archivoedit) {
 				return archivoedit.name === nombre;
 			});
+
+			var agregadoManualmente = archivosedit[indice].agregadoManualmente
 
 			// Si se encontró el archivo
 			if (indice !== -1) {
@@ -1837,12 +1778,12 @@ $arttipo = $_GET['arttipo'];
 					archivosedit.splice(indice, 1);
 
 					// Eliminar el elemento de lista correspondiente
-					var li = document.querySelector('#listaArchivosEdit li[data-nombre="' + nombre + '"]');
+					var li = document.querySelector(listFilesEdit + ' li[data-nombre="' + nombre + '"]');
 
 					var rutadel = '../' + ruta;
-
 					// Enviar los datos al archivo PHP para guardar la orden
-					$.post("scripts/eliminar_archivos_ae.php", {
+					if(!agregadoManualmente){
+						$.post("scripts/eliminar_archivos_ae.php", {
 						rutadel: rutadel
 					}, function (data) {
 						// Manejar la respuesta del servidor (puede ser un mensaje de éxito o error)
@@ -1875,6 +1816,7 @@ $arttipo = $_GET['arttipo'];
 							})
 						}
 					});
+					}
 					//----------
 
 					if (li) {
@@ -1884,10 +1826,10 @@ $arttipo = $_GET['arttipo'];
 			}
 		}
 
-		function agregarArchivoEdit(archivoedit) {
+		function agregarArchivoEdit(archivoedit,inputFileModalEdit = '#inputFileEdit', listFileModalEdit = '#listaArchivosEdit' ) {
 			// Si no se proporciona un archivo, obtenerlo del input y marcarlo como agregado manualmente
 			if (!archivoedit) {
-				archivoedit = document.querySelector('#inputFileEdit').files[0];
+				archivoedit = document.querySelector(inputFileModalEdit).files[0];
 				if (archivoedit) {
 					archivoedit.agregadoManualmente = true;
 				}
@@ -1919,12 +1861,14 @@ $arttipo = $_GET['arttipo'];
 			var boton = document.createElement('button');
 			boton.className = 'btn btn-xs btn-danger';  // Añadir la clase al botón
 			boton.style.marginRight = '10px';  // Añadir un espacio de 10px entre el botón y el nombre
+			boton.title = 'Eliminar archivo';
 			boton.onclick = function () {
 				var rutadel = '';
 				if (archivoedit.ruta) {
-					eliminarArchivoEdit(archivoedit.name, archivoedit.ruta);
+					eliminarArchivoEdit(archivoedit.name, archivoedit.ruta,listFileModalEdit);
 				} else {
-					eliminarArchivoEdit(archivoedit.name, rutadel);
+					eliminarArchivoEdit(archivoedit.name, rutadel,listFileModalEdit);
+					console.log("Archivo sin ruta")
 				}
 			};
 
@@ -1954,198 +1898,12 @@ $arttipo = $_GET['arttipo'];
 			li.setAttribute('data-nombre', archivoedit.name);
 
 			// Añadir el elemento de lista a la lista de archivos en el modal
-			document.querySelector('#listaArchivosEdit').appendChild(li);
+			document.querySelector(listFileModalEdit).appendChild(li);
 
 			// Limpiar la casilla del input
-			document.querySelector('#inputFileEdit').value = null;
-			// Cambiar el texto del label
-			var label = document.querySelector('#labelinputfileEdit');
+			document.querySelector(inputFileModalEdit).value = null;
 		}
 
-		//***********************************************************************************
-
-		//***********************************************************************************
-		// FUNCIÓN DE UPDATE MASIVO DE PRODUCTOS
-		//***********************************************************************************
-
-		function cargamasiva() {
-
-			// Obtener el archivo del input
-			var archivo = document.querySelector('#inputFileMasivo').files[0];
-
-			// Comprobar si el archivo está definido
-			if (!archivo) {
-				// Mostrar un mensaje de advertencia si falta información
-				var Toast = Swal.mixin({
-					toast: true,
-					position: 'top-end',
-					showConfirmButton: false,
-					timer: 3000
-				});
-				Toast.fire({
-					icon: 'warning',
-					title: 'Por favor, selecciona un archivo.'
-				})
-				return;
-			}
-
-
-			if (archivo && !validarFormatoArchivo(archivo.name)) {
-				// Mostrar mensaje de advertencia si el formato no es válido
-				var Toast = Swal.mixin({
-					toast: true,
-					position: 'top-end',
-					showConfirmButton: false,
-					timer: 3000
-				});
-				Toast.fire({
-					icon: 'warning',
-					title: 'Formato de archivo no permitido. Por favor, selecciona un archivo .xls o .xlsx.'
-				});
-
-				// Limpiar el input
-				inputFile.value = null;
-				return;
-			}
-
-			const inputFileMasivo = document.getElementById('inputFileMasivo');
-			const excelTable = document.getElementById('excelTable');
-
-			const file = inputFileMasivo.files[0];
-			const reader = new FileReader();
-
-			reader.onload = function (e) {
-				const data = e.target.result;
-				const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
-
-				const sheetName = workbook.SheetNames[0];
-				const worksheet = workbook.Sheets[sheetName];
-
-				const excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-				// Limpiar la tabla antes de agregar nuevos datos
-				while (excelTable.rows.length > 1) {
-					excelTable.deleteRow(1);
-				}
-
-				// Filtramos las filas vacías
-				let excelDataFiltered = excelData.filter(row => row.some(cell => cell !== null && cell !== ''));
-
-				let headers = excelDataFiltered[0]; // Obtenemos los nombres de las columnas
-
-				// Definimos los campos que corresponden a cada tabla
-				let camposArticulos = ["ArtDescripcion", "ArtTipo", "ArtCodigoGMDN", "ArtCodigoUMDNS", "ArtProyectoRAAE", "ArtFabricante", "ArtOrigen", "ArtLugarFabricacion", "ArtFormaFarma", "ArtConcentracion", "ArtPresentacion", "ArtNivelRiesgo", "ArtMaterialPCB", "ArtComercializado", "ArtLabelAlemania", "ArtExoneracionCM", "ArtBarraUn", "ArtBarraCj", "ArtEAN13Un", "ArtEAN14Cj", "ArtGTINUn", "ArtGTINCj", "ArtProyecto", "ArtProveedor", "ArtProveedorDes"];
-				let camposRegistroSanitario = ["RegNumero", "RegResolucion", "RegFechaEmision", "RegFechaAprobacion", "RegFechaVencimiento", "RegEstadoVencimiento", "RegObservaciones"];
-
-				let promises = []; // Almacenamos las promesas de las consultas
-				let failedArtCodes = []; // Almacenamos los códigos de los artículos cuyas consultas fallaron
-
-				for (let i = 1; i < excelDataFiltered.length; i++) {
-					let row = excelDataFiltered[i];
-					let query_update1 = "UPDATE Sdt_Articulos SET ";
-					let query_update2 = "UPDATE Sdt_RegistroSanitario SET ";
-
-					for (let j = 1; j < row.length; j++) {
-						let valor = row[j];
-
-						// Verificamos si el encabezado contiene la palabra 'fecha'
-						if (headers[j].toLowerCase().includes('fecha') && valor && !isNaN(valor)) {
-							// Convertimos el número de Excel a una fecha de JavaScript
-							let fechaJS = new Date((valor - (25567 + 2)) * 86400 * 1000);
-
-							// Ajustamos la fecha a la medianoche UTC
-							fechaJS.setUTCHours(0, 0, 0, 0);
-
-							// Formateamos la fecha al formato esperado por SQL Server
-							valor = fechaJS.getUTCFullYear() + '-' + (fechaJS.getUTCMonth() + 1).toString().padStart(2, '0') + '-' + fechaJS.getUTCDate().toString().padStart(2, '0');
-						}
-
-						if (valor) { // Solo agregamos el valor si no es nulo o indefinido
-							if (camposArticulos.includes(headers[j])) {
-								query_update1 += headers[j] + " = '" + valor + "'";
-								if (j < row.length - 1) {
-									query_update1 += ", ";
-								}
-							} else if (camposRegistroSanitario.includes(headers[j])) {
-								query_update2 += headers[j] + " = '" + valor + "'";
-								if (j < row.length - 1) {
-									query_update2 += ", ";
-								}
-							}
-						}
-					}
-
-					if (query_update1.endsWith(", ")) {
-						query_update1 = query_update1.slice(0, -2);
-					}
-					if (query_update2.endsWith(", ")) {
-						query_update2 = query_update2.slice(0, -2);
-					}
-
-					query_update1 += ", ArtUsuarioModificacion = '<?php echo $_SESSION['usuario']; ?>', ArtFechaModificacion = getdate() WHERE ArtComercializado='SI' AND ArtCodigo = '" + row[0] + "'";
-					query_update2 += ", RegUsuarioModificacion = '<?php echo $_SESSION['usuario']; ?>', RegFechaModificacion = getdate() WHERE ArtID = (SELECT ArtID FROM Sdt_Articulos WHERE ArtComercializado='SI' AND ArtCodigo = '" + row[0] + "')";
-
-					// Verificamos si las consultas están vacías
-					if (query_update1 === "UPDATE Sdt_Articulos SET , ArtUsuarioModificacion = '<?php echo $_SESSION['usuario']; ?>', ArtFechaModificacion = getdate() WHERE ArtComercializado='SI' AND ArtCodigo = '" + row[0] + "'") {
-						query_update1 = "";
-					}
-
-					if (query_update2 === "UPDATE Sdt_RegistroSanitario SET , RegUsuarioModificacion = '<?php echo $_SESSION['usuario']; ?>', RegFechaModificacion = getdate() WHERE ArtID = (SELECT ArtID FROM Sdt_Articulos WHERE ArtComercializado='SI' AND ArtCodigo = '" + row[0] + "'") {
-						query_update2 = "";
-					}
-
-					// Enviar los datos al archivo PHP para guardar la orden
-					if (query_update1 !== "") {
-						promises.push($.post("scripts/guardar_edit_masivo_ae.php", { query_update1: query_update1 }));
-					}
-					if (query_update2 !== "") {
-						promises.push($.post("scripts/guardar_edit_masivo_ae.php", { query_update2: query_update2 }));
-					}
-				}
-
-				// Esperamos a que todas las promesas se resuelvan
-				Promise.all(promises).then(function (responses) {
-					// Verificamos si todas las consultas fueron exitosas
-					if (responses.every(response => response === "success")) {
-						// Mostramos el toast de éxito
-						var Toast = Swal.mixin({
-							toast: true,
-							position: 'top-end',
-							showConfirmButton: false,
-							timer: 5000 // Aumentamos el tiempo de visualización del toast
-						});
-
-						Toast.fire({
-							icon: 'success',
-							title: 'Todas las consultas se ejecutaron correctamente.'
-						});
-					} else {
-						// Mostramos el toast de error
-						var Toast = Swal.mixin({
-							toast: true,
-							position: 'top-end',
-							showConfirmButton: false,
-							timer: 5000 // Aumentamos el tiempo de visualización del toast
-						});
-
-						Toast.fire({
-							icon: 'error',
-							title: 'Las consultas para los siguientes códigos de artículos no se ejecutaron correctamente: ' + failedArtCodes.join(', ')
-						});
-					}
-				});
-			};
-
-			// Utilizar readAsArrayBuffer en lugar de readAsBinaryString
-			reader.readAsArrayBuffer(file);
-
-			document.getElementById("modalproductomasivocierra").click();
-
-			// Actualizar la tabla de órdenes (puedes recargar la tabla o hacerlo de otra manera)
-			$('#registrosanitario').DataTable().ajax.reload();
-		}
-
-		
 
 		function validarFormatoArchivo(nombre) {
 			var extensionesPermitidas = ['.xls', '.xlsx'];
@@ -2248,7 +2006,7 @@ $arttipo = $_GET['arttipo'];
 			formData.append('usuariomod',usuariomod);
 
 			// Añadir cada archivo de la lista archivosedit al objeto FormData
-			archivos.forEach(function (archivo) {
+			archivosedit.forEach(function (archivo) {
 				// Comprobar si el archivo tiene una propiedad 'ruta'
 				if (!archivo.ruta) {
 					// Si el archivo no tiene una propiedad 'ruta', entonces es un archivo real y se puede añadir a FormData
@@ -2684,6 +2442,79 @@ $arttipo = $_GET['arttipo'];
 					}
 				});
 			}
+		}
+
+		function agregarGrupoArchivosEdit(listaRutas) {
+			console.log("listaRutas: ",listaRutas)
+			archivosedit = []
+			let fileNameList = new Set()
+			if (!listaRutas || listaRutas.length === 0) {
+				Swal.fire({
+					icon: 'warning',
+					title: 'No se proporcionaron archivos para agregar.'
+				});
+				return;
+			}
+
+
+			// Añadir todos los archivos al array global
+			// listaRutas.forEach(ruta => archivosedit.push(ruta));
+			listaRutas.forEach(ruta => {
+				var rutaLimpia = ruta.replace('../', '');
+
+				// Encuentra la posición del primer guión
+				var posicionGuion = rutaLimpia.indexOf('-');
+
+				// Extrae el nombre del archivo después del primer guión
+				var nombreArchivo = rutaLimpia.substring(posicionGuion + 1);
+
+				// Crea un objeto de archivo ficticio con la ruta y el nombre
+				var archivoFicticio = {
+					name: nombreArchivo,
+					ruta: rutaLimpia,
+					agregadoManualmente: false
+				};
+
+				archivosedit.push(archivoFicticio)
+				fileNameList.add(archivoFicticio.name)
+
+			});
+
+			console.log(archivosedit)
+
+			// Crear un solo elemento visual para el grupo
+			var li = document.createElement('li');
+
+			// Botón de eliminar
+			var boton = document.createElement('button');
+			boton.className = 'btn btn-xs btn-danger';
+			boton.style.marginRight = '10px';
+			boton.title = `Eliminar ${listaRutas.length} archivos`;
+			boton.onclick = function () {
+				archivosedit.forEach(archivo => {
+					eliminarArchivoEdit(archivo.name, archivo.ruta || '', '#list-files');
+				});
+				li.remove(); // Elimina el elemento visual del DOM
+			};
+
+			var icono = document.createElement('i');
+			icono.className = 'far fa-trash-alt';
+			boton.appendChild(icono);
+			li.appendChild(boton);
+
+			// Texto o enlaces de los archivos
+			var textoGrupo = document.createElement('span');
+			textoGrupo.textContent = archivosedit.map(a => a.name).join(', ');
+			li.appendChild(textoGrupo);
+
+			// Atributo para identificar el grupo
+			li.setAttribute('data-grupo', fileNameList[0]);
+
+			// Agregar al DOM
+			document.querySelector("#list-files").appendChild(li);
+
+			// Limpiar input
+			document.querySelector("#input-file").value = null;
 		}
 
 		// Selecciono el elemento que quieres observar
