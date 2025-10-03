@@ -1659,6 +1659,7 @@
 
 				// Añadir un botón para eliminar el archivo de la lista
 				var boton = document.createElement('button');
+				boton.type = 'button';
 				//boton.textContent = 'Eliminar';
 				boton.className = 'btn btn-xs btn-danger';  // Añadir la clase al botón
 				boton.style.marginRight = '10px';  // Añadir un espacio de 10px entre el botón y el nombre
@@ -1790,6 +1791,7 @@
 
 				// Añadir un botón para eliminar el archivo de la lista
 				var boton = document.createElement('button');
+				boton.type = 'button';
 				boton.className = 'btn btn-xs btn-danger';  // Añadir la clase al botón
 				boton.style.marginRight = '10px';  // Añadir un espacio de 10px entre el botón y el nombre
 				boton.onclick = function() {

@@ -598,16 +598,16 @@ $arttipo = $_GET['arttipo'];
 								<div class="form-group">
 									<label for="estadors">Estado</label>
 									<select class="form-control form-select" id="estadors" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> disabled <?php } ?>>
-										<option value="BAJA">BAJA</option>
-										<option value="RENOVACION">EN RENOVACI&Oacute;N</option>
-										<option value="TRAMITE">EN TR&Aacute;MITE</option>
-										<option value="PRORROGADO">PRORROGADO</option>
-										<option value="VENCIDO">VENCIDO</option>
+										<option value="VIGENTE">VIGENTE</option>
 										<option value="VENCE 1 MES">VENCE 1 MES</option>
 										<option value="VENCE 2 MESES">VENCE 2 MESES</option>
 										<option value="VENCE 3 MESES">VENCE 3 MESES</option>
-										<option value="VIGENTE">VIGENTE</option>
-									</select>
+										<option value="PRORROGADO">PRORROGADO</option>
+										<option value="RENOVACION">EN RENOVACI&Oacute;N</option>
+										<option value="TRAMITE">EN TR&Aacute;MITE</option>
+										<option value="VENCIDO">VENCIDO</option>
+										<option value="DESCONTINUADO">DESCONTINUADO</option>
+								</select>
 								</div>
 							</div>
 						</div>
@@ -816,15 +816,15 @@ $arttipo = $_GET['arttipo'];
 							<div class="form-group">
 								<label for="newestadors">Estado Vencimiento</label>
 								<select class="form-control form-select" id="newestadors">
-									<option value="BAJA">BAJA</option>
-									<option value="RENOVACION">EN RENOVACI&Oacute;N</option>
-									<option value="TRAMITE">EN TR&Aacute;MITE</option>
-									<option value="PRORROGADO">PRORROGADO</option>
-									<option value="VENCIDO">VENCIDO</option>
+									<option value="VIGENTE">VIGENTE</option>
 									<option value="VENCE 1 MES">VENCE 1 MES</option>
 									<option value="VENCE 2 MESES">VENCE 2 MESES</option>
 									<option value="VENCE 3 MESES">VENCE 3 MESES</option>
-									<option value="VIGENTE" selected>VIGENTE</option>
+									<option value="PRORROGADO">PRORROGADO</option>
+									<option value="RENOVACION">EN RENOVACI&Oacute;N</option>
+									<option value="TRAMITE">EN TR&Aacute;MITE</option>
+									<option value="VENCIDO">VENCIDO</option>
+									<option value="DESCONTINUADO">DESCONTINUADO</option>
 								</select>
 							</div>
 						</div>
@@ -941,16 +941,16 @@ $arttipo = $_GET['arttipo'];
 						<div class="col-md-4">
 							<div class="form-group">
 								<label for="new-state">Estado Vencimiento</label>
-								<select class="form-control form-select" id="new-state">
-									<option value="BAJA">BAJA</option>
-									<option value="RENOVACION">EN RENOVACI&Oacute;N</option>
-									<option value="TRAMITE">EN TR&Aacute;MITE</option>
-									<option value="PRORROGADO">PRORROGADO</option>
-									<option value="VENCIDO">VENCIDO</option>
+								<select class="form-control form-select" id="new-state"  <?php if ($_SESSION['nivel'] === 'VISOR') { ?> disabled <?php } ?>>
+									<option value="VIGENTE" selected>VIGENTE</option>
 									<option value="VENCE 1 MES">VENCE 1 MES</option>
 									<option value="VENCE 2 MESES">VENCE 2 MESES</option>
 									<option value="VENCE 3 MESES">VENCE 3 MESES</option>
-									<option value="VIGENTE" selected>VIGENTE</option>
+									<option value="PRORROGADO">PRORROGADO</option>
+									<option value="RENOVACION">EN RENOVACI&Oacute;N</option>
+									<option value="TRAMITE">EN TR&Aacute;MITE</option>
+									<option value="VENCIDO">VENCIDO</option>
+									<option value="DESCONTINUADO">DESCONTINUADO</option>
 								</select>
 							</div>
 						</div>
@@ -1246,6 +1246,59 @@ $arttipo = $_GET['arttipo'];
 			$('.selectRow').prop('checked', isChecked);
 			});
 
+			//Evento para cambiar el estado del selector de estado
+			
+			function actualizarEstadoSegunFecha(newExpiredDate, newState) {
+				const fechaVencimiento = $(newExpiredDate).val();
+				const hoy = new Date(); // formato YYYY-MM-DD
+
+				
+				if (fechaVencimiento) {
+						const fechaSeleccionada = new Date(fechaVencimiento);
+						const diferenciaDias = Math.floor((fechaSeleccionada - hoy) / (1000 * 60 * 60 * 24));
+
+						if (diferenciaDias < 0) {
+							$(newState).val('VENCIDO');
+						} else if (diferenciaDias <= 30) {
+							$(newState).val('VENCE 1 MES');
+						} else if (diferenciaDias <= 60) {
+							$(newState).val('VENCE 2 MESES');
+						} else if (diferenciaDias <= 90) {
+							$(newState).val('VENCE 3 MESES');
+						} else {
+							$(newState).val('VIGENTE');
+						}
+					}
+
+			}
+
+			//cambio de estado segun la fecha de vencimiento
+
+			$('#new-expired-date').on('change', function () {
+				actualizarEstadoSegunFecha('#new-expired-date', '#new-state');
+			});
+			$('#vencimiento').on('change', function () {
+				actualizarEstadoSegunFecha('#vencimiento', '#estadors');
+			});
+
+			// cambio de fecha de vencimiento si el estado es prorrogado
+
+			$('#new-state').on('change', function () {
+				const estado = $(this).val();
+				if (estado === 'PRORROGADO') {
+					$('#new-expired-date').val('');
+				}
+			});
+
+			$('#estadors').on('change', function () {
+				const estado = $(this).val();
+				if (estado === 'PRORROGADO') {
+					$('#vencimiento').val('');
+				}
+			});
+
+
+
 			//Quitar el foco del modal para  evitar warning de accesibilidad
 			$('#modal-edit-several').on('hidden.bs.modal', function () {
 				archivosedit = []
@@ -1356,11 +1409,6 @@ $arttipo = $_GET['arttipo'];
 						
 				// 	});
 				// }
-
-
-				//PRUEBAS
-				agregarGrupoArchivosEdit(rutas)
-
 
 				// si todo esta bien: llenar tabla y abrir modal
 				tablaModal.clear().rows.add(datos).draw();
@@ -1727,6 +1775,7 @@ $arttipo = $_GET['arttipo'];
 
 			// Añadir un botón para eliminar el archivo de la lista
 			var boton = document.createElement('button');
+			boton.type = 'button';
 			//boton.textContent = 'Eliminar';
 			boton.className = 'btn btn-xs btn-danger';  // Añadir la clase al botón
 			boton.style.marginRight = '10px';  // Añadir un espacio de 10px entre el botón y el nombre
@@ -1760,6 +1809,7 @@ $arttipo = $_GET['arttipo'];
 		var archivosedit = [];
 
 		function eliminarArchivoEdit(nombre, ruta,listFilesEdit = '#listaArchivosEdit' ) {
+			console.log("Eliminando archivo:", nombre, "con ruta:", ruta);
 			
 			// Buscar el archivo en la lista de archivosedit
 			var indice = archivosedit.findIndex(function (archivoedit) {
@@ -1859,6 +1909,7 @@ $arttipo = $_GET['arttipo'];
 
 			// Añadir un botón para eliminar el archivo de la lista
 			var boton = document.createElement('button');
+			boton.type = 'button';
 			boton.className = 'btn btn-xs btn-danger';  // Añadir la clase al botón
 			boton.style.marginRight = '10px';  // Añadir un espacio de 10px entre el botón y el nombre
 			boton.title = 'Eliminar archivo';
@@ -2487,6 +2538,7 @@ $arttipo = $_GET['arttipo'];
 
 			// Botón de eliminar
 			var boton = document.createElement('button');
+			boton.type = 'button';
 			boton.className = 'btn btn-xs btn-danger';
 			boton.style.marginRight = '10px';
 			boton.title = `Eliminar ${listaRutas.length} archivos`;
