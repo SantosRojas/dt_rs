@@ -8,16 +8,19 @@ if (!isset($_SESSION['usuario'])) {
 	header('Location: index.php');
 	exit;
 }
+$arttipo = "IMPORTACIONES_AE";
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Sistema de Importaciones - Dirección Técnica</title>
 	<link rel="icon" href="dist/img/favicon.ico">
 	<!-- Google Font: Source Sans Pro -->
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 	<!-- Font Awesome -->
 	<link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
 	<!-- Bootstrap 5.3.2 -->
@@ -45,69 +48,87 @@ if (!isset($_SESSION['usuario'])) {
 			border-radius: 10px;
 			background-color: #f8f9fa;
 		}
+
 		.code-input-area:focus {
 			border-color: #0056b3;
 			background-color: #ffffff;
 			box-shadow: 0 0 10px rgba(0, 123, 255, 0.25);
 		}
+
 		.processing-spinner {
 			display: none;
 		}
+
 		.results-container {
 			margin-top: 20px;
 		}
+
 		.code-count {
 			font-size: 0.9em;
 			color: #6c757d;
 		}
+
 		.producto-vencido {
 			background-color: #f8d7da !important;
 			border-color: #f5c6cb !important;
 		}
+
 		.producto-vencido:hover {
 			background-color: #f1b0b7 !important;
 		}
+
 		.fecha-vencida {
 			color: #721c24 !important;
 			font-weight: bold;
 		}
+
 		.badge-vencido {
 			background-color: #dc3545;
 			animation: pulse-red 2s infinite;
 		}
+
 		@keyframes pulse-red {
-			0% { opacity: 1; }
-			50% { opacity: 0.7; }
-			100% { opacity: 1; }
+			0% {
+				opacity: 1;
+			}
+
+			50% {
+				opacity: 0.7;
+			}
+
+			100% {
+				opacity: 1;
+			}
 		}
-		
+
 		/* Estilos para que la tabla ocupe todo el ancho */
 		.table-responsive {
 			width: 100%;
 		}
-		
+
 		#resultadosTable {
 			width: 100% !important;
 			table-layout: fixed;
 		}
-		
+
 		#resultadosTable th,
 		#resultadosTable td {
 			word-wrap: break-word;
 			overflow-wrap: break-word;
 		}
-		
+
 		/* Asegurar que DataTable ocupe todo el ancho */
 		.dataTables_wrapper {
 			width: 100%;
 		}
-		
+
 		.dataTables_filter {
 			text-align: right;
 			margin-bottom: 10px;
 		}
 	</style>
 </head>
+
 <body id="body" class="hold-transition sidebar-mini sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 	<!-- Site wrapper -->
 	<div class="wrapper">
@@ -115,23 +136,34 @@ if (!isset($_SESSION['usuario'])) {
 		<div class="preloader flex-column justify-content-center align-items-center">
 			<img class="animation__wobble" src="dist/img/bbraun.png" alt="B Logo" height="60" width="60">
 		</div>
-		
+
 		<!-- Navbar -->
 		<nav class="main-header navbar navbar-expand navbar-white navbar-light">
 			<!-- Left navbar links -->
 			<ul class="navbar-nav">
 				<li class="nav-item">
-					<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+					<a class="nav-link" data-widget="pushmenu" href="#" role="button">
+						<i class="fas fa-bars"></i>
+					</a>
 				</li>
 				<li class="nav-item d-none d-sm-inline-block">
 					<a href="home.php" class="nav-link">Inicio</a>
 				</li>
 				<li class="nav-item d-none d-sm-inline-block">
-					<a href="#" class="nav-link">Importaciones</a>
+					<a href="#" class="nav-link active">Importaciones AE</a>
+				</li>
+				<li class="nav-item d-none d-sm-inline-block">
+					<a href="rs_ae.php?arttipo=PRODUCTO AE" class="nav-link">Aesculap</a>
 				</li>
 			</ul>
+	
 			<!-- Right navbar links -->
 			<ul class="navbar-nav ml-auto">
+				<li class="nav-item">
+					<a class="nav-link" data-widget="fullscreen" href="#" role="button">
+						<i class="fas fa-expand-arrows-alt"></i>
+					</a>
+				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="cnx/logout.php">
 						<i class="fas fa-sign-out-alt"></i> Cerrar Sesión
@@ -144,24 +176,128 @@ if (!isset($_SESSION['usuario'])) {
 		<aside class="main-sidebar sidebar-dark-primary elevation-4">
 			<!-- Brand Logo -->
 			<a href="home.php" class="brand-link">
-				<img src="dist/img/bbraun.png" alt="B Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+				<img src="dist/img/bbraun.png" alt="B Logo" class="brand-image img-circle elevation-3"
+					style="opacity: .8">
 				<span class="brand-text font-weight-light">Dirección Técnica</span>
 			</a>
 			<!-- Sidebar -->
 			<div class="sidebar">
-				<!-- Sidebar Menu -->
+				<div class="user-panel mt-3 pb-3 mb-3 d-flex">
+					<div class="image">
+						<img id="avatar" name="avatar" src="" class="img-circle elevation-1" alt="User Image">
+					</div>
+					<div class="info">
+						<a href="#"
+							class="d-block"><?php echo $_SESSION['nombres'] . ' ' . $_SESSION['apellidos']; ?><br><small><?php echo $_SESSION['area']; ?></small></a>
+					</div>
+				</div>
 				<nav class="mt-2">
-					<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+					<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+						data-accordion="false">
+						<li class="nav-header">MENU PRINCIPAL</li>
 						<li class="nav-item">
 							<a href="home.php" class="nav-link">
 								<i class="nav-icon fas fa-home"></i>
-								<p>Inicio</p>
+								<p>
+									Inicio
+								</p>
 							</a>
 						</li>
 						<li class="nav-item">
 							<a href="importaciones.php" class="nav-link active">
 								<i class="nav-icon fas fa-upload"></i>
-								<p>Importaciones</p>
+								<p>Importaciones AE</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">
+								<i class="nav-icon fas fa-chart-pie"></i>
+								<p>
+									Maestros
+									<i class="right fas fa-angle-left"></i>
+								</p>
+							</a>
+							<ul class="nav nav-treeview">
+								<li class="nav-item ">
+									<a href="#" class="nav-link active">
+										<i
+											class="far fa-circle nav-icon"></i>
+										<p>
+											Registros Sanitarios HC
+											<i class="right fas fa-angle-left"></i>
+										</p>
+									</a>
+									<ul class="nav nav-treeview">
+										<li class="nav-item">
+											<a href="rs.php?arttipo=PRODUCTO LINEA AVITUM" class="nav-link" >
+												<i class="far fa-dot-circle nav-icon"></i>
+												<p>Producto L&iacute;nea AVITUM</p>
+											</a>
+										</li>
+										<li class="nav-item">
+											<a href="rs.php?arttipo=PRODUCTO LINEA HC AIS" class="nav-link">
+												<i class="far fa-dot-circle nav-icon"></i>
+												<p>Producto L&iacute;nea HC AIS</p>
+											</a>
+										</li>
+										<li class="nav-item">
+											<a href="rs.php?arttipo=PRODUCTO LINEA HC BC" class="nav-link">
+												<i class="far fa-dot-circle nav-icon "></i>
+												<p>Producto L&iacute;nea HC BC</p>
+											</a>
+										</li>
+										<li class="nav-item">
+											<a href="rs.php?arttipo=PRODUCTO LINEA HC CN" class="nav-link" <?php if ($arttipo == "PRODUCTO LINEA HC CN") {
+												echo "active";
+											} ?>>
+												<i class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA HC CN") {
+													echo "text-success";
+												} ?>"></i>
+												<p>Producto L&iacute;nea HC CN</p>
+											</a>
+										</li>
+										<li class="nav-item">
+											<a href="rs.php?arttipo=PRODUCTO LINEA HC PC VA" class="nav-link">
+												<i class="far fa-dot-circle nav-icon "></i>
+												<p>Producto L&iacute;nea HP PC VA</p>
+											</a>
+										</li>
+										<li class="nav-item">
+											<a href="rs.php?arttipo=PRODUCTO LINEA OPM" class="nav-link">
+												<i class="far fa-dot-circle nav-icon"></i>
+												<p>Producto L&iacute;nea OPM</p>
+											</a>
+										</li>
+									</ul>
+								</li>
+
+								<li class="nav-item">
+									<a href="#" class="nav-link active">
+										<i
+											class="far fa-circle nav-icon"></i>
+										<p>
+											Registros Sanitarios AE
+											<i class="right fas fa-angle-left"></i>
+										</p>
+									</a>
+									<ul class="nav nav-treeview">
+										<li class="nav-item">
+											<a href="rs_ae.php?arttipo=PRODUCTO AE" class="nav-link">
+												<i class="far fa-dot-circle nav-icon"></i>
+												<p>Producto AE</p>
+											</a>
+										</li>
+
+									</ul>
+								</li>
+
+							</ul>
+						</li>
+						<li class="nav-header">USUARIO</li>
+						<li class="nav-item">
+							<a href="cnx/logout.php" class="nav-link">
+								<i class="nav-icon far fa-circle text-danger"></i>
+								<p class="text">Cerrar Sesi&oacute;n</p>
 							</a>
 						</li>
 					</ul>
@@ -204,16 +340,15 @@ if (!isset($_SESSION['usuario'])) {
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="codigosInput">Pegue los códigos aquí (uno por línea):</label>
-												<textarea 
-													id="codigosInput" 
-													class="form-control code-input-area" 
+												<label for="codigosInput">Pegue los códigos aquí (uno por
+													línea):</label>
+												<textarea id="codigosInput" class="form-control code-input-area"
 													placeholder="Pegue aquí los códigos copiados de Excel...&#10;Ejemplo:&#10;ABC123&#10;DEF456&#10;GHI789"
-													rows="10"
-												></textarea>
+													rows="10"></textarea>
 												<small class="form-text text-muted">
-													<i class="fas fa-info-circle"></i> 
-													Copie la columna de códigos desde Excel y péguela aquí. El sistema procesará automáticamente cada línea como un código separado.
+													<i class="fas fa-info-circle"></i>
+													Copie la columna de códigos desde Excel y péguela aquí. El sistema
+													procesará automáticamente cada línea como un código separado.
 												</small>
 												<div class="code-count mt-2">
 													<span id="contadorCodigos">0 códigos detectados</span>
@@ -260,7 +395,8 @@ if (!isset($_SESSION['usuario'])) {
 											<i class="fas fa-file-excel mr-1"></i>
 											Exportar Vista Actual
 										</button>
-										<button type="button" id="exportarCompletoBtn" class="btn btn-primary btn-sm ml-2">
+										<button type="button" id="exportarCompletoBtn"
+											class="btn btn-primary btn-sm ml-2">
 											<i class="fas fa-download mr-1"></i>
 											Exportar Todo
 										</button>
@@ -306,7 +442,8 @@ if (!isset($_SESSION['usuario'])) {
 										</div>
 									</div>
 									<div class="table-responsive">
-										<table id="resultadosTable" class="table table-bordered table-striped table-hover w-100">
+										<table id="resultadosTable"
+											class="table table-bordered table-striped table-hover w-100">
 											<thead class="thead-dark">
 												<tr>
 													<th>Código Buscado</th>
@@ -325,7 +462,7 @@ if (!isset($_SESSION['usuario'])) {
 								</div>
 							</div>
 						</div>
-						
+
 						<!-- Card para códigos no encontrados -->
 						<div class="col-12" id="codigosNoEncontradosContainer" style="display: none;">
 							<div class="card card-warning">
@@ -366,7 +503,8 @@ if (!isset($_SESSION['usuario'])) {
 	</div>
 
 	<!-- Modal para mostrar estructura de la vista -->
-	<div class="modal fade" id="modalEstructura" tabindex="-1" role="dialog" aria-labelledby="modalEstructuraLabel" aria-hidden="true">
+	<div class="modal fade" id="modalEstructura" tabindex="-1" role="dialog" aria-labelledby="modalEstructuraLabel"
+		aria-hidden="true">
 		<div class="modal-dialog modal-xl" role="document">
 			<div class="modal-content">
 				<div class="modal-header bg-info">
@@ -416,15 +554,15 @@ if (!isset($_SESSION['usuario'])) {
 	<script src="plugins/toastr/toastr.min.js"></script>
 
 	<script>
-		$(document).ready(function() {
+		$(document).ready(function () {
 			let dataTable;
 			let estructuraVista = null;
-			
+
 			// Cargar información de la vista al iniciar
 			cargarInfoVista();
-			
+
 			// Contador de códigos en tiempo real
-			$('#codigosInput').on('input', function() {
+			$('#codigosInput').on('input', function () {
 				const texto = $(this).val().trim();
 				const lineas = texto ? texto.split('\n').filter(line => line.trim() !== '') : [];
 				$('#contadorCodigos').text(lineas.length + ' códigos detectados');
@@ -436,7 +574,7 @@ if (!isset($_SESSION['usuario'])) {
 					url: 'scripts/obtener_estructura_vista.php',
 					method: 'GET',
 					dataType: 'json',
-					success: function(response) {
+					success: function (response) {
 						if (response.success) {
 							estructuraVista = response;
 							const info = `
@@ -455,7 +593,7 @@ if (!isset($_SESSION['usuario'])) {
 							`);
 						}
 					},
-					error: function() {
+					error: function () {
 						$('#infoVista').html(`
 							<span class="text-warning">
 								<i class="fas fa-exclamation-triangle mr-1"></i>
@@ -467,7 +605,7 @@ if (!isset($_SESSION['usuario'])) {
 			}
 
 			// Ver estructura de la vista
-			$('#verEstructuraBtn').on('click', function() {
+			$('#verEstructuraBtn').on('click', function () {
 				if (!estructuraVista) {
 					toastr.warning('Primero debe cargar la información de la vista.');
 					return;
@@ -547,9 +685,9 @@ if (!isset($_SESSION['usuario'])) {
 			});
 
 			// Procesar códigos
-			$('#procesarBtn').on('click', function() {
+			$('#procesarBtn').on('click', function () {
 				const codigos = $('#codigosInput').val().trim();
-				
+
 				if (!codigos) {
 					toastr.warning('Por favor, pegue los códigos a procesar.');
 					return;
@@ -579,18 +717,18 @@ if (!isset($_SESSION['usuario'])) {
 					data: {
 						codigos: codigosArray
 					},
-					success: function() {
+					success: function () {
 						// Códigos enviados exitosamente, ahora inicializar DataTable
 						window.firstLoad = true; // Marcar como primera carga
 						inicializarDataTableServerSide();
 						$('#resultadosContainer').show();
 						toastr.success('Códigos procesados exitosamente.');
 					},
-					error: function(xhr, status, error) {
+					error: function (xhr, status, error) {
 						console.error('Error:', error);
 						toastr.error('Error de conexión al procesar los códigos.');
 					},
-					complete: function() {
+					complete: function () {
 						$('.processing-spinner').hide();
 						$('#procesarBtn').prop('disabled', false);
 					}
@@ -598,7 +736,7 @@ if (!isset($_SESSION['usuario'])) {
 			});
 
 			// Limpiar formulario
-			$('#limpiarBtn').on('click', function() {
+			$('#limpiarBtn').on('click', function () {
 				$('#codigosInput').val('');
 				$('#contadorCodigos').text('0 códigos detectados');
 				$('#resultadosContainer').hide();
@@ -609,7 +747,7 @@ if (!isset($_SESSION['usuario'])) {
 				// Limpiar códigos de la sesión
 				window.codigosActuales = null;
 				window.ultimasEstadisticas = null;
-				
+
 				// Limpiar estadísticas
 				$('#totalProcesados').text('0');
 				$('#totalEncontrados').text('0');
@@ -631,27 +769,27 @@ if (!isset($_SESSION['usuario'])) {
 				dataTable = $('#resultadosTable').DataTable({
 					dom: '<"top"f>rt<"bottom"lip><"clear">',
 					lengthMenu: [
-						[ 10, 25, 50, 100 ],
-						[ '10 filas', '25 filas', '50 filas', '100 filas' ]
+						[10, 25, 50, 100],
+						['10 filas', '25 filas', '50 filas', '100 filas']
 					],
 					processing: true,
 					serverSide: true,
 					ajax: {
 						url: 'scripts/server_side_processing_importaciones.php',
 						type: 'GET',
-						dataSrc: function(json) {
+						dataSrc: function (json) {
 							console.log('Respuesta del servidor:', json);
 							// Actualizar estadísticas cuando se reciban los datos
 							if (json.estadisticas) {
 								// Almacenar estadísticas para uso posterior
 								window.ultimasEstadisticas = json.estadisticas;
-								
+
 								actualizarEstadisticas(json.estadisticas);
 								if (window.firstLoad !== false) {
 									mostrarNotificacionesVencimiento(json.estadisticas);
 									window.firstLoad = false;
 								}
-								
+
 								// Siempre actualizar códigos no encontrados con los datos del servidor
 								setTimeout(() => mostrarCodigosNoEncontrados(json), 300);
 							}
@@ -661,7 +799,7 @@ if (!isset($_SESSION['usuario'])) {
 							}
 							return json.data || [];
 						},
-						error: function(xhr, error, code) {
+						error: function (xhr, error, code) {
 							console.error('Error AJAX:', error);
 							console.log('Respuesta completa:', xhr.responseText);
 							toastr.error('Error al cargar los datos de la tabla: ' + error);
@@ -705,7 +843,7 @@ if (!isset($_SESSION['usuario'])) {
 							extend: 'excelHtml5',
 							text: '<i class="fas fa-file-excel"></i> Excel',
 							className: 'btn btn-success btn-sm',
-							title: 'Resultados_Importacion_' + new Date().toISOString().slice(0,10),
+							title: 'Resultados_Importacion_' + new Date().toISOString().slice(0, 10),
 							exportOptions: {
 								columns: ':visible'
 							}
@@ -729,7 +867,7 @@ if (!isset($_SESSION['usuario'])) {
 						{ width: "10%", targets: 5 }, // PaisFabricacion
 						{ width: "8%", targets: 6 }   // FactoryLocation
 					],
-					createdRow: function(row, data, dataIndex) {
+					createdRow: function (row, data, dataIndex) {
 						// Aplicar clases CSS basadas en DT_RowClass
 						if (data.DT_RowClass) {
 							$(row).addClass(data.DT_RowClass);
@@ -744,7 +882,7 @@ if (!isset($_SESSION['usuario'])) {
 				$('#totalEncontrados').text(estadisticas.encontrados);
 				$('#totalNoEncontrados').text(estadisticas.no_encontrados);
 				$('#totalErrores').text(estadisticas.errores || 0);
-				
+
 				// Guardar estadísticas para exportación
 				window.ultimasEstadisticas = estadisticas;
 			}
@@ -760,7 +898,7 @@ if (!isset($_SESSION['usuario'])) {
 				if (estadisticas.vigentes > 0) {
 					toastr.success(`${estadisticas.vigentes} producto(s) vigente(s) encontrado(s).`, 'Productos Vigentes');
 				}
-				
+
 				// Mostrar códigos no encontrados
 				mostrarCodigosNoEncontrados();
 			}
@@ -784,7 +922,7 @@ if (!isset($_SESSION['usuario'])) {
 				if (totalNoEncontrados > 0) {
 					// Obtener códigos encontrados directamente de los datos del servidor
 					let codigosEncontrados = [];
-					
+
 					if (dataFromServer && dataFromServer.data && dataFromServer.data.length > 0) {
 						// Usar los datos que vienen del servidor directamente
 						dataFromServer.data.forEach(row => {
@@ -794,7 +932,7 @@ if (!isset($_SESSION['usuario'])) {
 								codigosEncontrados.push(codigo);
 							}
 						});
-						
+
 						console.log('Códigos buscados originales:', window.codigosActuales);
 						console.log('Códigos encontrados en datos del servidor:', codigosEncontrados);
 					}
@@ -802,7 +940,7 @@ if (!isset($_SESSION['usuario'])) {
 					// Encontrar códigos NO encontrados: los que están en los originales pero NO en la tabla
 					const codigosNoEncontrados = window.codigosActuales.filter(codigo => {
 						const codigoLimpio = codigo.trim();
-						const encontrado = codigosEncontrados.some(codigoEncontrado => 
+						const encontrado = codigosEncontrados.some(codigoEncontrado =>
 							codigoEncontrado === codigoLimpio
 						);
 						return !encontrado; // Retornar solo los que NO fueron encontrados
@@ -811,7 +949,7 @@ if (!isset($_SESSION['usuario'])) {
 					if (codigosNoEncontrados.length > 0) {
 						// Mostrar container
 						$('#codigosNoEncontradosContainer').show();
-						
+
 						// Generar HTML para los códigos no encontrados
 						let html = '';
 						codigosNoEncontrados.forEach(codigo => {
@@ -824,9 +962,9 @@ if (!isset($_SESSION['usuario'])) {
 								</div>
 							`;
 						});
-						
+
 						$('#listaCodigosNoEncontrados').html(html);
-						
+
 						console.log('Códigos NO encontrados (faltantes):', codigosNoEncontrados);
 						console.log('Total estadísticas:', window.ultimasEstadisticas);
 					}
@@ -834,7 +972,7 @@ if (!isset($_SESSION['usuario'])) {
 					// Ocultar container si no hay códigos no encontrados
 					$('#codigosNoEncontradosContainer').hide();
 				}
-				
+
 				// Liberar el flag
 				setTimeout(() => {
 					window.procesandoCodigosNoEncontrados = false;
@@ -847,7 +985,7 @@ if (!isset($_SESSION['usuario'])) {
 				let totalVencidos = 0;
 				let totalSinFecha = 0;
 
-				datos.forEach(function(item) {
+				datos.forEach(function (item) {
 					if (item.estado === 'encontrado' && item.datos_vista && item.datos_vista.FechaVencimiento) {
 						try {
 							const fechaVencimiento = new Date(item.datos_vista.FechaVencimiento);
@@ -883,7 +1021,7 @@ if (!isset($_SESSION['usuario'])) {
 			}
 
 			// Exportar vista actual (botón personalizado)
-			$('#exportarBtn').on('click', function() {
+			$('#exportarBtn').on('click', function () {
 				if (!window.codigosActuales || !window.ultimasEstadisticas) {
 					toastr.warning('No hay datos para exportar. Primero procese algunos códigos.');
 					return;
@@ -899,7 +1037,7 @@ if (!isset($_SESSION['usuario'])) {
 			});
 
 			// Exportar todos los datos completos
-			$('#exportarCompletoBtn').on('click', function() {
+			$('#exportarCompletoBtn').on('click', function () {
 				if (!window.codigosActuales || !window.ultimasEstadisticas) {
 					toastr.warning('No hay datos para exportar. Primero procese algunos códigos.');
 					return;
@@ -909,7 +1047,60 @@ if (!isset($_SESSION['usuario'])) {
 				window.open('scripts/exportar_completo.php', '_blank');
 				toastr.success('Iniciando descarga del archivo Excel completo...');
 			});
+
+			//Generación del avatar
+			generarAvatar('<?php echo $_SESSION['nombres']; ?>', '<?php echo $_SESSION['apellidos']; ?>');
 		});
+
+		function generarAvatar(nombre, apellido) {
+			let canvas = document.createElement('canvas');
+			canvas.style.display = 'none';
+			canvas.width = 160;
+			canvas.height = 160;
+			document.body.appendChild(canvas);
+			let context = canvas.getContext('2d');
+
+			// Lista de colores
+			let colores = ['#00A97A', '#9E2AB5', '#ECECEC', '#C6C6C6', '#9A9A9A', '#737373', '#545454', '#202020', '#F0EDE6', '#CAC6BF', '#9C9A94', '#74746F', '#555451', '#31312E', '#2DA0D3', '#E40147', '#F29000', '#BFCF00'];
+
+			// Generar color aleatorio de la lista
+			let color = colores[Math.floor(Math.random() * colores.length)];
+
+			// Dibujar círculo
+			context.beginPath();
+			context.arc(80, 80, 80, 0, Math.PI * 2, false);
+			context.fillStyle = color;
+			context.fill();
+
+			// Dibujar círculo interno
+			context.beginPath();
+			context.arc(80, 80, 80 * 0.6, 0, Math.PI * 2, false); // 60% del tamaño del círculo principal
+			context.fillStyle = colorDarker(color); // color más oscuro
+			context.fill();
+
+			// Agregar texto
+			context.font = 'bold 70px Arial';
+			context.fillStyle = '#ffffff';
+			context.textAlign = 'center';
+			context.textBaseline = 'middle';
+			context.fillText(nombre.charAt(0) + apellido.charAt(0), 80, 85);
+
+			// Setear como src en una etiqueta imagen
+			let img = document.getElementById('avatar');
+			img.src = canvas.toDataURL('image/png');
+			document.body.removeChild(canvas);
+		}
+		// Función para oscurecer un color
+		function colorDarker(color) {
+			let num = parseInt(color.replace("#", ""), 16),
+				amt = Math.round(2.55 * 5),
+				R = (num >> 16) - amt,
+				G = (num >> 8 & 0x00FF) - amt,
+				B = (num & 0x0000FF) - amt;
+			return "#" + (0x1000000 + (R > 0 ? R : 0) * 0x10000 + (G > 0 ? G : 0) * 0x100 + (B > 0 ? B : 0)).toString(16).slice(1);
+		}
+
 	</script>
 </body>
+
 </html>

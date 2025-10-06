@@ -103,18 +103,36 @@ $arttipo = $_GET['arttipo'];
 			<img class="animation__wobble" src="dist/img/bbraun.png" alt="B Logo" height="60" width="60">
 		</div>
 		<!-- Navbar -->
+		<!-- Navbar -->
 		<nav class="main-header navbar navbar-expand navbar-white navbar-light">
 			<!-- Left navbar links -->
 			<ul class="navbar-nav">
 				<li class="nav-item">
-					<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+					<a class="nav-link" data-widget="pushmenu" href="#" role="button">
+						<i class="fas fa-bars"></i>
+					</a>
+				</li>
+				<li class="nav-item d-none d-sm-inline-block">
+					<a href="home.php" class="nav-link">Inicio</a>
+				</li>
+				<li class="nav-item d-none d-sm-inline-block">
+					<a href="importaciones.php" class="nav-link">Importaciones AE</a>
+				</li>
+				<li class="nav-item d-none d-sm-inline-block">
+					<a href="rs_ae.php?arttipo=PRODUCTO AE" class="nav-link active">Aesculap</a>
 				</li>
 			</ul>
+	
 			<!-- Right navbar links -->
 			<ul class="navbar-nav ml-auto">
 				<li class="nav-item">
 					<a class="nav-link" data-widget="fullscreen" href="#" role="button">
 						<i class="fas fa-expand-arrows-alt"></i>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="cnx/logout.php">
+						<i class="fas fa-sign-out-alt"></i> Cerrar Sesión
 					</a>
 				</li>
 			</ul>
@@ -149,6 +167,12 @@ $arttipo = $_GET['arttipo'];
 								<p>
 									Inicio
 								</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="importaciones.php" class="nav-link">
+								<i class="nav-icon fas fa-upload"></i>
+								<p>Importaciones AE</p>
 							</a>
 						</li>
 						<li class="nav-item menu-open">
