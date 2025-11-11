@@ -47,7 +47,7 @@ $arttipo = $_GET['arttipo'];
 
 	<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
 
-	
+
 	<style>
 		#listaArchivos,
 		#listaArchivosEdit,
@@ -88,8 +88,10 @@ $arttipo = $_GET['arttipo'];
 		}
 
 		td.copy-etiqueta:hover {
-			background: #e0ffe0; /* Color de fondo al pasar el mouse (puedes cambiarlo) */
-			font-weight: bold;   /* Opcional: pone el texto en negrita */
+			background: #e0ffe0;
+			/* Color de fondo al pasar el mouse (puedes cambiarlo) */
+			font-weight: bold;
+			/* Opcional: pone el texto en negrita */
 		}
 
 		/* Estilos para el modal de etiqueta */
@@ -117,7 +119,7 @@ $arttipo = $_GET['arttipo'];
 			background-color: #343a40;
 			border-radius: 3px;
 			border: 1px solid #6c757d;
-			box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+			box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
 			color: #fff;
 			display: inline-block;
 			font-size: 0.875em;
@@ -125,6 +127,32 @@ $arttipo = $_GET['arttipo'];
 			line-height: 1;
 			padding: 2px 4px;
 			white-space: nowrap;
+		}
+
+		/* Estilos para los filtros de búsqueda por columna */
+		.filters th {
+			padding: 5px !important;
+			background-color: #f8f9fa;
+		}
+
+		.filters th input {
+			width: 100%;
+			box-sizing: border-box;
+			font-size: 0.8em;
+			padding: 4px 8px;
+			border: 1px solid #ced4da;
+			border-radius: 4px;
+		}
+
+		.filters th input:focus {
+			border-color: #80bdff;
+			outline: 0;
+			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+		}
+
+		.filters th input::placeholder {
+			color: #6c757d;
+			font-style: italic;
 		}
 	</style>
 </head>
@@ -156,7 +184,7 @@ $arttipo = $_GET['arttipo'];
 					<a href="rs_ae.php?arttipo=PRODUCTO AE" class="nav-link active">Aesculap</a>
 				</li>
 			</ul>
-	
+
 			<!-- Right navbar links -->
 			<ul class="navbar-nav ml-auto">
 				<li class="nav-item">
@@ -218,9 +246,10 @@ $arttipo = $_GET['arttipo'];
 								</p>
 							</a>
 							<ul class="nav nav-treeview">
-								<li class="nav-item <?= $arttipo !='PRODUCTO AE' ? 'menu-open' : '' ?>">
+								<li class="nav-item <?= $arttipo != 'PRODUCTO AE' ? 'menu-open' : '' ?>">
 									<a href="#" class="nav-link active">
-										<i class="far fa-circle nav-icon <?= $arttipo !='PRODUCTO AE' ? 'text-danger' : '' ?>"></i>
+										<i
+											class="far fa-circle nav-icon <?= $arttipo != 'PRODUCTO AE' ? 'text-danger' : '' ?>"></i>
 										<p>
 											Registros Sanitarios HC
 											<i class="right fas fa-angle-left"></i>
@@ -231,10 +260,9 @@ $arttipo = $_GET['arttipo'];
 											<a href="rs.php?arttipo=PRODUCTO LINEA AVITUM" class="nav-link" <?php if ($arttipo == "PRODUCTO LINEA AVITUM") {
 												echo "active";
 											} ?>>
-												<i
-													class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA AVITUM") {
-														echo "text-success";
-													} ?>"></i>
+												<i class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA AVITUM") {
+													echo "text-success";
+												} ?>"></i>
 												<p>Producto L&iacute;nea AVITUM</p>
 											</a>
 										</li>
@@ -242,10 +270,9 @@ $arttipo = $_GET['arttipo'];
 											<a href="rs.php?arttipo=PRODUCTO LINEA HC AIS" class="nav-link" <?php if ($arttipo == "PRODUCTO LINEA HC AIS") {
 												echo "active";
 											} ?>>
-												<i
-													class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA HC AIS") {
-														echo "text-success";
-													} ?>"></i>
+												<i class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA HC AIS") {
+													echo "text-success";
+												} ?>"></i>
 												<p>Producto L&iacute;nea HC AIS</p>
 											</a>
 										</li>
@@ -253,10 +280,9 @@ $arttipo = $_GET['arttipo'];
 											<a href="rs.php?arttipo=PRODUCTO LINEA HC BC" class="nav-link" <?php if ($arttipo == "PRODUCTO LINEA HC BC") {
 												echo "active";
 											} ?>">
-												<i
-													class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA HC BC") {
-														echo "text-success";
-													} ?>"></i>
+												<i class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA HC BC") {
+													echo "text-success";
+												} ?>"></i>
 												<p>Producto L&iacute;nea HC BC</p>
 											</a>
 										</li>
@@ -264,10 +290,9 @@ $arttipo = $_GET['arttipo'];
 											<a href="rs.php?arttipo=PRODUCTO LINEA HC CN" class="nav-link" <?php if ($arttipo == "PRODUCTO LINEA HC CN") {
 												echo "active";
 											} ?>>
-												<i
-													class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA HC CN") {
-														echo "text-success";
-													} ?>"></i>
+												<i class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA HC CN") {
+													echo "text-success";
+												} ?>"></i>
 												<p>Producto L&iacute;nea HC CN</p>
 											</a>
 										</li>
@@ -275,10 +300,9 @@ $arttipo = $_GET['arttipo'];
 											<a href="rs.php?arttipo=PRODUCTO LINEA HC PC VA" class="nav-link" <?php if ($arttipo == "PRODUCTO LINEA HC PC VA") {
 												echo "active";
 											} ?>>
-												<i
-													class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA HC PC VA") {
-														echo "text-success";
-													} ?>"></i>
+												<i class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA HC PC VA") {
+													echo "text-success";
+												} ?>"></i>
 												<p>Producto L&iacute;nea HP PC VA</p>
 											</a>
 										</li>
@@ -286,19 +310,19 @@ $arttipo = $_GET['arttipo'];
 											<a href="rs.php?arttipo=PRODUCTO LINEA OPM" class="nav-link" <?php if ($arttipo == "PRODUCTO LINEA OPM") {
 												echo "active";
 											} ?>>
-												<i
-													class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA OPM") {
-														echo "text-success";
-													} ?>"></i>
+												<i class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO LINEA OPM") {
+													echo "text-success";
+												} ?>"></i>
 												<p>Producto L&iacute;nea OPM</p>
 											</a>
 										</li>
 									</ul>
 								</li>
 
-								<li class="nav-item <?= $arttipo =='PRODUCTO AE' ? 'menu-open' : '' ?>">
+								<li class="nav-item <?= $arttipo == 'PRODUCTO AE' ? 'menu-open' : '' ?>">
 									<a href="#" class="nav-link active">
-										<i class="far fa-circle nav-icon <?= $arttipo =='PRODUCTO AE' ? 'text-danger' : '' ?>"></i>
+										<i
+											class="far fa-circle nav-icon <?= $arttipo == 'PRODUCTO AE' ? 'text-danger' : '' ?>"></i>
 										<p>
 											Registros Sanitarios AE
 											<i class="right fas fa-angle-left"></i>
@@ -309,17 +333,16 @@ $arttipo = $_GET['arttipo'];
 											<a href="rs_ae.php?arttipo=PRODUCTO AE" class="nav-link" <?php if ($arttipo == "PRODUCTO AE") {
 												echo "active";
 											} ?>>
-												<i
-													class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO AE") {
-														echo "text-success";
-													} ?>"></i>
+												<i class="far fa-dot-circle nav-icon <?php if ($arttipo == "PRODUCTO AE") {
+													echo "text-success";
+												} ?>"></i>
 												<p>Producto AE</p>
 											</a>
 										</li>
 
 									</ul>
 								</li>
-								
+
 							</ul>
 						</li>
 						<li class="nav-header">USUARIO</li>
@@ -336,7 +359,7 @@ $arttipo = $_GET['arttipo'];
 		</aside>
 		<!-- Content Wrapper. Contains page content -->
 		<div class="content-wrapper">
-			
+
 			<section class="content pt-3">
 				<div class="container-fluid">
 					<div class="row">
@@ -402,6 +425,61 @@ $arttipo = $_GET['arttipo'];
 												<th class="text-center">OBSERVACIONES</th>
 												<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
 													<th class="text-center">OPCI&Oacute;N</th><?php } ?>
+											</tr>
+											<tr class="filters">
+												<th></th>
+												<th></th>
+												<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+													<th></th>
+												<?php } ?>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Buscar código"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Buscar descripción"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Buscar RS"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Buscar resolución"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Fecha"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Fecha"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Fecha"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Buscar estado"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Buscar fabricante"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Buscar origen"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Buscar lugar"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Riesgo"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Exoneración"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="EAN14"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="EAN13"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="GTIN"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Esteril"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Etiqueta"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="IFU"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="GMDN"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Cambios"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Problemas"></th>
+												<th><input type="text" class="form-control form-control-sm"
+														placeholder="Observaciones"></th>
+												<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+													<th></th><?php } ?>
 											</tr>
 										</thead>
 									</table>
@@ -521,7 +599,7 @@ $arttipo = $_GET['arttipo'];
 												</div>
 
 												<div class="row">
-													
+
 													<div class="col-md-3">
 														<div class="form-group">
 															<label for="exoneracioncm">Exoneracion CM</label>
@@ -534,7 +612,8 @@ $arttipo = $_GET['arttipo'];
 														<div class="form-group">
 															<label for="esterilidad">¿Es Esteril?</label>
 															<select class="form-control form-select" id="esterilidad"
-																<?php if ($_SESSION['nivel'] === 'VISOR') { ?> disabled <?php } ?>>
+																<?php if ($_SESSION['nivel'] === 'VISOR') { ?> disabled
+																<?php } ?>>
 																<option value="E">ESTERIL</option>
 																<option value="NE">NO ESTERIL</option>
 																<option value="NO APLICA">NO APLICA</option>
@@ -548,7 +627,7 @@ $arttipo = $_GET['arttipo'];
 															<input type="text" class="form-control" id="ean13un" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
 														</div>
 													</div>
-												
+
 													<div class="col-md-3">
 														<div class="form-group">
 															<label for="ean14cj">C&oacute;digo EAN 14 (caja)</label>
@@ -557,9 +636,9 @@ $arttipo = $_GET['arttipo'];
 														</div>
 													</div>
 
-			
+
 												</div>
-												
+
 												<div class="row">
 
 													<div class="col-md-3">
@@ -569,7 +648,7 @@ $arttipo = $_GET['arttipo'];
 															<input type="text" class="form-control" id="gtincj" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
 														</div>
 													</div>
-													
+
 													<div class="col-md-3">
 														<div class="form-group">
 															<label for="gmdn">C&oacute;digo GMDN</label>
@@ -593,7 +672,7 @@ $arttipo = $_GET['arttipo'];
 															<input type="text" class="form-control" id="pdimen" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
 														</div>
 													</div>
-													
+
 												</div>
 
 												<div class="row">
@@ -610,11 +689,13 @@ $arttipo = $_GET['arttipo'];
 														<div class="form-group">
 															<label for="etiqueta">Etiqueta</label>
 															<textarea class="form-control" rows="5"
-																placeholder="Importado por B. Braun Me..." id="etiqueta" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>></textarea>
+																placeholder="Importado por B. Braun Me..." id="etiqueta"
+																<?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly
+																<?php } ?>></textarea>
 														</div>
+													</div>
 												</div>
-												</div>
-												
+
 											</div>
 										</div>
 									</div>
@@ -668,7 +749,7 @@ $arttipo = $_GET['arttipo'];
 										<option value="VENCIDO">VENCIDO</option>
 										<option value="DESCONTINUADO">DESCONTINUADO</option>
 										<option value="NO APLICA">NO APLICA</option>
-								</select>
+									</select>
 								</div>
 							</div>
 						</div>
@@ -689,8 +770,9 @@ $arttipo = $_GET['arttipo'];
 									<div class="input-group">
 										<input type="file" class="form-control" id="inputFileEdit"
 											aria-describedby="inputFileEditAdd" aria-label="Upload" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
-										<button onclick="agregarArchivoEdit(null,'#inputFileEdit','#listaArchivosEdit')" class="btn btn-outline-secondary"
-											type="button" id="inputFileEditAdd" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> disabled <?php } ?>>Agregar archivo</button>
+										<button onclick="agregarArchivoEdit(null,'#inputFileEdit','#listaArchivosEdit')"
+											class="btn btn-outline-secondary" type="button" id="inputFileEditAdd" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> disabled <?php } ?>>Agregar
+											archivo</button>
 									</div>
 								</div>
 								<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
@@ -908,8 +990,9 @@ $arttipo = $_GET['arttipo'];
 								<div class="input-group">
 									<input type="file" class="form-control" id="inputFile"
 										aria-describedby="inputFileAdd" aria-label="Upload">
-									<button onclick="agregarArchivo('#inputFile','#listaArchivos')" class="btn btn-outline-secondary" type="button"
-										id="inputFileAdd">Agregar archivo</button>
+									<button onclick="agregarArchivo('#inputFile','#listaArchivos')"
+										class="btn btn-outline-secondary" type="button" id="inputFileAdd">Agregar
+										archivo</button>
 								</div>
 							</div>
 							<ul id="listaArchivos"></ul>
@@ -931,7 +1014,8 @@ $arttipo = $_GET['arttipo'];
 	</div>
 
 	<!-- MODAL PARA MOSTRAR Y COPIAR ETIQUETA -->
-	<div class="modal fade" id="modalEtiqueta" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalEtiquetaLabel" aria-hidden="true">
+	<div class="modal fade" id="modalEtiqueta" data-backdrop="static" data-keyboard="false" tabindex="-1"
+		aria-labelledby="modalEtiquetaLabel" aria-hidden="true">
 		<div class="modal-dialog modal-lg modal-dialog-centered">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -946,7 +1030,9 @@ $arttipo = $_GET['arttipo'];
 						<textarea class="form-control" id="etiquetaCompleta" rows="10" readonly></textarea>
 					</div>
 					<div class="alert alert-info">
-						<i class="fas fa-info-circle"></i> <strong>Instrucciones:</strong> Haz clic en el botón "Seleccionar Todo" y luego presiona <kbd>Ctrl + C</kbd> (o <kbd>Cmd + C</kbd> en Mac) para copiar el texto.
+						<i class="fas fa-info-circle"></i> <strong>Instrucciones:</strong> Haz clic en el botón
+						"Seleccionar Todo" y luego presiona <kbd>Ctrl + C</kbd> (o <kbd>Cmd + C</kbd> en Mac) para
+						copiar el texto.
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -966,9 +1052,8 @@ $arttipo = $_GET['arttipo'];
 	</button>
 
 
-	<div class="modal fade" id="modal-edit-several" 
-     data-bs-backdrop="static" data-bs-keyboard="false"
-     aria-labelledby="modal-edit-several-label" aria-hidden="true">
+	<div class="modal fade" id="modal-edit-several" data-bs-backdrop="static" data-bs-keyboard="false"
+		aria-labelledby="modal-edit-several-label" aria-hidden="true">
 
 
 		<div class="modal-dialog modal-xl">
@@ -981,7 +1066,8 @@ $arttipo = $_GET['arttipo'];
 
 				<div class="modal-body">
 					<div class="table-responsive row">
-						<table id="tb-selected-articles" class="display compact cell-border table-striped hover" style="width:100%">
+						<table id="tb-selected-articles" class="display compact cell-border table-striped hover"
+							style="width:100%">
 							<thead>
 								<tr>
 									<th>ID</th>
@@ -1032,7 +1118,7 @@ $arttipo = $_GET['arttipo'];
 						<div class="col-md-4">
 							<div class="form-group">
 								<label for="new-state">Estado Vencimiento</label>
-								<select class="form-control form-select" id="new-state"  <?php if ($_SESSION['nivel'] === 'VISOR') { ?> disabled <?php } ?>>
+								<select class="form-control form-select" id="new-state" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> disabled <?php } ?>>
 									<option value="VIGENTE" selected>VIGENTE</option>
 									<option value="VENCE 1 MES">VENCE 1 MES</option>
 									<option value="VENCE 2 MESES">VENCE 2 MESES</option>
@@ -1064,12 +1150,13 @@ $arttipo = $_GET['arttipo'];
 								<div class="input-group">
 									<input type="file" class="form-control" id="input-file"
 										aria-describedby="input-file-add" aria-label="Upload">
-									<button onclick="agregarArchivoEdit(null,'#input-file','#list-files')" class="btn btn-outline-secondary" type="button"
-										id="input-file-add">Agregar archivo</button>
+									<button onclick="agregarArchivoEdit(null,'#input-file','#list-files')"
+										class="btn btn-outline-secondary" type="button" id="input-file-add">Agregar
+										archivo</button>
 								</div>
 							</div>
 							<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-									<ul id="list-files"></ul><?php } ?>
+								<ul id="list-files"></ul><?php } ?>
 						</div>
 					</div>
 				</div>
@@ -1178,13 +1265,14 @@ $arttipo = $_GET['arttipo'];
 		$(document).ready(function () {
 			var table = $('#registrosanitario').DataTable({
 				dom: '<"top"Bf>rt<"bottom"lip><"clear">',
+				orderCellsTop: true, // Usa solo la primera fila del thead para ordenar
 				lengthMenu: [
 					[20, 50, 100, 200],
 					['20 filas', '50 filas', '100 filas', '200 filas']
 				],
 				buttons: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
-							{
+											{
 							text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto',
 							className: 'btn btn-success',
 							action: function (e, dt, node, config) {
@@ -1213,13 +1301,13 @@ $arttipo = $_GET['arttipo'];
 						extend: 'print',
 						className: 'btn btn-primary',
 						orientation: 'landscape',
-						titleAttr:'Imprimir',
+						titleAttr: 'Imprimir',
 						text: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">  <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"/>  <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/></svg>'
 					},
 					'spacer',
 					{
 						extend: 'excel',
-						titleAttr:'Descargar excel',
+						titleAttr: 'Descargar excel',
 						className: 'btn btn-primary',
 						text: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-excel-fill" viewBox="0 0 16 16">  <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M5.884 6.68 8 9.219l2.116-2.54a.5.5 0 1 1 .768.641L8.651 10l2.233 2.68a.5.5 0 0 1-.768.64L8 10.781l-2.116 2.54a.5.5 0 0 1-.768-.641L7.349 10 5.116 7.32a.5.5 0 1 1 .768-.64z"/></svg>'
 					}
@@ -1250,12 +1338,12 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-					{
-						data: null,
-						render: function (data, type, row) {
-							return `<input type="checkbox" class="selectRow" value="${row.id}">`;
-						}
-					},
+									{
+							data: null,
+							render: function (data, type, row) {
+								return `<input type="checkbox" class="selectRow" value="${row.id}">`;
+							}
+						},
 					<?php } ?>
 					{ data: 'ArtCodigo_AE' },
 					{ data: 'ArtDescripcion_AE' },
@@ -1273,8 +1361,8 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'CodigoEAN_14' },
 					{ data: 'CodigoEAN_13' },
 					{ data: 'CodigoGTIN' },
-					{ data: 'EsEsteril_AE'},
-					{ data: 'Etiqueta_AE',className: 'copy-etiqueta' },
+					{ data: 'EsEsteril_AE' },
+					{ data: 'Etiqueta_AE', className: 'copy-etiqueta' },
 					{ data: 'NumeroIFU_AE' },
 					{ data: 'Codigo_GMDN_UMDNS' },
 					{ data: 'Cambios_AE' },
@@ -1289,15 +1377,15 @@ $arttipo = $_GET['arttipo'];
 						}
 						<?php } ?>
 				],
-				
+
 				columnDefs: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-					{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
-					{
-						targets: -1, // Última columna (botón de edición)
-						className: "text-center",
-						width: "4%"
-					}
+									{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
+						{
+							targets: -1, // Última columna (botón de edición)
+							className: "text-center",
+							width: "4%"
+						}
 					<?php } ?>
 				]
 				,
@@ -1333,38 +1421,68 @@ $arttipo = $_GET['arttipo'];
 				processing: true,
 				serverSide: true
 			});
-			
-			<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-			// Evento para seleccionar/deseleccionar todos
-			$('#selectAll').on('click', function () {
-				const isChecked = $(this).is(':checked');
-				$('.selectRow').prop('checked', isChecked);
+
+			// Búsqueda por columna con debounce
+			var searchTimeout;
+			$('#registrosanitario thead .filters th').each(function (i) {
+				var title = $(this).text();
+
+				// Solo agregar funcionalidad de búsqueda a columnas con input
+				if ($(this).find('input').length > 0) {
+					var input = $(this).find('input');
+
+					input.on('keyup', function () {
+						var searchValue = this.value.trim();
+						var currentSearch = table.column(i).search();
+
+						// Limpiar el timeout anterior
+						clearTimeout(searchTimeout);
+
+						// Solo buscar si hay contenido o si se está limpiando una búsqueda existente
+						if (searchValue !== '' || currentSearch !== '') {
+							// Esperar 500ms después de que el usuario deje de escribir
+							searchTimeout = setTimeout(function () {
+								// Aplicar búsqueda en la columna correspondiente
+								if (currentSearch !== searchValue) {
+									table.column(i).search(searchValue).draw();
+								}
+							}, 500);
+						}
+					});
+				}
 			});
+
+			<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+				// Evento para seleccionar/deseleccionar todos
+				$('#selectAll').on('click', function () {
+					const isChecked = $(this).is(':checked');
+					$('.selectRow').prop('checked', isChecked);
+				});
 			<?php } ?>
 
 			//Evento para cambiar el estado del selector de estado
-			
+
 			function actualizarEstadoSegunFecha(newExpiredDate, newState) {
 				const fechaVencimiento = $(newExpiredDate).val();
 				const hoy = new Date(); // formato YYYY-MM-DD
 
-				
-				if (fechaVencimiento) {
-						const fechaSeleccionada = new Date(fechaVencimiento);
-						const diferenciaDias = Math.floor((fechaSeleccionada - hoy) / (1000 * 60 * 60 * 24));
 
-						if (diferenciaDias < 0) {
-							$(newState).val('VENCIDO');
-						} else if (diferenciaDias <= 30) {
-							$(newState).val('VENCE 1 MES');
-						} else if (diferenciaDias <= 60) {
-							$(newState).val('VENCE 2 MESES');
-						} else if (diferenciaDias <= 90) {
-							$(newState).val('VENCE 3 MESES');
-						} else {
-							$(newState).val('VIGENTE');
-						}
+				if (fechaVencimiento) {
+					const fechaSeleccionada = new Date(fechaVencimiento);
+					const diferenciaDias = Math.floor((fechaSeleccionada - hoy) / (1000 * 60 * 60 * 24));
+
+					if (diferenciaDias < 0) {
+						$(newState).val('VENCIDO');
+					} else if (diferenciaDias <= 30) {
+						$(newState).val('VENCE 1 MES');
+					} else if (diferenciaDias <= 60) {
+						$(newState).val('VENCE 2 MESES');
+					} else if (diferenciaDias <= 90) {
+						$(newState).val('VENCE 3 MESES');
+					} else {
+						$(newState).val('VIGENTE');
 					}
+				}
 
 			}
 
@@ -1412,24 +1530,24 @@ $arttipo = $_GET['arttipo'];
 				data: [],
 				responsive: true,
 				columns: [
-					{ title: "ID", visible:false},
+					{ title: "ID", visible: false },
 					{ title: "CODIGO" },
 					{ title: "DESCRIPCION" },
-					{ title: "REGISTRO SANITARIO"},
+					{ title: "REGISTRO SANITARIO" },
 					{ title: "RESOLUCION" },
 					{ title: "EMISION" },
 					{ title: "APROBACION" },
 					{ title: "VENCIMIENTO" }
 				],
-				});
+			});
 
 			$('#btn-edit-several').on('click', function () {
 				let datos = [];
 				let registrosSanitarios = new Set();
 
-				let rutas  = new Set()
+				let rutas = new Set()
 				console.log(rutas)
-				
+
 				table.rows().every(function () {
 					const fila = this.node();
 					const chk = $(fila).find('.selectRow');
@@ -1438,7 +1556,7 @@ $arttipo = $_GET['arttipo'];
 						const data = this.data();
 						registrosSanitarios.add(data.RegNumero_AE);
 						console.log(data.Rutas)
-						if(data.Rutas){
+						if (data.Rutas) {
 							rutas.add(data.Rutas)
 						}
 
@@ -1501,8 +1619,8 @@ $arttipo = $_GET['arttipo'];
 				// 		// Llama a la función agregarArchivoEdit con el archivo ficticio
 				// 		agregarArchivoEdit(archivoFicticio,'#input-file','#list-files');
 
-			
-						
+
+
 				// 	});
 				// }
 
@@ -1528,12 +1646,12 @@ $arttipo = $_GET['arttipo'];
 			// copy feature - abrir modal para copiar etiqueta
 			$('#registrosanitario tbody').on('click', 'td.copy-etiqueta', function () {
 				var etiqueta = $(this).text().trim();
-				
+
 				console.log('Click en etiqueta:', etiqueta); // Debug
-				
+
 				// Mostrar el contenido completo en el modal
 				$('#etiquetaCompleta').val(etiqueta);
-				
+
 				// Abrir el modal de forma simple primero
 				$('#modalEtiqueta').modal('show');
 			});
@@ -1560,7 +1678,7 @@ $arttipo = $_GET['arttipo'];
 				responsive: true,
 				ajax: 'scripts/consultar_articulos_ae.php',
 				columns: [
-					{ data: 'DT_RowId', "visible": false },	
+					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtCodigo' },
 					{ data: 'ArtDescripcion' },
 					{
@@ -1630,7 +1748,7 @@ $arttipo = $_GET['arttipo'];
 				$('#ucreacion').val(data.RegUsuarioCreacion_AE);
 				$('#modificacion').val(data.RegFechaModificacion_AE);
 				$('#umodificacion').val(data.RegUsuarioModificacion_AE);
-				
+
 				$('#artcreacion').val(data.FechaCreacion_AE);
 				$('#artucreacion').val(data.UsuarioCreacion_AE);
 				$('#artmodificacion').val(data.FechaModificacion_AE);
@@ -1652,7 +1770,7 @@ $arttipo = $_GET['arttipo'];
 				$('#pdimen').val(data.ProblemaDimensiones_AE || '');
 
 
-				
+
 				// $('#etiqueta').val(data.EsEsteril);
 				$('#gmdn').val(data.Codigo_GMDN_UMDNS || '');
 				$('#etiqueta').val(data.Etiqueta_AE || '');
@@ -1692,7 +1810,7 @@ $arttipo = $_GET['arttipo'];
 
 			});
 
-			
+
 
 			//MODAL NUEVO REGISTRO SANITARIO
 			$('#dtnewproducto tbody').on('click', 'button.newbtn', function () {
@@ -1811,9 +1929,9 @@ $arttipo = $_GET['arttipo'];
 		});
 
 		var archivos = [];
-		
 
-		function eliminarArchivo(fileName,listFilesId) {
+
+		function eliminarArchivo(fileName, listFilesId) {
 			// Buscar el archivo en la lista de archivos
 			var indice = archivos.findIndex(function (archivo) {
 				return archivo.name === fileName;
@@ -1825,13 +1943,13 @@ $arttipo = $_GET['arttipo'];
 			}
 
 			// Eliminar el elemento de lista correspondiente
-			var li = document.querySelector(listFilesId +' li[data-nombre="' + fileName + '"]');
+			var li = document.querySelector(listFilesId + ' li[data-nombre="' + fileName + '"]');
 			if (li) {
 				li.parentNode.removeChild(li);
 			}
 		}
 
-		function agregarArchivo(inputId,listFilesId) {
+		function agregarArchivo(inputId, listFilesId) {
 			// Obtener el archivo del input
 			var archivo = document.querySelector(inputId).files[0];
 
@@ -1864,7 +1982,7 @@ $arttipo = $_GET['arttipo'];
 			boton.className = 'btn btn-xs btn-danger';  // Añadir la clase al botón
 			boton.style.marginRight = '10px';  // Añadir un espacio de 10px entre el botón y el nombre
 			boton.onclick = function () {
-				eliminarArchivo(archivo.name,listFilesId);
+				eliminarArchivo(archivo.name, listFilesId);
 			};
 
 			// Crear un elemento i para el ícono de eliminación
@@ -1892,9 +2010,9 @@ $arttipo = $_GET['arttipo'];
 
 		var archivosedit = [];
 
-		function eliminarArchivoEdit(nombre, ruta,listFilesEdit = '#listaArchivosEdit' ) {
+		function eliminarArchivoEdit(nombre, ruta, listFilesEdit = '#listaArchivosEdit') {
 			console.log("Eliminando archivo:", nombre, "con ruta:", ruta);
-			
+
 			// Buscar el archivo en la lista de archivosedit
 			var indice = archivosedit.findIndex(function (archivoedit) {
 				return archivoedit.name === nombre;
@@ -1916,40 +2034,40 @@ $arttipo = $_GET['arttipo'];
 
 					var rutadel = '../' + ruta;
 					// Enviar los datos al archivo PHP para guardar la orden
-					if(!agregadoManualmente){
+					if (!agregadoManualmente) {
 						$.post("scripts/eliminar_archivos_ae.php", {
-						rutadel: rutadel
-					}, function (data) {
-						// Manejar la respuesta del servidor (puede ser un mensaje de éxito o error)
-						if (data === "success") {
-							// Actualizar la tabla de órdenes (puedes recargar la tabla o hacerlo de otra manera)
-							$('#registrosanitario').DataTable().ajax.reload();
+							rutadel: rutadel
+						}, function (data) {
+							// Manejar la respuesta del servidor (puede ser un mensaje de éxito o error)
+							if (data === "success") {
+								// Actualizar la tabla de órdenes (puedes recargar la tabla o hacerlo de otra manera)
+								$('#registrosanitario').DataTable().ajax.reload();
 
-							var Toast = Swal.mixin({
-								toast: true,
-								position: 'top-end',
-								showConfirmButton: false,
-								timer: 3000
-							});
+								var Toast = Swal.mixin({
+									toast: true,
+									position: 'top-end',
+									showConfirmButton: false,
+									timer: 3000
+								});
 
-							Toast.fire({
-								icon: 'success',
-								title: 'Archivo eliminado con éxito.'
-							})
-						} else {
-							var Toast = Swal.mixin({
-								toast: true,
-								position: 'top-end',
-								showConfirmButton: false,
-								timer: 3000
-							});
+								Toast.fire({
+									icon: 'success',
+									title: 'Archivo eliminado con éxito.'
+								})
+							} else {
+								var Toast = Swal.mixin({
+									toast: true,
+									position: 'top-end',
+									showConfirmButton: false,
+									timer: 3000
+								});
 
-							Toast.fire({
-								icon: 'error',
-								title: 'Error en la operación.'
-							})
-						}
-					});
+								Toast.fire({
+									icon: 'error',
+									title: 'Error en la operación.'
+								})
+							}
+						});
 					}
 					//----------
 
@@ -1960,7 +2078,7 @@ $arttipo = $_GET['arttipo'];
 			}
 		}
 
-		function agregarArchivoEdit(archivoedit,inputFileModalEdit = '#inputFileEdit', listFileModalEdit = '#listaArchivosEdit' ) {
+		function agregarArchivoEdit(archivoedit, inputFileModalEdit = '#inputFileEdit', listFileModalEdit = '#listaArchivosEdit') {
 			// Si no se proporciona un archivo, obtenerlo del input y marcarlo como agregado manualmente
 			if (!archivoedit) {
 				archivoedit = document.querySelector(inputFileModalEdit).files[0];
@@ -2000,9 +2118,9 @@ $arttipo = $_GET['arttipo'];
 			boton.onclick = function () {
 				var rutadel = '';
 				if (archivoedit.ruta) {
-					eliminarArchivoEdit(archivoedit.name, archivoedit.ruta,listFileModalEdit);
+					eliminarArchivoEdit(archivoedit.name, archivoedit.ruta, listFileModalEdit);
 				} else {
-					eliminarArchivoEdit(archivoedit.name, rutadel,listFileModalEdit);
+					eliminarArchivoEdit(archivoedit.name, rutadel, listFileModalEdit);
 					console.log("Archivo sin ruta")
 				}
 			};
@@ -2066,11 +2184,11 @@ $arttipo = $_GET['arttipo'];
 		function seleccionarTextoEtiqueta() {
 			// Obtener el elemento textarea
 			var textarea = document.getElementById('etiquetaCompleta');
-			
+
 			// Seleccionar todo el contenido del textarea
 			textarea.select();
 			textarea.setSelectionRange(0, 99999); // Para dispositivos móviles
-			
+
 			// Intentar copiar usando el método tradicional (funciona sin SSL)
 			try {
 				var exitoso = document.execCommand('copy');
@@ -2161,13 +2279,13 @@ $arttipo = $_GET['arttipo'];
 			return "#" + (0x1000000 + (R > 0 ? R : 0) * 0x10000 + (G > 0 ? G : 0) * 0x100 + (B > 0 ? B : 0)).toString(16).slice(1);
 		}
 
-		function update_several(){
-			
+		function update_several() {
+
 			let idsSelected = [];
 
 			tablaModal.rows().every(function () {
-			const data = this.data(); // data es un array si usaste rows.add([ ... ])
-			idsSelected.push(data[0].replace("ID_","")); // ID está en la primera columna
+				const data = this.data(); // data es un array si usaste rows.add([ ... ])
+				idsSelected.push(data[0].replace("ID_", "")); // ID está en la primera columna
 			});
 
 			var newRs = $('#new-rs').val();
@@ -2181,18 +2299,18 @@ $arttipo = $_GET['arttipo'];
 
 
 			console.log(idsSelected); // muestra los IDs en consola
-			
+
 			var formData = new FormData();
 
-			formData.append('idsSelected',idsSelected);
-			formData.append('newRs',newRs);
-			formData.append('newResolution',newResolution);
-			formData.append('newEmition',newEmition);
-			formData.append('newAproval',newAproval);
-			formData.append('newExpiredDate',newExpiredDate);
-			formData.append('newState',newState);
-			formData.append('newObservation',newObservation);
-			formData.append('usuariomod',usuariomod);
+			formData.append('idsSelected', idsSelected);
+			formData.append('newRs', newRs);
+			formData.append('newResolution', newResolution);
+			formData.append('newEmition', newEmition);
+			formData.append('newAproval', newAproval);
+			formData.append('newExpiredDate', newExpiredDate);
+			formData.append('newState', newState);
+			formData.append('newObservation', newObservation);
+			formData.append('usuariomod', usuariomod);
 
 			// Añadir cada archivo de la lista archivosedit al objeto FormData
 			archivosedit.forEach(function (archivo) {
@@ -2224,7 +2342,7 @@ $arttipo = $_GET['arttipo'];
 				})
 			} else {
 				for (let pair of formData.entries()) {
-					console.log(pair[0]+ ': ' + pair[1]);
+					console.log(pair[0] + ': ' + pair[1]);
 				}
 
 
@@ -2634,7 +2752,7 @@ $arttipo = $_GET['arttipo'];
 		}
 
 		function agregarGrupoArchivosEdit(listaRutas) {
-			console.log("listaRutas: ",listaRutas)
+			console.log("listaRutas: ", listaRutas)
 			archivosedit = []
 			let fileNameList = new Set()
 			if (!listaRutas || listaRutas.length === 0) {

@@ -140,12 +140,12 @@ class SSP
                 }
             }
             // see "static function limit" above to explain the next line.
-			
-			$length = intval($request["length"]);
-			if ($length < 0) {
-				$length = 1000000;
-			}
-			
+
+            $length = intval($request["length"]);
+            if ($length < 0) {
+                $length = 1000000;
+            }
+
             $order =
                 "ORDER BY " .
                 implode(", ", $orderBy) .
@@ -195,7 +195,7 @@ class SSP
                             PDO::PARAM_STR
                         );
                         $globalSearch[] =
-                            "" . $column["db"] . " LIKE " . $binding;
+                            "[" . $column["db"] . "] LIKE " . $binding;
                     }
                 }
             }
@@ -218,7 +218,7 @@ class SSP
                             PDO::PARAM_STR
                         );
                         $columnSearch[] =
-                            "`" . $column["db"] . "` LIKE " . $binding;
+                            "[" . $column["db"] . "] LIKE " . $binding;
                     }
                 }
             }
@@ -234,8 +234,8 @@ class SSP
         if (count($columnSearch)) {
             $where =
                 $where === ""
-                    ? implode(" AND ", $columnSearch)
-                    : $where . " AND " . implode(" AND ", $columnSearch);
+                ? implode(" AND ", $columnSearch)
+                : $where . " AND " . implode(" AND ", $columnSearch);
         }
 
         if ($where !== "") {
@@ -279,8 +279,8 @@ class SSP
             $db,
             $bindings,
             "SET NOCOUNT ON SELECT " .
-                implode(", ", self::pluck($columns, "db")) .
-                " FROM $table $where $order $limit"
+            implode(", ", self::pluck($columns, "db")) .
+            " FROM $table $where $order $limit"
         );
 
         // Data set length after filtering  the $where will update info OR will be blank when not doing a search
@@ -288,8 +288,8 @@ class SSP
             $db,
             $bindings,
             "SET NOCOUNT ON SELECT " .
-                implode(", ", self::pluck($columns, "db")) .
-                " FROM $table $where "
+            implode(", ", self::pluck($columns, "db")) .
+            " FROM $table $where "
         );
         $recordsFiltered = count($resFilterLength);
 
@@ -435,8 +435,8 @@ class SSP
         } catch (PDOException $e) {
             self::fatal(
                 "An error occurred while connecting to the database. " .
-                    "The error reported by the server was: " .
-                    $e->getMessage()
+                "The error reported by the server was: " .
+                $e->getMessage()
             );
         }
 
@@ -459,9 +459,9 @@ class SSP
         if ($sql === null) {
             $sql = $bindings;
         }
-		//echo $sql;
+        //echo $sql;
         $stmt = $db->prepare($sql);
-        
+
 
         // Bind parameters
         if (is_array($bindings)) {
