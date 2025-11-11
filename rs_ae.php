@@ -374,7 +374,9 @@ $arttipo = $_GET['arttipo'];
 											<tr>
 												<th class="text-center">ID</th>
 												<th class="text-center">ARTID</th>
-												<th><input type="checkbox" id="selectAll"></th>
+												<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+													<th><input type="checkbox" id="selectAll"></th>
+												<?php } ?>
 												<th class="text-center">C&Oacute;DIGO</th>
 												<th class="text-center">DESCRIPCI&Oacute;N</th>
 												<th class="text-center">REGISTRO SANITARIO</th>
@@ -1244,12 +1246,14 @@ $arttipo = $_GET['arttipo'];
 				columns: [
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
+					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
 					{
 						data: null,
 						render: function (data, type, row) {
 							return `<input type="checkbox" class="selectRow" value="${row.id}">`;
 						}
 					},
+					<?php } ?>
 					{ data: 'ArtCodigo_AE' },
 					{ data: 'ArtDescripcion_AE' },
 					{ data: 'RegNumero_AE' },
@@ -1284,8 +1288,8 @@ $arttipo = $_GET['arttipo'];
 				],
 				
 				columnDefs: [
-					{ orderable: false, targets: 2 }, // La columna 3 no será ordenable
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+					{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
 					{
 						targets: -1, // Última columna (botón de edición)
 						className: "text-center",
@@ -1327,11 +1331,13 @@ $arttipo = $_GET['arttipo'];
 				serverSide: true
 			});
 			
+			<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
 			// Evento para seleccionar/deseleccionar todos
 			$('#selectAll').on('click', function () {
-			const isChecked = $(this).is(':checked');
-			$('.selectRow').prop('checked', isChecked);
+				const isChecked = $(this).is(':checked');
+				$('.selectRow').prop('checked', isChecked);
 			});
+			<?php } ?>
 
 			//Evento para cambiar el estado del selector de estado
 			
