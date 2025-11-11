@@ -154,6 +154,15 @@ $arttipo = $_GET['arttipo'];
 			color: #6c757d;
 			font-style: italic;
 		}
+
+		/* Separación entre botones y tabla */
+		.top {
+			margin-bottom: 15px;
+		}
+
+		#registrosanitario {
+			margin-top: 10px;
+		}
 	</style>
 </head>
 
@@ -1264,7 +1273,7 @@ $arttipo = $_GET['arttipo'];
 		let tablaModal; // definición global
 		$(document).ready(function () {
 			var table = $('#registrosanitario').DataTable({
-				dom: '<"top"Bf>rt<"bottom"lip><"clear">',
+				dom: '<"top"B>rt<"bottom"lip><"clear">', // Quitado 'f' (búsqueda general)
 				orderCellsTop: true, // Usa solo la primera fila del thead para ordenar
 				lengthMenu: [
 					[20, 50, 100, 200],
@@ -1272,7 +1281,7 @@ $arttipo = $_GET['arttipo'];
 				],
 				buttons: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
-											{
+													{
 							text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto',
 							className: 'btn btn-success',
 							action: function (e, dt, node, config) {
@@ -1338,7 +1347,7 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-									{
+											{
 							data: null,
 							render: function (data, type, row) {
 								return `<input type="checkbox" class="selectRow" value="${row.id}">`;
@@ -1380,7 +1389,7 @@ $arttipo = $_GET['arttipo'];
 
 				columnDefs: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-									{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
+											{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
 						{
 							targets: -1, // Última columna (botón de edición)
 							className: "text-center",
@@ -1412,7 +1421,6 @@ $arttipo = $_GET['arttipo'];
 					info: 'Mostrando página _PAGE_ de _PAGES_',
 					infoEmpty: 'No existen registros',
 					infoFiltered: '(filtrado de _MAX_ registros totales)',
-					search: "Búsqueda por palabra clave:",
 					lengthMenu: "_MENU_",
 					info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
 					zeroRecords: 'No existen registros',
