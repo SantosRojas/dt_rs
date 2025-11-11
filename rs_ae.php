@@ -92,6 +92,40 @@ $arttipo = $_GET['arttipo'];
 			font-weight: bold;   /* Opcional: pone el texto en negrita */
 		}
 
+		/* Estilos para el modal de etiqueta */
+		#etiquetaCompleta {
+			font-family: 'Courier New', monospace;
+			font-size: 0.95em;
+			background-color: #f8f9fa;
+			border: 1px solid #ced4da;
+			resize: vertical;
+		}
+
+		#etiquetaCompleta:focus {
+			background-color: #fff;
+			border-color: #80bdff;
+			outline: 0;
+			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+		}
+
+		#modalEtiqueta .alert-info {
+			font-size: 0.9em;
+			margin-bottom: 0;
+		}
+
+		#modalEtiqueta kbd {
+			background-color: #343a40;
+			border-radius: 3px;
+			border: 1px solid #6c757d;
+			box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+			color: #fff;
+			display: inline-block;
+			font-size: 0.875em;
+			font-weight: 700;
+			line-height: 1;
+			padding: 2px 4px;
+			white-space: nowrap;
+		}
 	</style>
 </head>
 
@@ -892,6 +926,35 @@ $arttipo = $_GET['arttipo'];
 		</div>
 	</div>
 
+	<!-- MODAL PARA MOSTRAR Y COPIAR ETIQUETA -->
+	<div class="modal fade" id="modalEtiqueta" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalEtiquetaLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalEtiquetaLabel">Contenido de la Etiqueta</h5>
+					<button type="button" class="close" onclick="cerrarModalEtiqueta()" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label for="etiquetaCompleta">Contenido:</label>
+						<textarea class="form-control" id="etiquetaCompleta" rows="10" readonly></textarea>
+					</div>
+					<div class="alert alert-info">
+						<i class="fas fa-info-circle"></i> <strong>Instrucciones:</strong> Haz clic en el botón "Seleccionar Todo" y luego presiona <kbd>Ctrl + C</kbd> (o <kbd>Cmd + C</kbd> en Mac) para copiar el texto.
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" onclick="cerrarModalEtiqueta()">Cerrar</button>
+					<button type="button" class="btn btn-primary" onclick="seleccionarTextoEtiqueta()">
+						<i class="fas fa-check-square"></i> Seleccionar Todo
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- MODAL DE EDICION DE RS PARA VARIOS ARTICULOS -->
 
 	<button type="button" id="btn-edit-several" name="btn-edit-several" class="btn btn-primary" hidden>
@@ -1453,41 +1516,29 @@ $arttipo = $_GET['arttipo'];
 
 
 
-			// copy feature
+			// copy feature - abrir modal para copiar etiqueta
 			$('#registrosanitario tbody').on('click', 'td.copy-etiqueta', function () {
-					var etiqueta = $(this).text().trim();
-
-					// Copiar al portapapeles
-					navigator.clipboard.writeText(etiqueta).then(function() {
-						var Toast = Swal.mixin({
-								toast: true,
-								position: 'top-end',
-								showConfirmButton: false,
-								timer: 3000
-							});
-
-							Toast.fire({
-								icon: 'success',
-								title: 'Etiqueta copiada.'
-							})
-					}).catch(function(err) {
-						var Toast = Swal.mixin({
-								toast: true,
-								position: 'top-end',
-								showConfirmButton: false,
-								timer: 3000
-							});
-
-							Toast.fire({
-								icon: 'error',
-								title: 'Error al copiar la etiqueta.'
-							})
-					});
-				});
+				var etiqueta = $(this).text().trim();
+				
+				console.log('Click en etiqueta:', etiqueta); // Debug
+				
+				// Mostrar el contenido completo en el modal
+				$('#etiquetaCompleta').val(etiqueta);
+				
+				// Abrir el modal de forma simple primero
+				$('#modalEtiqueta').modal('show');
+			});
 
 
 			$('input[name=filtro1]').on('change', function () {
 				table.ajax.reload();
+			});
+
+			// Configurar el modal de etiqueta para que no se cierre al hacer clic fuera
+			$('#modalEtiqueta').modal({
+				backdrop: 'static',
+				keyboard: false,
+				show: false
 			});
 
 
@@ -1995,6 +2046,60 @@ $arttipo = $_GET['arttipo'];
 				return '';
 			} else {
 				return partes[2] + "-" + partes[1] + "-" + partes[0];
+			}
+		}
+
+		function cerrarModalEtiqueta() {
+			// Cerrar el modal usando jQuery (compatible con Bootstrap 4)
+			$('#modalEtiqueta').modal('hide');
+		}
+
+		function seleccionarTextoEtiqueta() {
+			// Obtener el elemento textarea
+			var textarea = document.getElementById('etiquetaCompleta');
+			
+			// Seleccionar todo el contenido del textarea
+			textarea.select();
+			textarea.setSelectionRange(0, 99999); // Para dispositivos móviles
+			
+			// Intentar copiar usando el método tradicional (funciona sin SSL)
+			try {
+				var exitoso = document.execCommand('copy');
+				if (exitoso) {
+					var Toast = Swal.mixin({
+						toast: true,
+						position: 'top-end',
+						showConfirmButton: false,
+						timer: 3000
+					});
+					Toast.fire({
+						icon: 'success',
+						title: 'Texto seleccionado. Presiona Ctrl+C para copiar.'
+					});
+				} else {
+					// Si execCommand no funciona, el texto ya está seleccionado
+					var Toast = Swal.mixin({
+						toast: true,
+						position: 'top-end',
+						showConfirmButton: false,
+						timer: 3000
+					});
+					Toast.fire({
+						icon: 'info',
+						title: 'Texto seleccionado. Presiona Ctrl+C para copiar.'
+					});
+				}
+			} catch (err) {
+				var Toast = Swal.mixin({
+					toast: true,
+					position: 'top-end',
+					showConfirmButton: false,
+					timer: 3000
+				});
+				Toast.fire({
+					icon: 'info',
+					title: 'Texto seleccionado. Usa Ctrl+C para copiar.'
+				});
 			}
 		}
 
