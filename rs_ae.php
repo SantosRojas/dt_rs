@@ -667,6 +667,7 @@ $arttipo = $_GET['arttipo'];
 										<option value="TRAMITE">EN TR&Aacute;MITE</option>
 										<option value="VENCIDO">VENCIDO</option>
 										<option value="DESCONTINUADO">DESCONTINUADO</option>
+										<option value="NO APLICA">NO APLICA</option>
 								</select>
 								</div>
 							</div>
@@ -885,6 +886,7 @@ $arttipo = $_GET['arttipo'];
 									<option value="TRAMITE">EN TR&Aacute;MITE</option>
 									<option value="VENCIDO">VENCIDO</option>
 									<option value="DESCONTINUADO">DESCONTINUADO</option>
+									<option value="NO APLICA">NO APLICA</option>
 								</select>
 							</div>
 						</div>
@@ -1040,6 +1042,7 @@ $arttipo = $_GET['arttipo'];
 									<option value="TRAMITE">EN TR&Aacute;MITE</option>
 									<option value="VENCIDO">VENCIDO</option>
 									<option value="DESCONTINUADO">DESCONTINUADO</option>
+									<option value="NO APLICA">NO APLICA</option>
 								</select>
 							</div>
 						</div>
