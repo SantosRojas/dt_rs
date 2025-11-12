@@ -18,8 +18,8 @@ try {
         'totales' => []
     ];
 
-    // Obtener estadísticas de RS HC (vw_rs)
-    $sql_hc = "SELECT RegEstadoVencimiento, COUNT(*) as total 
+    // Obtener estadísticas de RS HC (vw_rs) - Solo registros sanitarios únicos
+    $sql_hc = "SELECT RegEstadoVencimiento, COUNT(DISTINCT RegNumero) as total 
                FROM vw_rs 
                GROUP BY RegEstadoVencimiento
                ORDER BY RegEstadoVencimiento";
@@ -36,8 +36,8 @@ try {
     }
     $response['totales']['rs_hc'] = $total_hc;
 
-    // Obtener estadísticas de RS AE (vw_rs_ae)
-    $sql_ae = "SELECT RegEstado_AE, COUNT(*) as total 
+    // Obtener estadísticas de RS AE (vw_rs_ae) - Solo registros sanitarios únicos
+    $sql_ae = "SELECT RegEstado_AE, COUNT(DISTINCT RegNumero_AE) as total 
                FROM vw_rs_ae 
                GROUP BY RegEstado_AE
                ORDER BY RegEstado_AE";
