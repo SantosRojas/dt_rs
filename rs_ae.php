@@ -1289,7 +1289,7 @@ $arttipo = $_GET['arttipo'];
 				],
 				buttons: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
-															{
+																{
 							text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto',
 							className: 'btn btn-success',
 							action: function (e, dt, node, config) {
@@ -1355,7 +1355,7 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-													{
+														{
 							data: null,
 							render: function (data, type, row) {
 								return `<input type="checkbox" class="selectRow" value="${row.id}">`;
@@ -1363,7 +1363,7 @@ $arttipo = $_GET['arttipo'];
 						},
 					<?php } ?>
 					{ data: 'ArtCodigo_AE' },
-					{ data: 'ArtDescripcion_AE' },
+					{ data: 'ArtDescripcion_AE', className: 'copy-etiqueta' },
 					{ data: 'RegNumero_AE' },
 					{ data: 'RegResolucion_AE' },
 					{ data: 'RegFechaEmision_AE' },
@@ -1397,7 +1397,7 @@ $arttipo = $_GET['arttipo'];
 
 				columnDefs: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-													{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
+														{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
 						{
 							targets: -1, // Última columna (botón de edición)
 							className: "text-center",
