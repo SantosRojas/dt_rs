@@ -1289,7 +1289,7 @@ $arttipo = $_GET['arttipo'];
 				],
 				buttons: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
-														{
+															{
 							text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto',
 							className: 'btn btn-success',
 							action: function (e, dt, node, config) {
@@ -1355,7 +1355,7 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-												{
+													{
 							data: null,
 							render: function (data, type, row) {
 								return `<input type="checkbox" class="selectRow" value="${row.id}">`;
@@ -1397,7 +1397,7 @@ $arttipo = $_GET['arttipo'];
 
 				columnDefs: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-												{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
+													{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
 						{
 							targets: -1, // Última columna (botón de edición)
 							className: "text-center",
@@ -1643,6 +1643,9 @@ $arttipo = $_GET['arttipo'];
 				// si todo esta bien: llenar tabla y abrir modal
 				tablaModal.clear().rows.add(datos).draw();
 
+				// Guardar el RS original (todos tienen el mismo RS)
+				rsOriginalMasivo = datos[0][3]; // RegNumero_AE está en la posición 3
+
 				// limpiar formulario
 				$("#new-rs").val("")
 				$("#new-resolution").val("")
@@ -1754,14 +1757,13 @@ $arttipo = $_GET['arttipo'];
 
 				// Datos básicos del registro sanitario
 				$('#rs').val(data.RegNumero_AE || '');
+				rsOriginal = data.RegNumero_AE || ''; // Guardar RS original
 				$('#resolucion').val(data.RegResolucion_AE || '');
 				$('#emision').val(convertirFecha(data.RegFechaEmision_AE));
 				$('#aprobacion').val(convertirFecha(data.RegFechaAprobacion_AE));
 				$('#vencimiento').val(convertirFecha(data.RegFechaVencimiento_AE));
 				$('#estadors').val(data.RegEstado_AE || '');
-				$('#observaciones').val(data.RegObservacion_AE || '');
-
-				$('#creacion').val(data.RegFechaCreacion_AE);
+				$('#observaciones').val(data.RegObservacion_AE || ''); $('#creacion').val(data.RegFechaCreacion_AE);
 				$('#ucreacion').val(data.RegUsuarioCreacion_AE);
 				$('#modificacion').val(data.RegFechaModificacion_AE);
 				$('#umodificacion').val(data.RegUsuarioModificacion_AE);
@@ -1946,6 +1948,7 @@ $arttipo = $_GET['arttipo'];
 		});
 
 		var archivos = [];
+		var rsOriginal = ''; // Variable para almacenar el RS original
 
 
 		function eliminarArchivo(fileName, listFilesId) {
@@ -2026,6 +2029,7 @@ $arttipo = $_GET['arttipo'];
 		}
 
 		var archivosedit = [];
+		var rsOriginalMasivo = ''; // Variable para almacenar el RS original en edición masiva
 
 		function eliminarArchivoEdit(nombre, ruta, listFilesEdit = '#listaArchivosEdit') {
 			console.log("Eliminando archivo:", nombre, "con ruta:", ruta);
@@ -2340,14 +2344,11 @@ $arttipo = $_GET['arttipo'];
 				}
 			});
 
-			// Verificar que los campos obligatorios no estén vacíos
-			if (
-				newResolution.trim() === "" ||
-				newRs.trim() === ""  /* ||
-					emision.trim() === "" ||
-					aprobacion.trim() === "" ||
-					vencimiento.trim() === "" */
-			) {
+			// Verificar si el RS ha sido modificado
+			var rsModificado = (newRs.trim() !== '' && newRs.trim() !== rsOriginalMasivo.trim());
+
+			// Si el RS fue modificado, validar campos obligatorios
+			if (rsModificado && (newResolution.trim() === "" || newRs.trim() === "" || newEmition.trim() === "" || newExpiredDate.trim() === "")) {
 				// Mostrar un mensaje de advertencia si falta información
 				var Toast = Swal.mixin({
 					toast: true,
@@ -2357,7 +2358,7 @@ $arttipo = $_GET['arttipo'];
 				});
 				Toast.fire({
 					icon: 'warning',
-					title: 'Es necesario completar toda la información.'
+					title: 'Al modificar el Registro Sanitario debe completar: Resolución, Emisión y Vencimiento.'
 				})
 			} else {
 				for (let pair of formData.entries()) {
@@ -2500,14 +2501,11 @@ $arttipo = $_GET['arttipo'];
 				}
 			});
 
-			// Verificar que los campos obligatorios no estén vacíos
-			if (
-				resolucion.trim() === "" ||
-				rs.trim() === ""  /* ||
-					emision.trim() === "" ||
-					aprobacion.trim() === "" ||
-					vencimiento.trim() === "" */
-			) {
+			// Verificar si el RS ha sido modificado
+			var rsModificado = (rs.trim() !== rsOriginal.trim());
+
+			// Si el RS fue modificado, validar campos obligatorios
+			if (rsModificado && (resolucion.trim() === "" || rs.trim() === "" || emision.trim() === "" || vencimiento.trim() === "")) {
 				// Mostrar un mensaje de advertencia si falta información
 				var Toast = Swal.mixin({
 					toast: true,
@@ -2517,7 +2515,7 @@ $arttipo = $_GET['arttipo'];
 				});
 				Toast.fire({
 					icon: 'warning',
-					title: 'Es necesario completar toda la información.'
+					title: 'Al modificar el Registro Sanitario debe completar: Resolución, Emisión y Vencimiento.'
 				})
 			} else {
 
