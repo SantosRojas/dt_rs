@@ -16,14 +16,15 @@ try {
         $idsSelected = explode(',', $idsSelected);
     }
 
-    $rs            = $_POST["newRs"] ?? null;
-    $resolucion    = $_POST["newResolution"] ?? null;
-    $emision       = $_POST["newEmition"] ?? null;
-    $aprobacion    = $_POST["newAproval"] ?? null;
-    $vencimiento   = $_POST["newExpiredDate"] ?? null;
-    $estadors      = $_POST["newState"] ?? null;
+    $rs = $_POST["newRs"] ?? null;
+    $resolucion = $_POST["newResolution"] ?? null;
+    $emision = $_POST["newEmition"] ?? null;
+    $aprobacion = $_POST["newAproval"] ?? null;
+    $vencimiento = $_POST["newExpiredDate"] ?? null;
+    $estadors = $_POST["newState"] ?? null;
     $observaciones = $_POST["newObservation"] ?? null;
-    $usuariomod    = $_POST["usuariomod"] ?? null;
+    $etiqueta = $_POST["newEtiqueta"] ?? null;
+    $usuariomod = $_POST["usuariomod"] ?? null;
 
     $conn->beginTransaction();
 
@@ -36,6 +37,7 @@ try {
         RegFechaVencimiento_AE = :vencimiento, 
         RegEstado_AE = :estadors, 
         RegObservacion_AE = :observaciones, 
+        Etiqueta_AE = :etiqueta, 
         RegUsuarioModificacion_AE = :usuariomod, 
         RegFechaModificacion_AE = getdate() 
         WHERE RegID_AE = :modalID';
@@ -54,7 +56,7 @@ try {
         $archivos = $_FILES['archivos'];
         for ($i = 0; $i < count($archivos['name']); $i++) {
             $nombreArchivo = $archivos['name'][$i];
-            $tmpArchivo    = $archivos['tmp_name'][$i];
+            $tmpArchivo = $archivos['tmp_name'][$i];
 
             if (!empty($tmpArchivo)) {
                 $nombreArchivoUnico = uniqid() . '-' . $nombreArchivo;
@@ -63,7 +65,7 @@ try {
                 if (move_uploaded_file($tmpArchivo, $ruta)) {
                     $archivosSubidos[] = [
                         'Descripcion' => $nombreArchivo,
-                        'Ruta'        => $ruta
+                        'Ruta' => $ruta
                     ];
                 }
             }
@@ -74,24 +76,25 @@ try {
     foreach ($idsSelected as $modalID) {
         // Ejecutar update
         $stmt->execute([
-            ':rs'            => $rs,
-            ':resolucion'    => $resolucion,
-            ':emision'       => $emision,
-            ':aprobacion'    => $aprobacion,
-            ':vencimiento'   => $vencimiento,
-            ':estadors'      => $estadors,
+            ':rs' => $rs,
+            ':resolucion' => $resolucion,
+            ':emision' => $emision,
+            ':aprobacion' => $aprobacion,
+            ':vencimiento' => $vencimiento,
+            ':estadors' => $estadors,
             ':observaciones' => $observaciones,
-            ':usuariomod'    => $usuariomod,
-            ':modalID'       => $modalID
+            ':etiqueta' => $etiqueta,
+            ':usuariomod' => $usuariomod,
+            ':modalID' => $modalID
         ]);
 
         // Insertar referencias de los archivos subidos
         foreach ($archivosSubidos as $archivo) {
             $stmt2->execute([
-                ':RegID'       => $modalID,
+                ':RegID' => $modalID,
                 ':Descripcion' => $archivo['Descripcion'],
-                ':Ruta'        => $archivo['Ruta'],
-                ':UsuarioCarga'=> $usuariomod
+                ':Ruta' => $archivo['Ruta'],
+                ':UsuarioCarga' => $usuariomod
             ]);
         }
     }

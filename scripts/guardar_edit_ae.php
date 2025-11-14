@@ -3,34 +3,34 @@
 
 $serverName = "pe01-wsqlprd01.bbmag.bbraun.com";
 $connectionOptions = array(
-        "Database" => "DP_BBRAUN_SAP",
-        "Uid" => "sa_bbmpe",
-        "PWD" => "ItPeru22$#"
+	"Database" => "DP_BBRAUN_SAP",
+	"Uid" => "sa_bbmpe",
+	"PWD" => "ItPeru22$#"
 );
 
 //Establecer la conexión
 $conn = new PDO("sqlsrv:server=$serverName; Database = $connectionOptions[Database]", $connectionOptions['Uid'], $connectionOptions['PWD']);
-$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // Recoge los datos del formulario
 $modalID = $_POST["modalID"];
 $ArtID = $_POST["ArtID"];
 $codigo = $_POST["codigo"];
 $descripcion = $_POST["descripcion"];
-$fabricante = $_POST["fabricante"];    
-$lugarfab = $_POST["lugarfab"];    
-$origen = $_POST["origen"];    
-$nivelriesgo = $_POST["nivelriesgo"];    
-$gmdn = $_POST["gmdn"];    
-$etiqueta = $_POST["etiqueta"];    
-$esterilidad = $_POST["esterilidad"];    
-$nifu = $_POST["nifu"];     
-$ean13un = $_POST["ean13un"];    
-$ean14cj = $_POST["ean14cj"];    
+$fabricante = $_POST["fabricante"];
+$lugarfab = $_POST["lugarfab"];
+$origen = $_POST["origen"];
+$nivelriesgo = $_POST["nivelriesgo"];
+$gmdn = $_POST["gmdn"];
+$etiqueta = $_POST["etiqueta"];
+$esterilidad = $_POST["esterilidad"];
+$nifu = $_POST["nifu"];
+$ean13un = $_POST["ean13un"];
+$ean14cj = $_POST["ean14cj"];
 $gtincj = $_POST["gtincj"];
 $cambae = $_POST["cambae"];
-$exoneracioncm = $_POST["exoneracioncm"];    
-$pdimen = $_POST["pdimen"];     
+$exoneracioncm = $_POST["exoneracioncm"];
+$pdimen = $_POST["pdimen"];
 
 $rs = $_POST["rs"];
 $resolucion = $_POST["resolucion"];
@@ -38,14 +38,14 @@ $emision = $_POST["emision"];
 $aprobacion = $_POST["aprobacion"];
 $vencimiento = $_POST["vencimiento"];
 $observaciones = $_POST["observaciones"];
-$estadors = $_POST["estadors"];    
-$usuariomod = $_POST["usuariomod"];    
+$estadors = $_POST["estadors"];
+$usuariomod = $_POST["usuariomod"];
 
 
 $sql_update01 = 'UPDATE Sdt_RegistroSanitario_AE SET RegNumero_AE = :rs, RegResolucion_AE = :resolucion, RegFechaEmision_AE = :emision, '
-		. 'RegFechaAprobacion_AE = :aprobacion, RegFechaVencimiento_AE = :vencimiento, RegEstado_AE = :estadors, '
-		. 'RegObservacion_AE = :observaciones, RegUsuarioModificacion_AE = :usuariomod, RegFechaModificacion_AE = getdate() where RegID_AE = :modalID';
-				
+	. 'RegFechaAprobacion_AE = :aprobacion, RegFechaVencimiento_AE = :vencimiento, RegEstado_AE = :estadors, '
+	. 'RegObservacion_AE = :observaciones, Etiqueta_AE = :etiqueta, RegUsuarioModificacion_AE = :usuariomod, RegFechaModificacion_AE = getdate() where RegID_AE = :modalID';
+
 // Preparar la sentencia
 $stmt = $conn->prepare($sql_update01);
 
@@ -57,6 +57,7 @@ $stmt->bindParam(':aprobacion', $aprobacion);
 $stmt->bindParam(':vencimiento', $vencimiento);
 $stmt->bindParam(':estadors', $estadors);
 $stmt->bindParam(':observaciones', $observaciones);
+$stmt->bindParam(':etiqueta', $etiqueta);
 $stmt->bindParam(':usuariomod', $usuariomod);
 $stmt->bindParam(':modalID', $modalID);
 
@@ -67,8 +68,8 @@ if ($stmt === false) {
 
 // Ejecutar la sentencia
 if ($stmt->execute()) {
-    // Éxito al guardar los cambios en registrosanitario
-	
+	// Éxito al guardar los cambios en registrosanitario
+
 
 	$sql_update02 = 'UPDATE [dbo].[Sdt_Articulos_ae]
 	   SET [ArtDescripcion_AE] = :descripcion
@@ -77,7 +78,6 @@ if ($stmt->execute()) {
 		  ,[ArtPaisOrigen_AE] = :origen
 		  ,[NivelRiesgoPeru_AE] = :nivelriesgo
 		  ,[Codigo_GMDN_UMDNS] = :gmdn
-		  ,[Etiqueta_AE] = :etiqueta
 		  ,[EsEsteril_AE] = :esterilidad
 		  ,[NumeroIFU_AE] = :nifu
 		  ,[CodigoEAN_13] = :ean13un
@@ -88,8 +88,8 @@ if ($stmt->execute()) {
 		  ,[ProblemaDimensiones_AE] = :pdimen
 		  ,[FechaModificacion_AE] = getdate()
 		  ,[UsuarioModificacion_AE] = :usuariomod
-	WHERE [ArtId_AE] = :ArtID';	
-	 
+	WHERE [ArtId_AE] = :ArtID';
+
 	//echo($sql_update02);
 
 	// Preparar la sentencia
@@ -110,10 +110,9 @@ if ($stmt->execute()) {
 	$stmt1->bindParam(':nifu', $nifu);
 	$stmt1->bindParam(':cambae', $cambae);
 	$stmt1->bindParam(':pdimen', $pdimen);
-	$stmt1->bindParam(':etiqueta', $etiqueta);
 	$stmt1->bindParam(':usuariomod', $usuariomod);
 	$stmt1->bindParam(':ArtID', $ArtID);
-		
+
 
 	// Verificar si la preparación de la sentencia fue exitosa
 	if ($stmt1 === false) {

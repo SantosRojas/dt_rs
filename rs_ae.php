@@ -685,26 +685,14 @@ $arttipo = $_GET['arttipo'];
 												</div>
 
 												<div class="row">
-													<div class="col-md-6">
+													<div class="col-md-12">
 														<div class="form-group">
 															<label for="cambae">Cambios AE</label>
 															<!-- C&oacute;digo GTIN (caja) -->
 															<input type="text" class="form-control" id="cambae" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>>
 														</div>
 													</div>
-
-													<div class="col-md-6">
-														<!-- textarea -->
-														<div class="form-group">
-															<label for="etiqueta">Etiqueta</label>
-															<textarea class="form-control" rows="5"
-																placeholder="Importado por B. Braun Me..." id="etiqueta"
-																<?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly
-																<?php } ?>></textarea>
-														</div>
-													</div>
 												</div>
-
 											</div>
 										</div>
 									</div>
@@ -769,6 +757,16 @@ $arttipo = $_GET['arttipo'];
 									<label>Observaciones</label>
 									<textarea class="form-control" rows="3" placeholder="Observaciones"
 										id="observaciones" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<!-- textarea -->
+								<div class="form-group">
+									<label for="etiqueta">Etiqueta</label>
+									<textarea class="form-control" rows="5" placeholder="Importado por B. Braun Me..."
+										id="etiqueta" <?php if ($_SESSION['nivel'] === 'VISOR') { ?> readonly <?php } ?>></textarea>
 								</div>
 							</div>
 						</div>
@@ -1154,6 +1152,16 @@ $arttipo = $_GET['arttipo'];
 					</div>
 					<div class="row">
 						<div class="col-md-12">
+							<!-- textarea -->
+							<div class="form-group">
+								<label for="new-etiqueta">Etiqueta</label>
+								<textarea class="form-control" rows="5" placeholder="Importado por B. Braun Me..."
+									id="new-etiqueta"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
 							<div class="form-group">
 								<label for="input-file">Documentos Adjuntos</label>
 								<div class="input-group">
@@ -1281,7 +1289,7 @@ $arttipo = $_GET['arttipo'];
 				],
 				buttons: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
-													{
+														{
 							text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto',
 							className: 'btn btn-success',
 							action: function (e, dt, node, config) {
@@ -1347,7 +1355,7 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-											{
+												{
 							data: null,
 							render: function (data, type, row) {
 								return `<input type="checkbox" class="selectRow" value="${row.id}">`;
@@ -1389,7 +1397,7 @@ $arttipo = $_GET['arttipo'];
 
 				columnDefs: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-											{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
+												{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
 						{
 							targets: -1, // Última columna (botón de edición)
 							className: "text-center",
@@ -1643,6 +1651,7 @@ $arttipo = $_GET['arttipo'];
 				$("#new-expired-date").val("")
 				$("#new-state").val("VIGENTE")
 				$("#new-observation").val("")
+				$("#new-etiqueta").val("")
 
 				// ￰abrir el modal manualmente
 				$('#modal-edit-several').modal('show');
@@ -2303,6 +2312,7 @@ $arttipo = $_GET['arttipo'];
 			var newExpiredDate = $('#new-expired-date').val();
 			var newState = $('#new-state').val();
 			var newObservation = $('#new-observation').val();
+			var newEtiqueta = $('#new-etiqueta').val();
 			var usuariomod = '<?php echo $_SESSION['usuario']; ?>';
 
 
@@ -2318,6 +2328,7 @@ $arttipo = $_GET['arttipo'];
 			formData.append('newExpiredDate', newExpiredDate);
 			formData.append('newState', newState);
 			formData.append('newObservation', newObservation);
+			formData.append('newEtiqueta', newEtiqueta);
 			formData.append('usuariomod', usuariomod);
 
 			// Añadir cada archivo de la lista archivosedit al objeto FormData
