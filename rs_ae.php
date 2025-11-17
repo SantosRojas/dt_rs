@@ -1052,6 +1052,98 @@ $arttipo = $_GET['arttipo'];
 		</div>
 	</div>
 
+	<!-- MODAL DE CARGA MASIVA -->
+	<button type="button" id="btnCargaMasivaModal" class="btn btn-primary" data-toggle="modal"
+		data-target="#modalCargaMasiva" hidden>Carga Masiva Modal</button>
+	<div class="modal fade" id="modalCargaMasiva" data-backdrop="static" data-keyboard="false" tabindex="-1"
+		aria-labelledby="modalCargaMasivaLabel" aria-hidden="true">
+		<div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h4 class="modal-title" id="modalCargaMasivaLabel">
+						<i class="fas fa-file-excel"></i> Carga Masiva de Productos y Registros Sanitarios
+					</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="alert alert-info">
+						<h5><i class="icon fas fa-info"></i> Instrucciones:</h5>
+						<p>El archivo Excel debe tener las siguientes columnas en este orden:</p>
+						<div class="row">
+							<div class="col-md-6">
+								<ol>
+									<li><strong>ArtCodigo_AE</strong> - Código del artículo</li>
+									<li><strong>ArtDescripcion_AE</strong> - Descripción del artículo</li>
+									<li><strong>ArtFabricante_AE</strong> - Fabricante</li>
+									<li><strong>ArtLugarFabricacion_AE</strong> - Lugar de fabricación</li>
+									<li><strong>ArtPaisOrigen_AE</strong> - País de origen</li>
+									<li><strong>NivelRiesgoPeru_AE</strong> - Nivel de riesgo</li>
+									<li><strong>Codigo_GMDN_UMDNS</strong> - Código GMDN</li>
+									<li><strong>EsEsteril_AE</strong> - Es estéril (E/NE/NO APLICA)</li>
+									<li><strong>NumeroIFU_AE</strong> - Número IFU</li>
+									<li><strong>CodigoEAN_13</strong> - Código EAN 13</li>
+									<li><strong>CodigoEAN_14</strong> - Código EAN 14</li>
+									<li><strong>CodigoGTIN</strong> - Código GTIN</li>
+								</ol>
+							</div>
+							<div class="col-md-6">
+								<ol start="13">
+									<li><strong>Cambios_AE</strong> - Cambios AE</li>
+									<li><strong>ExoneracionCM</strong> - Exoneración CM</li>
+									<li><strong>ProblemaDimensiones_AE</strong> - Problema dimensiones</li>
+									<li><strong>RegNumero_AE</strong> - Número de Registro Sanitario</li>
+									<li><strong>RegResolucion_AE</strong> - Resolución</li>
+									<li><strong>RegFechaEmision_AE</strong> - Fecha emisión (DD/MM/YYYY)</li>
+									<li><strong>RegFechaAprobacion_AE</strong> - Fecha aprobación (DD/MM/YYYY)</li>
+									<li><strong>RegFechaVencimiento_AE</strong> - Fecha vencimiento (DD/MM/YYYY)</li>
+									<li><strong>RegEstado_AE</strong> - Estado</li>
+									<li><strong>Etiqueta_AE</strong> - Etiqueta</li>
+									<li><strong>RegObservacion_AE</strong> - Observaciones</li>
+								</ol>
+							</div>
+						</div>
+						<p class="mb-0"><i class="fas fa-download"></i> <a
+								href="scripts/descargar_plantilla_carga_masiva.php" target="_blank">Descargar plantilla
+								Excel</a></p>
+					</div>
+
+					<form id="formCargaMasiva" enctype="multipart/form-data">
+						<div class="form-group">
+							<label for="archivoExcel">Seleccionar archivo Excel:</label>
+							<div class="input-group">
+								<div class="custom-file">
+									<input type="file" class="custom-file-input" id="archivoExcel" name="archivoExcel"
+										accept=".xlsx,.xls">
+									<label class="custom-file-label" for="archivoExcel">Elegir archivo...</label>
+								</div>
+							</div>
+						</div>
+					</form>
+
+					<div id="resultadoCargaMasiva" class="mt-3" style="display: none;">
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">Resultado de la Carga</h3>
+							</div>
+							<div class="card-body">
+								<div id="resumenCargaMasiva"></div>
+								<div id="detalleErroresMasiva"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+					<button type="button" class="btn btn-primary" onclick="procesarArchivoMasivo()">
+						<i class="fas fa-upload"></i> Procesar Carga Masiva
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- MODAL DE EDICION DE RS PARA VARIOS ARTICULOS -->
 
 	<button type="button" id="btn-edit-several" name="btn-edit-several" class="btn btn-primary" hidden>
@@ -1280,7 +1372,17 @@ $arttipo = $_GET['arttipo'];
 	<script>
 		let tablaModal; // definición global
 		$(document).ready(function () {
-			var table = $('#registrosanitario').DataTable({
+			// Inicializar bs-custom-file-input
+			bsCustomFileInput.init();
+
+			// Limpiar modal de carga masiva al cerrarse
+			$('#modalCargaMasiva').on('hidden.bs.modal', function () {
+				$('#archivoExcel').val('');
+				$('.custom-file-label').html('Elegir archivo...');
+				$('#resultadoCargaMasiva').hide();
+				$('#resumenCargaMasiva').html('');
+				$('#detalleErroresMasiva').html('');
+			}); var table = $('#registrosanitario').DataTable({
 				dom: '<"top"B>rt<"bottom"lip><"clear">', // Quitado 'f' (búsqueda general)
 				orderCellsTop: true, // Usa solo la primera fila del thead para ordenar
 				lengthMenu: [
@@ -1289,19 +1391,11 @@ $arttipo = $_GET['arttipo'];
 				],
 				buttons: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
-																{
-							text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto',
-							className: 'btn btn-success',
+																					{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
+							text: '<i class="fas fa-file-excel"></i>&nbsp;Carga Masiva									',
+							className: 'btn btn-info',
 							action: function (e, dt, node, config) {
-								document.getElementById("btncreamodal").click();
-							}
-						},
-						'spacer',
-						{
-							text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario',
-							className: 'btn btn-dark',
-							action: function (e, dt, node, config) {
-								document.getElementById("btnnewmodal").click();
+								document.getElementById("btnCargaMasivaModal").click();
 							}
 						},
 						'spacer',
@@ -1355,7 +1449,7 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-														{
+																			{
 							data: null,
 							render: function (data, type, row) {
 								return `<input type="checkbox" class="selectRow" value="${row.id}">`;
@@ -1397,7 +1491,7 @@ $arttipo = $_GET['arttipo'];
 
 				columnDefs: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-														{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
+																			{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
 						{
 							targets: -1, // Última columna (botón de edición)
 							className: "text-center",
@@ -2251,7 +2345,141 @@ $arttipo = $_GET['arttipo'];
 			}
 		}
 
-		function generarAvatar(nombre, apellido) {
+		function procesarArchivoMasivo() {
+			var archivoInput = document.getElementById('archivoExcel');
+			var archivo = archivoInput.files[0];
+
+			if (!archivo) {
+				Swal.fire({
+					icon: 'warning',
+					title: 'Archivo requerido',
+					text: 'Por favor seleccione un archivo Excel.'
+				});
+				return;
+			}
+
+			// Mostrar loading
+			Swal.fire({
+				title: 'Procesando...',
+				html: 'Por favor espere mientras se procesa el archivo.',
+				allowOutsideClick: false,
+				didOpen: () => {
+					Swal.showLoading();
+				}
+			});
+
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				try {
+					var data = new Uint8Array(e.target.result);
+					var workbook = XLSX.read(data, { type: 'array' });
+					var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+					var jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+					// Validar que tenga datos
+					if (jsonData.length < 2) {
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: 'El archivo no contiene datos para procesar.'
+						});
+						return;
+					}
+
+					// Preparar datos para enviar
+					var formData = new FormData();
+					formData.append('datosExcel', JSON.stringify(jsonData));
+					formData.append('usuario', '<?php echo $_SESSION['usuario']; ?>');
+
+					// Enviar al servidor
+					$.ajax({
+						url: 'scripts/procesar_carga_masiva_ae.php',
+						type: 'POST',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function (response) {
+							Swal.close();
+							mostrarResultadoMasivo(response);
+						},
+						error: function (xhr, status, error) {
+							Swal.fire({
+								icon: 'error',
+								title: 'Error en el servidor',
+								text: 'Ocurrió un error al procesar el archivo: ' + error
+							});
+						}
+					});
+
+				} catch (error) {
+					Swal.fire({
+						icon: 'error',
+						title: 'Error al leer el archivo',
+						text: 'No se pudo leer el archivo Excel: ' + error.message
+					});
+				}
+			};
+
+			reader.readAsArrayBuffer(archivo);
+		}
+
+		function mostrarResultadoMasivo(response) {
+			try {
+				// Si la respuesta ya es un objeto, usarla directamente
+				var resultado;
+				if (typeof response === 'object') {
+					resultado = response;
+				} else {
+					// Si es string, limpiar y parsear
+					var cleanResponse = response.trim();
+					var jsonStart = cleanResponse.indexOf('{');
+					if (jsonStart > 0) {
+						cleanResponse = cleanResponse.substring(jsonStart);
+					}
+					resultado = JSON.parse(cleanResponse);
+				}
+
+				$('#resultadoCargaMasiva').show(); var html = '<div class="row">';
+				html += '<div class="col-md-4"><div class="info-box bg-success"><span class="info-box-icon"><i class="fas fa-check"></i></span><div class="info-box-content"><span class="info-box-text">Insertados</span><span class="info-box-number">' + resultado.exitosos + '</span></div></div></div>';
+				html += '<div class="col-md-4"><div class="info-box bg-danger"><span class="info-box-icon"><i class="fas fa-times"></i></span><div class="info-box-content"><span class="info-box-text">Errores</span><span class="info-box-number">' + resultado.errores + '</span></div></div></div>';
+				html += '<div class="col-md-4"><div class="info-box bg-info"><span class="info-box-icon"><i class="fas fa-info"></i></span><div class="info-box-content"><span class="info-box-text">Total Procesados</span><span class="info-box-number">' + resultado.total + '</span></div></div></div>';
+				html += '</div>';
+
+				$('#resumenCargaMasiva').html(html);
+
+				// Mostrar detalles de errores si existen
+				if (resultado.detalleErrores && resultado.detalleErrores.length > 0) {
+					var htmlErrores = '<div class="alert alert-danger"><h5><i class="icon fas fa-ban"></i> Detalles de Errores:</h5><ul>';
+					resultado.detalleErrores.forEach(function (error) {
+						htmlErrores += '<li>' + error + '</li>';
+					});
+					htmlErrores += '</ul></div>';
+					$('#detalleErroresMasiva').html(htmlErrores);
+				} else {
+					$('#detalleErroresMasiva').html('');
+				}				// Recargar la tabla de registros sanitarios
+				if (resultado.exitosos > 0) {
+					$('#registrosanitario').DataTable().ajax.reload();
+
+					Swal.fire({
+						icon: 'success',
+						title: 'Carga completada',
+						text: resultado.exitosos + ' registro(s) insertado(s) correctamente.',
+						timer: 3000,
+						showConfirmButton: false
+					});
+				}
+
+			} catch (error) {
+				console.error('Respuesta del servidor:', response);
+				console.error('Error al parsear:', error);
+				Swal.fire({
+					icon: 'error',
+					title: 'Error al procesar respuesta',
+					text: 'La respuesta del servidor no es válida. Revisa la consola para más detalles.'
+				});
+			}
+		} function generarAvatar(nombre, apellido) {
 			let canvas = document.createElement('canvas');
 			canvas.style.display = 'none';
 			canvas.width = 160;
