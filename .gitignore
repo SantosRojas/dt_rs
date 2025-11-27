@@ -2,3 +2,6 @@ plugins/
 reports/
 dist/
 *.pdf
+*.zip
+*.tar.gz
+.gitignore

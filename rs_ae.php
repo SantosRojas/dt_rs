@@ -746,6 +746,7 @@ $arttipo = $_GET['arttipo'];
 										<option value="VENCIDO">VENCIDO</option>
 										<option value="DESCONTINUADO">DESCONTINUADO</option>
 										<option value="NO APLICA">NO APLICA</option>
+										<option value="NO SE USA PARA IMPORTAR">NO SE USA PARA IMPORTAR</option>
 									</select>
 								</div>
 							</div>
@@ -976,6 +977,7 @@ $arttipo = $_GET['arttipo'];
 									<option value="VENCIDO">VENCIDO</option>
 									<option value="DESCONTINUADO">DESCONTINUADO</option>
 									<option value="NO APLICA">NO APLICA</option>
+									<option value="NO SE USA PARA IMPORTAR">NO SE USA PARA IMPORTAR</option>
 								</select>
 							</div>
 						</div>
@@ -1228,6 +1230,7 @@ $arttipo = $_GET['arttipo'];
 									<option value="VENCIDO">VENCIDO</option>
 									<option value="DESCONTINUADO">DESCONTINUADO</option>
 									<option value="NO APLICA">NO APLICA</option>
+									<option value="NO SE USA PARA IMPORTAR">NO SE USA PARA IMPORTAR</option>
 								</select>
 							</div>
 						</div>
@@ -1391,7 +1394,7 @@ $arttipo = $_GET['arttipo'];
 				],
 				buttons: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
-																					{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
+																						{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
 							text: '<i class="fas fa-file-excel"></i>&nbsp;Carga Masiva									',
 							className: 'btn btn-info',
 							action: function (e, dt, node, config) {
@@ -1449,7 +1452,7 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																			{
+																				{
 							data: null,
 							render: function (data, type, row) {
 								return `<input type="checkbox" class="selectRow" value="${row.id}">`;
@@ -1491,7 +1494,7 @@ $arttipo = $_GET['arttipo'];
 
 				columnDefs: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																			{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
+																				{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
 						{
 							targets: -1, // Última columna (botón de edición)
 							className: "text-center",

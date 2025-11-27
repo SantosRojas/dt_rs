@@ -28,22 +28,6 @@ try {
 
     $conn->beginTransaction();
 
-    // --- UPDATE de los registros seleccionados ---
-    $sql_update01 = 'UPDATE Sdt_RegistroSanitario_AE SET 
-        RegNumero_AE = :rs, 
-        RegResolucion_AE = :resolucion, 
-        RegFechaEmision_AE = :emision, 
-        RegFechaAprobacion_AE = :aprobacion, 
-        RegFechaVencimiento_AE = :vencimiento, 
-        RegEstado_AE = :estadors, 
-        RegObservacion_AE = :observaciones, 
-        Etiqueta_AE = :etiqueta, 
-        RegUsuarioModificacion_AE = :usuariomod, 
-        RegFechaModificacion_AE = getdate() 
-        WHERE RegID_AE = :modalID';
-
-    $stmt = $conn->prepare($sql_update01);
-
     // --- INSERT de archivos ---
     $sql_insert02 = "INSERT INTO Std_RSDoc_AE 
         (RegID, Descripcion, Ruta, FechaCarga, UsuarioCarga, Estado) 
@@ -74,19 +58,54 @@ try {
 
     // Recorremos todos los IDs
     foreach ($idsSelected as $modalID) {
-        // Ejecutar update
-        $stmt->execute([
-            ':rs' => $rs,
-            ':resolucion' => $resolucion,
-            ':emision' => $emision,
-            ':aprobacion' => $aprobacion,
-            ':vencimiento' => $vencimiento,
-            ':estadors' => $estadors,
-            ':observaciones' => $observaciones,
-            ':etiqueta' => $etiqueta,
-            ':usuariomod' => $usuariomod,
-            ':modalID' => $modalID
-        ]);
+        // Construir UPDATE dinámico solo con campos que tienen valores (PATCH)
+        $setClauses = [];
+        $params = [':modalID' => $modalID];
+
+        if (!empty($rs)) {
+            $setClauses[] = 'RegNumero_AE = :rs';
+            $params[':rs'] = $rs;
+        }
+        if (!empty($resolucion)) {
+            $setClauses[] = 'RegResolucion_AE = :resolucion';
+            $params[':resolucion'] = $resolucion;
+        }
+        if (!empty($emision)) {
+            $setClauses[] = 'RegFechaEmision_AE = :emision';
+            $params[':emision'] = $emision;
+        }
+        if (!empty($aprobacion)) {
+            $setClauses[] = 'RegFechaAprobacion_AE = :aprobacion';
+            $params[':aprobacion'] = $aprobacion;
+        }
+        if (!empty($vencimiento)) {
+            $setClauses[] = 'RegFechaVencimiento_AE = :vencimiento';
+            $params[':vencimiento'] = $vencimiento;
+        }
+        if (!empty($estadors)) {
+            $setClauses[] = 'RegEstado_AE = :estadors';
+            $params[':estadors'] = $estadors;
+        }
+        if (!empty($observaciones)) {
+            $setClauses[] = 'RegObservacion_AE = :observaciones';
+            $params[':observaciones'] = $observaciones;
+        }
+        if (!empty($etiqueta)) {
+            $setClauses[] = 'Etiqueta_AE = :etiqueta';
+            $params[':etiqueta'] = $etiqueta;
+        }
+
+        // Solo ejecutar UPDATE si hay campos para actualizar
+        if (!empty($setClauses)) {
+            // Siempre agregar usuario y fecha de modificación
+            $setClauses[] = 'RegUsuarioModificacion_AE = :usuariomod';
+            $setClauses[] = 'RegFechaModificacion_AE = getdate()';
+            $params[':usuariomod'] = $usuariomod;
+
+            $sql_update01 = 'UPDATE Sdt_RegistroSanitario_AE SET ' . implode(', ', $setClauses) . ' WHERE RegID_AE = :modalID';
+            $stmt = $conn->prepare($sql_update01);
+            $stmt->execute($params);
+        }
 
         // Insertar referencias de los archivos subidos
         foreach ($archivosSubidos as $archivo) {
