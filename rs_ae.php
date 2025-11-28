@@ -995,6 +995,15 @@ $arttipo = $_GET['arttipo'];
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
+								<label for="newetiqueta">Etiqueta</label>
+								<textarea class="form-control" rows="2" placeholder="Etiqueta"
+									id="newetiqueta"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
 								<label for="inputFile">Documentos Adjuntos</label>
 								<div class="input-group">
 									<input type="file" class="form-control" id="inputFile"
@@ -1394,7 +1403,7 @@ $arttipo = $_GET['arttipo'];
 				],
 				buttons: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
-																						{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
+																								{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
 							text: '<i class="fas fa-file-excel"></i>&nbsp;Carga Masiva									',
 							className: 'btn btn-info',
 							action: function (e, dt, node, config) {
@@ -1452,7 +1461,7 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																				{
+																						{
 							data: null,
 							render: function (data, type, row) {
 								return `<input type="checkbox" class="selectRow" value="${row.id}">`;
@@ -1494,7 +1503,7 @@ $arttipo = $_GET['arttipo'];
 
 				columnDefs: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																				{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
+																						{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
 						{
 							targets: -1, // Última columna (botón de edición)
 							className: "text-center",
@@ -2824,6 +2833,7 @@ $arttipo = $_GET['arttipo'];
 			var newvencimiento = $("#newvencimiento").val();
 			var newobservaciones = $("#newobservaciones").val();
 			var newestadors = $("#newestadors").val();
+			var newetiqueta = $("#newetiqueta").val();
 			var newucreacion = '<?php echo $_SESSION['usuario']; ?>';
 
 			// Crear un objeto FormData para almacenar los archivos y los datos del formulario
@@ -2837,6 +2847,7 @@ $arttipo = $_GET['arttipo'];
 			formData.append('newvencimiento', newvencimiento);
 			formData.append('newobservaciones', newobservaciones);
 			formData.append('newestadors', newestadors);
+			formData.append('newetiqueta', newetiqueta);
 			formData.append('newucreacion', newucreacion);
 
 			// Añadir cada archivo al objeto FormData
@@ -2904,13 +2915,15 @@ $arttipo = $_GET['arttipo'];
 								toast: true,
 								position: 'top-end',
 								showConfirmButton: false,
-								timer: 3000
+								timer: 5000
 							});
 
 							Toast.fire({
 								icon: 'error',
-								title: 'Error en la operación.'
+								title: 'Error en la operación.',
+								text: data
 							})
+							console.log('Error:', data);
 						}
 					}
 				});
