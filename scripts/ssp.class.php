@@ -217,8 +217,16 @@ class SSP
                             "%" . $str . "%",
                             PDO::PARAM_STR
                         );
-                        $columnSearch[] =
-                            "[" . $column["db"] . "] LIKE " . $binding;
+
+                        // Verificar si la columna es de tipo fecha (tiene formatter y contiene 'Fecha' en el nombre)
+                        if (isset($column["formatter"]) && stripos($column["db"], "Fecha") !== false) {
+                            // Convertir fecha a formato dd/mm/yyyy para la búsqueda
+                            $columnSearch[] =
+                                "CONVERT(VARCHAR, [" . $column["db"] . "], 103) LIKE " . $binding;
+                        } else {
+                            $columnSearch[] =
+                                "[" . $column["db"] . "] LIKE " . $binding;
+                        }
                     }
                 }
             }
