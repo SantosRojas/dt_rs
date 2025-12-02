@@ -43,7 +43,7 @@ $columns = [
         "db" => "RegFechaEmision_AE",
         "dt" => "RegFechaEmision_AE",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y", strtotime($d));
@@ -54,7 +54,7 @@ $columns = [
         "db" => "RegFechaAprobacion_AE",
         "dt" => "RegFechaAprobacion_AE",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y", strtotime($d));
@@ -65,7 +65,7 @@ $columns = [
         "db" => "RegFechaVencimiento_AE",
         "dt" => "RegFechaVencimiento_AE",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y", strtotime($d));
@@ -76,7 +76,7 @@ $columns = [
         "db" => "RegFechaCreacion_AE",
         "dt" => "RegFechaCreacion_AE",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y", strtotime($d));
@@ -87,7 +87,7 @@ $columns = [
         "db" => "RegFechaModificacion_AE",
         "dt" => "RegFechaModificacion_AE",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y", strtotime($d));
@@ -98,7 +98,7 @@ $columns = [
         "db" => "FechaCreacion_AE",
         "dt" => "FechaCreacion_AE",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y", strtotime($d));
@@ -109,7 +109,7 @@ $columns = [
         "db" => "FechaModificacion_AE",
         "dt" => "FechaModificacion_AE",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y", strtotime($d));
@@ -129,7 +129,7 @@ $columns = [
     ["db" => "CodigoEAN_13", "dt" => "CodigoEAN_13"],
     ["db" => "CodigoEAN_14", "dt" => "CodigoEAN_14"],
     ["db" => "CodigoGTIN", "dt" => "CodigoGTIN"],
-    ["db" => "Codigo_GMDN_UMDNS","dt" => "Codigo_GMDN_UMDNS"],
+    ["db" => "Codigo_GMDN_UMDNS", "dt" => "Codigo_GMDN_UMDNS"],
     ["db" => "Etiqueta_AE", "dt" => "Etiqueta_AE"],
     ["db" => "EsEsteril_AE", "dt" => "EsEsteril_AE"],
     ["db" => "NumeroIFU_AE", "dt" => "NumeroIFU_AE"],
@@ -158,6 +158,8 @@ if ($filter == 'VENCIDO') {
     $where = "RegEstado_AE ='VENCE 2 MESES'";
 } elseif ($filter == 'VENCE_1_MES') {
     $where = "RegEstado_AE ='VENCE 1 MES'";
+} elseif ($filter == 'VENCE_ESTE_MES') {
+    $where = "RegEstado_AE ='VENCE ESTE MES'";
 } else {
     $where = "";
 }
@@ -167,5 +169,5 @@ if ($filter == 'VENCIDO') {
  */
 require "ssp.class.php";
 echo json_encode(
-    SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, null,$where)
+    SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, null, $where)
 );
