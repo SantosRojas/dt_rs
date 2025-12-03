@@ -1316,24 +1316,125 @@ $arttipo = $_GET['arttipo'];
 				</div>
 				<div class="modal-body">
 					<div class="row">
-						<div class="row col-md-12">
-							<div class="col-md-4">
-								<div class="form-group">
-									<label for="codprodcrea">C&oacute;digo</label>
-									<input type="text" class="form-control" id="codprodcrea">
-								</div>
+						<!-- Campos Obligatorios -->
+						<div class="col-md-12">
+							<h5 class="text-primary">Información Obligatoria</h5>
+							<hr>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="codprodcrea">C&oacute;digo <span class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="codprodcrea" required>
 							</div>
-							<div class="col-md-8">
-								<div class="form-group">
-									<label for="desprodcrea">Descripci&oacute;n</label>
-									<input type="text" class="form-control" id="desprodcrea">
-								</div>
+						</div>
+						<div class="col-md-8">
+							<div class="form-group">
+								<label for="desprodcrea">Descripci&oacute;n <span class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="desprodcrea" required>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="origenprodcrea">Pa&iacute;s de Origen <span
+										class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="origenprodcrea" required>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="fabricanteprodcrea">Fabricante <span class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="fabricanteprodcrea" required>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="lugarfabprodcrea">Lugar de Fabricaci&oacute;n <span
+										class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="lugarfabprodcrea" required>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="nivelriesgoprodcrea">Nivel de Riesgo <span
+										class="text-danger">*</span></label>
+								<select class="form-control" id="nivelriesgoprodcrea" required>
+									<option value="">Seleccione...</option>
+									<option value="I">I</option>
+									<option value="II">II</option>
+									<option value="III">III</option>
+									<option value="IV">IV</option>
+									<option value="NO APLICA">NO APLICA</option>
+								</select>
+							</div>
+						</div>
+
+						<!-- Campos Opcionales -->
+						<div class="col-md-12 mt-3">
+							<h5 class="text-secondary">Información Opcional</h5>
+							<hr>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="exoneracioncmprodcrea">Exoneraci&oacute;n CM</label>
+								<input type="text" class="form-control" id="exoneracioncmprodcrea">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="esterilidadprodcrea">Esterilidad</label>
+								<select class="form-control" id="esterilidadprodcrea">
+									<option value="">Seleccione...</option>
+									<option value="E">ESTERIL</option>
+									<option value="NE">NO ESTERIL</option>
+									<option value="NO APLICA">NO APLICA</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="ean14prodcrea">C&oacute;digo EAN-14</label>
+								<input type="text" class="form-control" id="ean14prodcrea">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="ean13prodcrea">C&oacute;digo EAN-13</label>
+								<input type="text" class="form-control" id="ean13prodcrea">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="gtinprodcrea">C&oacute;digo GTIN</label>
+								<input type="text" class="form-control" id="gtinprodcrea">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="gmdnprodcrea">C&oacute;digo GMDN/UMDNS</label>
+								<input type="text" class="form-control" id="gmdnprodcrea">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="ifuprodcrea">N&uacute;mero IFU</label>
+								<input type="text" class="form-control" id="ifuprodcrea">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="problemadimprodcrea">Problema con Dimensiones</label>
+								<input type="text" class="form-control" id="problemadimprodcrea">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label for="cambiosproducrea">Cambios AE</label>
+								<input type="text" class="form-control" id="cambiosproducrea">
 							</div>
 						</div>
 					</div>
-					<div>
-						<p class="text-danger">- La informaci&oacute;n adicional del producto podr&aacute; ser agregada
-							posterior a la asignación del RS.</p>
+					<div class="mt-2">
+						<p class="text-danger"><small>* Campos obligatorios</small></p>
 					</div>
 				</div>
 				<div class="modal-footer d-flex justify-content-between">
@@ -1664,7 +1765,28 @@ $arttipo = $_GET['arttipo'];
 				$('#resultadoCargaMasiva').hide();
 				$('#resumenCargaMasiva').html('');
 				$('#detalleErroresMasiva').html('');
-			}); var table = $('#registrosanitario').DataTable({
+			});
+
+			// Limpiar modal de nuevo producto al cerrarse
+			$('#modalproductocrea').on('hidden.bs.modal', function () {
+				$('#codprodcrea').val('');
+				$('#desprodcrea').val('');
+				$('#origenprodcrea').val('');
+				$('#fabricanteprodcrea').val('');
+				$('#lugarfabprodcrea').val('');
+				$('#nivelriesgoprodcrea').val('');
+				$('#exoneracioncmprodcrea').val('');
+				$('#esterilidadprodcrea').val('');
+				$('#ean14prodcrea').val('');
+				$('#ean13prodcrea').val('');
+				$('#gtinprodcrea').val('');
+				$('#gmdnprodcrea').val('');
+				$('#ifuprodcrea').val('');
+				$('#problemadimprodcrea').val('');
+				$('#cambiosproducrea').val('');
+			});
+
+			var table = $('#registrosanitario').DataTable({
 				dom: '<"top"B>rt<"bottom"lip><"clear">', // Quitado 'f' (búsqueda general)
 				orderCellsTop: true, // Usa solo la primera fila del thead para ordenar
 				lengthMenu: [
@@ -1673,22 +1795,22 @@ $arttipo = $_GET['arttipo'];
 				],
 				buttons: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
-																												{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
-									text: '<i class="fas fa-file-excel"></i>&nbsp;Carga Masiva									',
-									className: 'btn btn-info',
-									action: function (e, dt, node, config) {
-										document.getElementById("btnCargaMasivaModal").click();
-									}
-								},
-								'spacer',
-								{
-									text: '<i class="fas fa-edit"></i>&nbsp;Editar Registros',
-									className: 'btn btn-warning',
-									action: function (e, dt, node, config) {
-										document.getElementById("btn-edit-several").click();
-									},
-								},
-								'spacer',
+																															{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
+												text: '<i class="fas fa-file-excel"></i>&nbsp;Carga Masiva									',
+												className: 'btn btn-info',
+												action: function (e, dt, node, config) {
+													document.getElementById("btnCargaMasivaModal").click();
+												}
+											},
+											'spacer',
+											{
+												text: '<i class="fas fa-edit"></i>&nbsp;Editar Registros',
+												className: 'btn btn-warning',
+												action: function (e, dt, node, config) {
+													document.getElementById("btn-edit-several").click();
+												},
+											},
+											'spacer',
 					<?php } ?>
 						{
 						text: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">  <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"/>  <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/></svg>',
@@ -1734,12 +1856,12 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																										{
-									data: null,
-									render: function (data, type, row) {
-										return `<input type="checkbox" class="selectRow" value="${row.id}">`;
-									}
-								},
+																													{
+												data: null,
+												render: function (data, type, row) {
+													return `<input type="checkbox" class="selectRow" value="${row.id}">`;
+												}
+											},
 					<?php } ?>
 					{ data: 'ArtCodigo_AE' },
 					{ data: 'ArtDescripcion_AE', className: 'copy-etiqueta' },
@@ -1765,23 +1887,23 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'ProblemaDimensiones_AE' },
 					{ data: 'RegObservacion_AE' }
 						<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-								, {
-									// Columna adicional para el botón de edición
-									data: null,
-									className: "center",
-									defaultContent: '<button type="button" class="btn btn-success btn-sm editbtn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">  <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg></button>'
-								}
+											, {
+												// Columna adicional para el botón de edición
+												data: null,
+												className: "center",
+												defaultContent: '<button type="button" class="btn btn-success btn-sm editbtn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">  <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg></button>'
+											}
 						<?php } ?>
 				],
 
 				columnDefs: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																										{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
-								{
-									targets: -1, // Última columna (botón de edición)
-									className: "text-center",
-									width: "4%"
-								}
+																													{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
+											{
+												targets: -1, // Última columna (botón de edición)
+												className: "text-center",
+												width: "4%"
+											}
 					<?php } ?>
 				]
 				,
@@ -1848,11 +1970,11 @@ $arttipo = $_GET['arttipo'];
 			});
 
 			<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-						// Evento para seleccionar/deseleccionar todos
-						$('#selectAll').on('click', function () {
-							const isChecked = $(this).is(':checked');
-							$('.selectRow').prop('checked', isChecked);
-						});
+									// Evento para seleccionar/deseleccionar todos
+									$('#selectAll').on('click', function () {
+										const isChecked = $(this).is(':checked');
+										$('.selectRow').prop('checked', isChecked);
+									});
 			<?php } ?>
 
 			//Evento para cambiar el estado del selector de estado
@@ -3205,21 +3327,54 @@ $arttipo = $_GET['arttipo'];
 
 		function cargacrea() {
 
-			// Obtener los datos del formulario
+			// Obtener los datos del formulario - Campos obligatorios
 			var newcodigo = $("#codprodcrea").val();
 			var newdescripcion = $("#desprodcrea").val();
+			var neworigen = $("#origenprodcrea").val();
+			var newfabricante = $("#fabricanteprodcrea").val();
+			var newlugarfab = $("#lugarfabprodcrea").val();
+			var newnivelriesgo = $("#nivelriesgoprodcrea").val();
+			
+			// Campos opcionales
+			var newexoneracioncm = $("#exoneracioncmprodcrea").val();
+			var newesterilidad = $("#esterilidadprodcrea").val();
+			var newean14 = $("#ean14prodcrea").val();
+			var newean13 = $("#ean13prodcrea").val();
+			var newgtin = $("#gtinprodcrea").val();
+			var newgmdn = $("#gmdnprodcrea").val();
+			var newifu = $("#ifuprodcrea").val();
+			var newproblemadim = $("#problemadimprodcrea").val();
+			var newcambios = $("#cambiosproducrea").val();
+			
 			var newucreacion = '<?php echo $_SESSION['usuario']; ?>';
 
-			// Crear un objeto FormData para almacenar los archivos y los datos del formulario
+			// Crear un objeto FormData para almacenar los datos del formulario
 			var formData = new FormData();
 			formData.append('newcodigo', newcodigo);
 			formData.append('newdescripcion', newdescripcion);
+			formData.append('neworigen', neworigen);
+			formData.append('newfabricante', newfabricante);
+			formData.append('newlugarfab', newlugarfab);
+			formData.append('newnivelriesgo', newnivelriesgo);
+			formData.append('newexoneracioncm', newexoneracioncm);
+			formData.append('newesterilidad', newesterilidad);
+			formData.append('newean14', newean14);
+			formData.append('newean13', newean13);
+			formData.append('newgtin', newgtin);
+			formData.append('newgmdn', newgmdn);
+			formData.append('newifu', newifu);
+			formData.append('newproblemadim', newproblemadim);
+			formData.append('newcambios', newcambios);
 			formData.append('newucreacion', newucreacion);
 
 			// Verificar que los campos obligatorios no estén vacíos
 			if (
 				newcodigo.trim() === "" ||
-				newdescripcion.trim() === ""
+				newdescripcion.trim() === "" ||
+				neworigen.trim() === "" ||
+				newfabricante.trim() === "" ||
+				newlugarfab.trim() === "" ||
+				newnivelriesgo.trim() === ""
 			) {
 				// Mostrar un mensaje de advertencia si falta información
 				var Toast = Swal.mixin({
@@ -3230,7 +3385,7 @@ $arttipo = $_GET['arttipo'];
 				});
 				Toast.fire({
 					icon: 'warning',
-					title: 'Es necesario completar toda la información.'
+					title: 'Es necesario completar todos los campos obligatorios (*).'
 				})
 			} else {
 				// Enviar los datos al archivo PHP para guardar la orden
