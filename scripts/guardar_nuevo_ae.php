@@ -14,8 +14,7 @@ try {
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 	// Recoge los datos del formulario
-	$ArtID = $_POST["newArtID"];
-	$codigo = $_POST["newcodigo"];
+	$productos = json_decode($_POST["productos"], true);
 	$rs = $_POST["newrs"];
 	$resolucion = $_POST["newresolucion"];
 	$emision = !empty($_POST["newemision"]) ? $_POST["newemision"] : null;
@@ -26,6 +25,9 @@ try {
 	$etiqueta = $_POST["newetiqueta"] ?? null;
 	$ucreacion = $_POST["newucreacion"];
 
+	// Iniciar transacción
+	$conn->beginTransaction();
+
 	$sql_insert01 = "INSERT INTO Sdt_RegistroSanitario_AE 
 		(ArtID_AE, ArtCodigo_AE, RegNumero_AE, RegResolucion_AE, RegFechaEmision_AE, RegFechaAprobacion_AE, 
 		RegFechaVencimiento_AE, RegEstado_AE, RegObservacion_AE, RegFechaCreacion_AE, RegUsuarioCreacion_AE, 
@@ -33,50 +35,53 @@ try {
 		VALUES (:ArtID, :codigo, :rs, :resolucion, :emision, :aprobacion, :vencimiento, :estadors, 
 		:observaciones, getdate(), :ucreacion, null, null, :etiqueta)";
 
-	// Preparar la sentencia
 	$stmt = $conn->prepare($sql_insert01);
 
-	// Vincular los parámetros
-	$stmt->bindParam(':ArtID', $ArtID);
-	$stmt->bindParam(':codigo', $codigo);
-	$stmt->bindParam(':rs', $rs);
-	$stmt->bindParam(':resolucion', $resolucion);
-	$stmt->bindParam(':emision', $emision);
-	$stmt->bindParam(':aprobacion', $aprobacion);
-	$stmt->bindParam(':vencimiento', $vencimiento);
-	$stmt->bindParam(':estadors', $estadors);
-	$stmt->bindParam(':observaciones', $observaciones);
-	$stmt->bindParam(':ucreacion', $ucreacion);
-	$stmt->bindParam(':etiqueta', $etiqueta);
-
-	// Ejecutar la sentencia
-	$stmt->execute();
-
-	// Éxito al guardar los cambios
-	// Obtener el ID del último registro insertado
-	$lastInsertId = $conn->lastInsertId();
-
-	// Preparar la sentencia para insertar en Std_RSDoc
 	$sql_insert02 = "INSERT INTO Std_RSDoc_AE (RegID, Descripcion, Ruta, FechaCarga, UsuarioCarga, Estado) VALUES (:RegID, :Descripcion, :Ruta, getdate(), :UsuarioCarga, 'ACTIVO')";
 	$stmt2 = $conn->prepare($sql_insert02);
 
-	// Manejar los archivos
-	if (isset($_FILES['archivos'])) {
+	$registrosCreados = 0;
+	$primerRegistroId = null;
+
+	// Insertar un registro por cada producto seleccionado
+	foreach ($productos as $producto) {
+		$ArtID = $producto['artId'];
+		$codigo = $producto['codigo'];
+
+		$stmt->bindParam(':ArtID', $ArtID);
+		$stmt->bindParam(':codigo', $codigo);
+		$stmt->bindParam(':rs', $rs);
+		$stmt->bindParam(':resolucion', $resolucion);
+		$stmt->bindParam(':emision', $emision);
+		$stmt->bindParam(':aprobacion', $aprobacion);
+		$stmt->bindParam(':vencimiento', $vencimiento);
+		$stmt->bindParam(':estadors', $estadors);
+		$stmt->bindParam(':observaciones', $observaciones);
+		$stmt->bindParam(':ucreacion', $ucreacion);
+		$stmt->bindParam(':etiqueta', $etiqueta);
+
+		$stmt->execute();
+		$registrosCreados++;
+
+		// Guardar el primer ID para asociar los archivos
+		if ($primerRegistroId === null) {
+			$primerRegistroId = $conn->lastInsertId();
+		}
+	}
+
+	// Manejar los archivos (asociarlos solo al primer registro)
+	if ($primerRegistroId !== null && isset($_FILES['archivos'])) {
 		$archivos = $_FILES['archivos'];
 		for ($i = 0; $i < count($archivos['name']); $i++) {
 			$nombreArchivo = $archivos['name'][$i];
 			$tmpArchivo = $archivos['tmp_name'][$i];
 
 			if (!empty($tmpArchivo)) {
-				// Generar un nombre de archivo único
 				$nombreArchivoUnico = uniqid() . '-' . $nombreArchivo;
-
-				// Mover el archivo a la carpeta de destino
 				$ruta = "../upload/rs/" . $nombreArchivoUnico;
 				move_uploaded_file($tmpArchivo, $ruta);
 
-				// Vincular los parámetros y ejecutar la sentencia
-				$stmt2->bindParam(':RegID', $lastInsertId);
+				$stmt2->bindParam(':RegID', $primerRegistroId);
 				$stmt2->bindParam(':Descripcion', $nombreArchivo);
 				$stmt2->bindParam(':Ruta', $ruta);
 				$stmt2->bindParam(':UsuarioCarga', $ucreacion);
@@ -85,13 +90,16 @@ try {
 		}
 	}
 
+	$conn->commit();
 	echo "success";
 
 } catch (PDOException $e) {
+	if ($conn->inTransaction()) {
+		$conn->rollBack();
+	}
 	echo "Error: " . $e->getMessage();
 }
 
-// Cerrar las sentencias
 $stmt = null;
 $stmt2 = null;
 ?>

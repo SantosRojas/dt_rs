@@ -923,10 +923,17 @@ $arttipo = $_GET['arttipo'];
 															<th>ID</th>
 															<th>C&oacute;digo</th>
 															<th>Descripci&oacute;n</th>
-															<th>Opci&oacute;n</th>
+															<th><input type="checkbox" id="chkSelectAllNew"> Sel.</th>
 														</tr>
 													</thead>
 												</table>
+												<div class="mt-2">
+													<button type="button" id="btnConfirmarProductos"
+														class="btn btn-primary btn-sm">
+														<i class="fas fa-check"></i> Confirmar Selecci&oacute;n (<span
+															id="contadorSeleccion">0</span>)
+													</button>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -1754,6 +1761,9 @@ $arttipo = $_GET['arttipo'];
 			});
 		}
 
+		// Array global para almacenar productos seleccionados (debe estar fuera de document.ready)
+		var productosSeleccionados = [];
+
 		$(document).ready(function () {
 			// Inicializar bs-custom-file-input
 			bsCustomFileInput.init();
@@ -1795,22 +1805,22 @@ $arttipo = $_GET['arttipo'];
 				],
 				buttons: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
-																																{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
-													text: '<i class="fas fa-file-excel"></i>&nbsp;Carga Masiva									',
-													className: 'btn btn-info',
-													action: function (e, dt, node, config) {
-														document.getElementById("btnCargaMasivaModal").click();
-													}
-												},
-												'spacer',
-												{
-													text: '<i class="fas fa-edit"></i>&nbsp;Editar Registros',
-													className: 'btn btn-warning',
-													action: function (e, dt, node, config) {
-														document.getElementById("btn-edit-several").click();
-													},
-												},
-												'spacer',
+																																			{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
+																text: '<i class="fas fa-file-excel"></i>&nbsp;Carga Masiva									',
+																className: 'btn btn-info',
+																action: function (e, dt, node, config) {
+																	document.getElementById("btnCargaMasivaModal").click();
+																}
+															},
+															'spacer',
+															{
+																text: '<i class="fas fa-edit"></i>&nbsp;Editar Registros',
+																className: 'btn btn-warning',
+																action: function (e, dt, node, config) {
+																	document.getElementById("btn-edit-several").click();
+																},
+															},
+															'spacer',
 					<?php } ?>
 						{
 						text: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">  <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"/>  <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/></svg>',
@@ -1856,12 +1866,12 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																														{
-													data: null,
-													render: function (data, type, row) {
-														return `<input type="checkbox" class="selectRow" value="${row.id}">`;
-													}
-												},
+																																	{
+																data: null,
+																render: function (data, type, row) {
+																	return `<input type="checkbox" class="selectRow" value="${row.id}">`;
+																}
+															},
 					<?php } ?>
 					{ data: 'ArtCodigo_AE' },
 					{ data: 'ArtDescripcion_AE', className: 'copy-etiqueta' },
@@ -1887,23 +1897,23 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'ProblemaDimensiones_AE' },
 					{ data: 'RegObservacion_AE' }
 						<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-												, {
-													// Columna adicional para el botón de edición
-													data: null,
-													className: "center",
-													defaultContent: '<button type="button" class="btn btn-success btn-sm editbtn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">  <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg></button>'
-												}
+															, {
+																// Columna adicional para el botón de edición
+																data: null,
+																className: "center",
+																defaultContent: '<button type="button" class="btn btn-success btn-sm editbtn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">  <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg></button>'
+															}
 						<?php } ?>
 				],
 
 				columnDefs: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																														{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
-												{
-													targets: -1, // Última columna (botón de edición)
-													className: "text-center",
-													width: "4%"
-												}
+																																	{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
+															{
+																targets: -1, // Última columna (botón de edición)
+																className: "text-center",
+																width: "4%"
+															}
 					<?php } ?>
 				]
 				,
@@ -1970,11 +1980,11 @@ $arttipo = $_GET['arttipo'];
 			});
 
 			<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-										// Evento para seleccionar/deseleccionar todos
-										$('#selectAll').on('click', function () {
-											const isChecked = $(this).is(':checked');
-											$('.selectRow').prop('checked', isChecked);
-										});
+													// Evento para seleccionar/deseleccionar todos
+													$('#selectAll').on('click', function () {
+														const isChecked = $(this).is(':checked');
+														$('.selectRow').prop('checked', isChecked);
+													});
 			<?php } ?>
 
 			//Evento para cambiar el estado del selector de estado
@@ -2189,8 +2199,6 @@ $arttipo = $_GET['arttipo'];
 				show: false
 			});
 
-
-
 			var table2 = $('#dtnewproducto').DataTable({
 				lengthMenu: [
 					[5, 10, 15, 20],
@@ -2203,10 +2211,14 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'ArtCodigo' },
 					{ data: 'ArtDescripcion' },
 					{
-						// Columna adicional para el botón de edición
+						// Columna con checkbox para selección múltiple
 						data: null,
 						className: "center",
-						defaultContent: '<button type="button" class="btn btn-success newbtn"><i class="fas fa-check-double"></i></button>'
+						orderable: false,
+						render: function(data, type, row) {
+							var artId = row.DT_RowId.split('_')[1];
+							return '<input type="checkbox" class="chkProducto" data-artid="' + artId + '" data-codigo="' + row.ArtCodigo + '" data-descripcion="' + row.ArtDescripcion + '">';
+						}
 					}
 				],
 				language: {
@@ -2332,52 +2344,95 @@ $arttipo = $_GET['arttipo'];
 
 
 
-			//MODAL NUEVO REGISTRO SANITARIO
-			$('#dtnewproducto tbody').on('click', 'button.newbtn', function () {
+			//MODAL NUEVO REGISTRO SANITARIO - Manejo de selección múltiple
+			
+			// Función para actualizar el contador de selección
+			function actualizarContador() {
+				$('#contadorSeleccion').text(productosSeleccionados.length);
+			}
 
-				var data;
-				var tr = $(this).closest('tr'); // Encuentra la fila más cercana al botón de edición
-				//Este if corrige el bug de la asignación de data cuando el dt está en modo responsive
-				if (tr.hasClass('child')) {
-					// Si la fila es una fila hija (es decir, está en modo responsive), obtén los datos de la fila padre
-					data = table2.row(tr.prev()).data();
+			// Checkbox "Seleccionar Todos" de la página actual
+			$('#chkSelectAllNew').on('change', function() {
+				var isChecked = $(this).prop('checked');
+				$('.chkProducto').each(function() {
+					$(this).prop('checked', isChecked);
+					var artId = $(this).data('artid');
+					var codigo = $(this).data('codigo');
+					var descripcion = $(this).data('descripcion');
+					
+					if (isChecked) {
+						// Agregar si no existe
+						if (!productosSeleccionados.some(p => p.artId == artId)) {
+							productosSeleccionados.push({artId: artId, codigo: codigo, descripcion: descripcion});
+						}
+					} else {
+						// Remover
+						productosSeleccionados = productosSeleccionados.filter(p => p.artId != artId);
+					}
+				});
+				actualizarContador();
+			});
+
+			// Checkbox individual de cada producto
+			$('#dtnewproducto tbody').on('change', '.chkProducto', function() {
+				var artId = $(this).data('artid');
+				var codigo = $(this).data('codigo');
+				var descripcion = $(this).data('descripcion');
+				
+				if ($(this).prop('checked')) {
+					// Agregar si no existe
+					if (!productosSeleccionados.some(p => p.artId == artId)) {
+						productosSeleccionados.push({artId: artId, codigo: codigo, descripcion: descripcion});
+					}
 				} else {
-					// Si no, obtén los datos de la fila normalmente
-					data = table2.row(tr).data();
+					// Remover
+					productosSeleccionados = productosSeleccionados.filter(p => p.artId != artId);
+				}
+				actualizarContador();
+			});
+
+			// Botón para confirmar selección
+			$('#btnConfirmarProductos').on('click', function() {
+				if (productosSeleccionados.length === 0) {
+					Swal.fire({
+						icon: 'warning',
+						title: 'Sin selección',
+						text: 'Debe seleccionar al menos un producto.'
+					});
+					return;
 				}
 
-				var codigo = data.ArtCodigo;
-				var ArtID = data.DT_RowId;
-				ArtID = ArtID.split('_')[1];
-				var descripcion = data.ArtDescripcion;
+				// Mostrar resumen
+				var listaHtml = '<ul style="text-align:left; max-height:200px; overflow-y:auto;">';
+				productosSeleccionados.forEach(function(p) {
+					listaHtml += '<li><b>' + p.codigo + '</b> - ' + p.descripcion + '</li>';
+				});
+				listaHtml += '</ul>';
 
-				// Concatena los valores con " - "
-				var concatenado = codigo + " - " + descripcion;
+				$('#newartcoddes').html(productosSeleccionados.length + ' producto(s) seleccionado(s)');
 
-				// Asigna el valor concatenado al span con id="newartcoddes"
-				$('#newartcoddes').text(concatenado);
-				// Asigna el valor concatenado al span con id="artcoddes"
-				$('#newmodalID').val(data.DT_RowId);
-				$('#newArtID').val(ArtID);
-				$('#newcodigo').val(codigo);
-				$('#newdescripcion').val(descripcion);
+				Swal.fire({
+					icon: 'success',
+					title: productosSeleccionados.length + ' producto(s) seleccionado(s)',
+					html: listaHtml
+				});
 
-				// Colapsa el tab
+				// Colapsar el acordeón
 				var enlace = document.getElementById('tabarticulo');
 				var div = document.getElementById('collapseOnenew');
 				enlace.classList.add('collapsed');
-
-				// Cambia la propiedad aria-expanded a "false"
 				enlace.setAttribute('aria-expanded', 'false');
-
-				// Cambia la clase del div de "collapse show" a "collapse"
 				div.className = 'collapse';
 
 				$('#newrs').focus();
-
 			});
 
 			$('#newModal').on('hidden.bs.modal', function () {
+				// Limpiar productos seleccionados
+				productosSeleccionados = [];
+				$('#contadorSeleccion').text('0');
+				$('#chkSelectAllNew').prop('checked', false);
+				$('.chkProducto').prop('checked', false);
 				// Restablece el campo de entrada del archivo cuando se cierra el modal
 				$('#newartcoddes').text('Información del Producto');
 				$('#newArtID').val('');
@@ -2389,6 +2444,7 @@ $arttipo = $_GET['arttipo'];
 				$("#newvencimiento").val('');
 				$("#newobservaciones").val('');
 				$("#newestadors").val('VIGENTE');
+				$("#newetiqueta").val('');
 				$('#dtnewproducto').DataTable().ajax.reload();
 				$('#dtnewproducto').DataTable().search("").draw();
 				// Colapsa el tab
@@ -3218,9 +3274,17 @@ $arttipo = $_GET['arttipo'];
 
 		function newguardar() {
 
+			// Verificar que haya productos seleccionados
+			if (productosSeleccionados.length === 0) {
+				Swal.fire({
+					icon: 'warning',
+					title: 'Sin productos',
+					text: 'Debe seleccionar al menos un producto.'
+				});
+				return;
+			}
+
 			// Obtener los datos del formulario
-			var newArtID = $("#newArtID").val();
-			var newcodigo = $("#newcodigo").val();
 			var newrs = $("#newrs").val();
 			var newresolucion = $("#newresolucion").val();
 			var newemision = $("#newemision").val();
@@ -3233,8 +3297,7 @@ $arttipo = $_GET['arttipo'];
 
 			// Crear un objeto FormData para almacenar los archivos y los datos del formulario
 			var formData = new FormData();
-			formData.append('newArtID', newArtID);
-			formData.append('newcodigo', newcodigo);
+			formData.append('productos', JSON.stringify(productosSeleccionados));
 			formData.append('newrs', newrs);
 			formData.append('newresolucion', newresolucion);
 			formData.append('newemision', newemision);
@@ -3254,11 +3317,7 @@ $arttipo = $_GET['arttipo'];
 			// Verificar que los campos obligatorios no estén vacíos
 			if (
 				newresolucion.trim() === "" ||
-				newrs.trim() === "" ||
-				newcodigo.trim() === "" /* ||
-					newemision.trim() === "" ||
-					newaprobacion.trim() === "" ||
-					newvencimiento.trim() === "" */
+				newrs.trim() === ""
 			) {
 				// Mostrar un mensaje de advertencia si falta información
 				var Toast = Swal.mixin({
@@ -3269,7 +3328,7 @@ $arttipo = $_GET['arttipo'];
 				});
 				Toast.fire({
 					icon: 'warning',
-					title: 'Es necesario completar toda la información.'
+					title: 'Es necesario completar Resolución y Registro Sanitario.'
 				})
 			} else {
 				// Enviar los datos al archivo PHP para guardar la orden
