@@ -156,7 +156,7 @@ $arttipo = "IMPORTACIONES_AE";
 					<a href="rs_ae.php?arttipo=PRODUCTO AE" class="nav-link">Aesculap</a>
 				</li>
 			</ul>
-	
+
 			<!-- Right navbar links -->
 			<ul class="navbar-nav ml-auto">
 				<li class="nav-item">
@@ -220,8 +220,7 @@ $arttipo = "IMPORTACIONES_AE";
 							<ul class="nav nav-treeview">
 								<li class="nav-item ">
 									<a href="#" class="nav-link active">
-										<i
-											class="far fa-circle nav-icon"></i>
+										<i class="far fa-circle nav-icon"></i>
 										<p>
 											Registros Sanitarios HC
 											<i class="right fas fa-angle-left"></i>
@@ -229,7 +228,7 @@ $arttipo = "IMPORTACIONES_AE";
 									</a>
 									<ul class="nav nav-treeview">
 										<li class="nav-item">
-											<a href="rs.php?arttipo=PRODUCTO LINEA AVITUM" class="nav-link" >
+											<a href="rs.php?arttipo=PRODUCTO LINEA AVITUM" class="nav-link">
 												<i class="far fa-dot-circle nav-icon"></i>
 												<p>Producto L&iacute;nea AVITUM</p>
 											</a>
@@ -273,8 +272,7 @@ $arttipo = "IMPORTACIONES_AE";
 
 								<li class="nav-item">
 									<a href="#" class="nav-link active">
-										<i
-											class="far fa-circle nav-icon"></i>
+										<i class="far fa-circle nav-icon"></i>
 										<p>
 											Registros Sanitarios AE
 											<i class="right fas fa-angle-left"></i>
@@ -496,9 +494,9 @@ $arttipo = "IMPORTACIONES_AE";
 		<!-- Footer -->
 		<footer class="main-footer">
 			<div class="float-right d-none d-sm-block">
-				<b>Versión</b> 1.0.0
+				<b>Versión</b> 2.0.0
 			</div>
-			<strong>Copyright &copy; 2024 <a href="#">B. Braun</a>.</strong> Todos los derechos reservados.
+			<strong>Copyright &copy; 2025 <a href="#">B. Braun</a>.</strong> Todos los derechos reservados.
 		</footer>
 	</div>
 
