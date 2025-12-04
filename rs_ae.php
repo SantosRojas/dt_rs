@@ -1805,22 +1805,22 @@ $arttipo = $_GET['arttipo'];
 				],
 				buttons: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
-																																			{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
-																text: '<i class="fas fa-file-excel"></i>&nbsp;Carga Masiva									',
-																className: 'btn btn-info',
-																action: function (e, dt, node, config) {
-																	document.getElementById("btnCargaMasivaModal").click();
-																}
-															},
-															'spacer',
-															{
-																text: '<i class="fas fa-edit"></i>&nbsp;Editar Registros',
-																className: 'btn btn-warning',
-																action: function (e, dt, node, config) {
-																	document.getElementById("btn-edit-several").click();
-																},
-															},
-															'spacer',
+																																						{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
+																			text: '<i class="fas fa-file-excel"></i>&nbsp;Carga Masiva									',
+																			className: 'btn btn-info',
+																			action: function (e, dt, node, config) {
+																				document.getElementById("btnCargaMasivaModal").click();
+																			}
+																		},
+																		'spacer',
+																		{
+																			text: '<i class="fas fa-edit"></i>&nbsp;Editar Registros',
+																			className: 'btn btn-warning',
+																			action: function (e, dt, node, config) {
+																				document.getElementById("btn-edit-several").click();
+																			},
+																		},
+																		'spacer',
 					<?php } ?>
 						{
 						text: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">  <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"/>  <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/></svg>',
@@ -1866,12 +1866,12 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																																	{
-																data: null,
-																render: function (data, type, row) {
-																	return `<input type="checkbox" class="selectRow" value="${row.id}">`;
-																}
-															},
+																																				{
+																			data: null,
+																			render: function (data, type, row) {
+																				return `<input type="checkbox" class="selectRow" value="${row.id}">`;
+																			}
+																		},
 					<?php } ?>
 					{ data: 'ArtCodigo_AE' },
 					{ data: 'ArtDescripcion_AE', className: 'copy-etiqueta' },
@@ -1897,23 +1897,23 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'ProblemaDimensiones_AE' },
 					{ data: 'RegObservacion_AE' }
 						<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-															, {
-																// Columna adicional para el botón de edición
-																data: null,
-																className: "center",
-																defaultContent: '<button type="button" class="btn btn-success btn-sm editbtn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">  <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg></button>'
-															}
+																		, {
+																			// Columna adicional para los botones de edición y eliminación
+																			data: null,
+																			className: "center",
+																			defaultContent: '<div class="btn-group" role="group"><button type="button" class="btn btn-success btn-sm editbtn" title="Editar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg></button><button type="button" class="btn btn-danger btn-sm deletebtn" title="Eliminar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16"><path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/></svg></button></div>'
+																		}
 						<?php } ?>
 				],
 
 				columnDefs: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																																	{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
-															{
-																targets: -1, // Última columna (botón de edición)
-																className: "text-center",
-																width: "4%"
-															}
+																																				{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
+																		{
+																			targets: -1, // Última columna (botones de acción)
+																			className: "text-center",
+																			width: "80px"
+																		}
 					<?php } ?>
 				]
 				,
@@ -1980,11 +1980,11 @@ $arttipo = $_GET['arttipo'];
 			});
 
 			<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-													// Evento para seleccionar/deseleccionar todos
-													$('#selectAll').on('click', function () {
-														const isChecked = $(this).is(':checked');
-														$('.selectRow').prop('checked', isChecked);
-													});
+																// Evento para seleccionar/deseleccionar todos
+																$('#selectAll').on('click', function () {
+																	const isChecked = $(this).is(':checked');
+																	$('.selectRow').prop('checked', isChecked);
+																});
 			<?php } ?>
 
 			//Evento para cambiar el estado del selector de estado
@@ -2233,6 +2233,69 @@ $arttipo = $_GET['arttipo'];
 				},
 				processing: true,
 				serverSide: true
+			});
+
+			// ELIMINAR REGISTRO SANITARIO (eliminación lógica)
+			$('#registrosanitario tbody').on('click', 'button.deletebtn', function () {
+				var tr = $(this).closest('tr');
+				var data;
+				
+				if (tr.hasClass('child')) {
+					data = table.row(tr.prev()).data();
+				} else {
+					data = table.row(tr).data();
+				}
+
+				var regId = data.DT_RowId.split('_')[1];
+				var codigo = data.ArtCodigo_AE || '';
+				var rs = data.RegNumero_AE || '';
+				var usuarioEliminar = '<?php echo addslashes($_SESSION['usuario']); ?>';
+
+				Swal.fire({
+					title: '¿Eliminar registro?',
+					html: '<p>¿Está seguro de eliminar el registro sanitario?</p>' +
+						  '<p><strong>Código:</strong> ' + codigo + '</p>' +
+						  '<p><strong>RS:</strong> ' + rs + '</p>',
+					icon: 'warning',
+					showCancelButton: true,
+					confirmButtonColor: '#d33',
+					cancelButtonColor: '#3085d6',
+					confirmButtonText: 'Sí, eliminar',
+					cancelButtonText: 'Cancelar'
+				}).then((result) => {
+					if (result.isConfirmed) {
+						$.ajax({
+							url: 'scripts/eliminar_rs_ae.php',
+							type: 'POST',
+							data: { regId: regId, usuario: usuarioEliminar },
+							success: function(response) {
+								if (response === 'success') {
+									Swal.fire({
+										icon: 'success',
+										title: 'Eliminado',
+										text: 'El registro ha sido eliminado correctamente.',
+										timer: 2000,
+										showConfirmButton: false
+									});
+									$('#registrosanitario').DataTable().ajax.reload();
+								} else {
+									Swal.fire({
+										icon: 'error',
+										title: 'Error',
+										text: 'No se pudo eliminar el registro: ' + response
+									});
+								}
+							},
+							error: function() {
+								Swal.fire({
+									icon: 'error',
+									title: 'Error',
+									text: 'Error de conexión al eliminar el registro.'
+								});
+							}
+						});
+					}
+				});
 			});
 
 			//MODAL EDICIÓN DE REGISTRO SANITARIO

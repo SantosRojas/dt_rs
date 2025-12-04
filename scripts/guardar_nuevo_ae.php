@@ -31,9 +31,9 @@ try {
 	$sql_insert01 = "INSERT INTO Sdt_RegistroSanitario_AE 
 		(ArtID_AE, ArtCodigo_AE, RegNumero_AE, RegResolucion_AE, RegFechaEmision_AE, RegFechaAprobacion_AE, 
 		RegFechaVencimiento_AE, RegEstado_AE, RegObservacion_AE, RegFechaCreacion_AE, RegUsuarioCreacion_AE, 
-		RegFechaModificacion_AE, RegUsuarioModificacion_AE, Etiqueta_AE) 
+		RegFechaModificacion_AE, RegUsuarioModificacion_AE, Etiqueta_AE, IsActive) 
 		VALUES (:ArtID, :codigo, :rs, :resolucion, :emision, :aprobacion, :vencimiento, :estadors, 
-		:observaciones, getdate(), :ucreacion, null, null, :etiqueta)";
+		:observaciones, getdate(), :ucreacion, null, null, :etiqueta, 1)";
 
 	$stmt = $conn->prepare($sql_insert01);
 

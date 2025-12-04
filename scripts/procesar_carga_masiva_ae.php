@@ -39,10 +39,10 @@ try {
 
     $sqlInsertRS = "INSERT INTO Sdt_RegistroSanitario_AE 
         (ArtID_AE, ArtCodigo_AE, RegNumero_AE, RegResolucion_AE, RegFechaEmision_AE, RegFechaAprobacion_AE, 
-        RegFechaVencimiento_AE, RegEstado_AE, Etiqueta_AE, RegObservacion_AE, RegFechaCreacion_AE, RegUsuarioCreacion_AE) 
+        RegFechaVencimiento_AE, RegEstado_AE, Etiqueta_AE, RegObservacion_AE, RegFechaCreacion_AE, RegUsuarioCreacion_AE, IsActive) 
         VALUES 
         (:artid, :codigo, :numero, :resolucion, :emision, :aprobacion, :vencimiento, :estado, 
-        :etiqueta, :observacion, GETDATE(), :usuario)";
+        :etiqueta, :observacion, GETDATE(), :usuario, 1)";
 
     $stmtArticulo = $conn->prepare($sqlInsertArticulo);
     $stmtRS = $conn->prepare($sqlInsertRS);
