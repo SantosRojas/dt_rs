@@ -1,16 +1,10 @@
 <?php
-    $serverName = "pe01-wsqlprd01.bbmag.bbraun.com";
-    $connectionOptions = array(
-        "Database" => "DP_BBRAUN_SAP",
-        "Uid" => "sa_bbmpe",
-        "PWD" => "ItPeru22$#"
-    );
+require_once __DIR__ . '/../config/database.php';
 
-    //Establecer la conexión
-    $conn = new PDO("sqlsrv:server=$serverName; Database = $connectionOptions[Database]", $connectionOptions['Uid'], $connectionOptions['PWD']);
-    $conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+//Establecer la conexión
+$conn = getDbConnection();
 
-if($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //Recibir los datos del formulario de login
     $username = $_POST['usuario'];
     $password = $_POST['clave'];
@@ -32,7 +26,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     //Verificar si el usuario existe
-    if(count($results) > 0){
+    if (count($results) > 0) {
         // Iniciar sesión
         session_start();
         $row = $results[0];
@@ -41,7 +35,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['apellidos'] = $row['apellidos'];
         $_SESSION['cargo'] = $row['cargo'];
         $_SESSION['area'] = $row['area'];
-		$_SESSION['nivel'] = $row['nivel'];
+        $_SESSION['nivel'] = $row['nivel'];
 
         //Redirigir a home.php
         header('Location: ../home.php');
@@ -51,7 +45,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Usuario o contraseña incorrectos";
         // Redirigir a index.php
         header('Location: ../index.php');
-        exit;		
+        exit;
     }
 }
 ?>

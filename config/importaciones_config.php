@@ -2,14 +2,12 @@
 // Configuración para el sistema de importaciones
 // Este archivo contiene las configuraciones para las búsquedas de códigos
 
+// Cargar configuración de base de datos desde database.php
+require_once __DIR__ . '/database.php';
+
 return [
-    // Configuración de base de datos
-    'database' => [
-        "user" => "sa_bbmpe",
-        "pass" => "ItPeru22$#",
-        "db" => "DP_BBRAUN_SAP",
-        "host" => "pe01-wsqlprd01.bbmag.bbraun.com"
-    ],
+    // Configuración de base de datos - usando variables del .env
+    'database' => getDbConfigSSP(),
 
     // Configuración de búsquedas
     // Puedes agregar múltiples tipos de búsqueda aquí
@@ -27,7 +25,7 @@ return [
                 'informacion_adicional' => 'info_adicional'   // Ajustar según el nombre real de la columna
             ]
         ],
-        
+
         // Búsqueda alternativa en artículos (como respaldo)
         'articulos' => [
             'nombre' => 'Búsqueda en Artículos',

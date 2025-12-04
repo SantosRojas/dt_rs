@@ -12,16 +12,13 @@ require_once __DIR__ . '/../includes/importaciones_helpers.php';
 
 // Configuración de la base de datos
 $config_file = __DIR__ . '/../config/importaciones_config.php';
+require_once __DIR__ . '/../config/database.php';
+
 if (file_exists($config_file)) {
     $config = include $config_file;
-    $sql_details = $config['database'];
+    $sql_details = getDbConfigSSP();
 } else {
-    $sql_details = [
-        "user" => "sa_bbmpe",
-        "pass" => "ItPeru22$#",
-        "db" => "DP_BBRAUN_SAP",
-        "host" => "pe01-wsqlprd01.bbmag.bbraun.com",
-    ];
+    $sql_details = getDbConfigSSP();
 }
 
 // Verificar que hay códigos en la sesión
@@ -44,7 +41,7 @@ try {
     foreach ($codigos as $i => $codigo) {
         $union_parts[] = "SELECT ? as codigo_busqueda";
     }
-    
+
     $query = "
         WITH codigos_cte AS (
             " . implode(' UNION ALL ', $union_parts) . "
@@ -82,20 +79,23 @@ try {
     $output = fopen('php://output', 'w');
 
     // BOM para UTF-8
-    fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+    fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
     // Escribir información de resumen
     fputcsv($output, ['RESUMEN DE IMPORTACIÓN - ' . date('Y-m-d H:i:s')], ';');
     fputcsv($output, [''], ';');
     fputcsv($output, ['Usuario:', $_SESSION['usuario']], ';');
     fputcsv($output, ['Total procesados:', count($resultados)], ';');
-    
+
     // Calcular estadísticas
-    $encontrados = count(array_filter($resultados, function($r) { return $r['estado'] === 'Encontrado'; }));
+    $encontrados = count(array_filter($resultados, function ($r) {
+        return $r['estado'] === 'Encontrado'; }));
     $no_encontrados = count($resultados) - $encontrados;
-    $vencidos = count(array_filter($resultados, function($r) { return $r['estado_producto'] === 'VENCIDO'; }));
-    $vigentes = count(array_filter($resultados, function($r) { return $r['estado_producto'] === 'VIGENTE'; }));
-    
+    $vencidos = count(array_filter($resultados, function ($r) {
+        return $r['estado_producto'] === 'VENCIDO'; }));
+    $vigentes = count(array_filter($resultados, function ($r) {
+        return $r['estado_producto'] === 'VIGENTE'; }));
+
     fputcsv($output, ['Encontrados:', $encontrados], ';');
     fputcsv($output, ['No encontrados:', $no_encontrados], ';');
     fputcsv($output, ['Productos vencidos:', $vencidos], ';');

@@ -1,16 +1,11 @@
 <?php
 // Script para obtener estadísticas del dashboard
 header('Content-Type: application/json');
+require_once __DIR__ . '/../config/database.php';
 
 try {
     // Conexión a la base de datos
-    $serverName = "pe01-wsqlprd01.bbmag.bbraun.com";
-    $database = "DP_BBRAUN_SAP";
-    $username = "sa_bbmpe";
-    $password = "ItPeru22$#";
-
-    $conn = new PDO("sqlsrv:server=$serverName;Database=$database", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn = getDbConnection();
 
     $response = [
         'rs_hc' => [],

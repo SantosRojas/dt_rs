@@ -23,7 +23,7 @@ $columns = [
         },
     ],
     [
-        "db" => "ArtCodigo", 
+        "db" => "ArtCodigo",
         "dt" => "codigo_buscado",
         "formatter" => function ($d, $row) {
             return '<strong>' . htmlspecialchars($d) . '</strong>';
@@ -35,7 +35,7 @@ $columns = [
         "db" => "FechaVencimiento",
         "dt" => "FechaVencimiento",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "-";
             } else {
                 $fecha = date("d/m/Y", strtotime($d));
@@ -50,14 +50,14 @@ $columns = [
         },
     ],
     [
-        "db" => "Estado", 
+        "db" => "Estado",
         "dt" => "Estado",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return '<span class="badge badge-secondary">N/A</span>';
             } else {
                 // Mostrar el estado con un badge apropiado
-                switch(strtoupper(trim($d))) {
+                switch (strtoupper(trim($d))) {
                     case 'VIGENTE':
                         return '<span class="badge badge-success"><i class="fas fa-check-circle mr-1"></i>VIGENTE</span>';
                     case 'VENCIDO':
@@ -76,7 +76,7 @@ $columns = [
         "db" => "FechaVencimiento",
         "dt" => "DT_RowClass",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 $fechaVencimiento = new DateTime($d);
@@ -87,12 +87,8 @@ $columns = [
     ]
 ];
 
-$sql_details = [
-    "user" => "sa_bbmpe",
-    "pass" => "ItPeru22$#",
-    "db" => "DP_BBRAUN_SAP",
-    "host" => "pe01-wsqlprd01.bbmag.bbraun.com",
-];
+require_once __DIR__ . '/../config/database.php';
+$sql_details = getDbConfigSSP();
 
 // Obtener códigos desde la sesión
 $codigos = [];
@@ -121,7 +117,7 @@ if (empty($codigos)) {
 }
 
 // Crear condición WHERE para filtrar por códigos
-$codigosEscapados = array_map(function($codigo) {
+$codigosEscapados = array_map(function ($codigo) {
     return str_replace("'", "''", trim($codigo));
 }, $codigos);
 
@@ -162,9 +158,9 @@ try {
     $stats_stmt = $pdo->prepare($stats_query);
     $stats_stmt->execute();
     $stats = $stats_stmt->fetch();
-    
-    $vencidos_count = (int)$stats['vencidos'];
-    $vigentes_count = (int)$stats['vigentes'];
+
+    $vencidos_count = (int) $stats['vencidos'];
+    $vigentes_count = (int) $stats['vigentes'];
     $no_encontrados_count = $total_codigos - $encontrados_count;
 
 } catch (Exception $e) {

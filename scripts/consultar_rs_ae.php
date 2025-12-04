@@ -139,12 +139,10 @@ $columns = [
     ["db" => "Rutas", "dt" => "Rutas"],
     //agregar CAMBIOS_AE
 ];
-$sql_details = [
-    "user" => "sa_bbmpe",
-    "pass" => "ItPeru22$#",
-    "db" => "DP_BBRAUN_SAP",
-    "host" => "pe01-wsqlprd01.bbmag.bbraun.com",
-];
+
+require_once __DIR__ . '/../config/database.php';
+$sql_details = getDbConfigSSP();
+
 $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 $filter2 = isset($_GET['filter2']) ? $_GET['filter2'] : '';
 

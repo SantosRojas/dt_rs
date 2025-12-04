@@ -1,16 +1,8 @@
 <?php
-//require_once("cnx/cnx.php");
-
-$serverName = "pe01-wsqlprd01.bbmag.bbraun.com";
-$connectionOptions = array(
-        "Database" => "DP_BBRAUN_SAP",
-        "Uid" => "sa_bbmpe",
-        "PWD" => "ItPeru22$#"
-);
+require_once __DIR__ . '/../config/database.php';
 
 //Establecer la conexión
-$conn = new PDO("sqlsrv:server=$serverName; Database = $connectionOptions[Database]", $connectionOptions['Uid'], $connectionOptions['PWD']);
-$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+$conn = getDbConnection();
 
 // Recoge los datos del formulario
 $modalID = $_POST["modalID"];
@@ -23,38 +15,38 @@ $emision = $_POST["emision"];
 $aprobacion = $_POST["aprobacion"];
 $vencimiento = $_POST["vencimiento"];
 $observaciones = $_POST["observaciones"];
-$estadors = $_POST["estadors"];    
-$usuariomod = $_POST["usuariomod"];    
+$estadors = $_POST["estadors"];
+$usuariomod = $_POST["usuariomod"];
 
-$arttipo = $_POST["arttipo"];    
-$origen = $_POST["origen"];    
-$fabricante = $_POST["fabricante"];    
-$lugarfab = $_POST["lugarfab"];    
-$formafarma = $_POST["formafarma"];    
-$concentracion = $_POST["concentracion"];    
-$presentacion = $_POST["presentacion"];    
-$nivelriesgo = $_POST["nivelriesgo"];    
-$materialpcb = $_POST["materialpcb"];    
-$comercializado = $_POST["comercializado"];    
-$labelalemania = $_POST["labelalemania"];    
-$exoneracioncm = $_POST["exoneracioncm"];    
-$proyectoart = $_POST["proyectoart"];    
-$barraun = $_POST["barraun"];    
-$barracj = $_POST["barracj"];    
-$ean13un = $_POST["ean13un"];    
-$ean14cj = $_POST["ean14cj"];    
-$gtinun = $_POST["gtinun"];    
-$gtincj = $_POST["gtincj"];    
-$gmdn = $_POST["gmdn"];    
-$umdns = $_POST["umdns"];    
-$proyecto = $_POST["proyecto"];    
-$proveedor = $_POST["proveedor"];    
-$proveedordes = $_POST["proveedordes"];    
+$arttipo = $_POST["arttipo"];
+$origen = $_POST["origen"];
+$fabricante = $_POST["fabricante"];
+$lugarfab = $_POST["lugarfab"];
+$formafarma = $_POST["formafarma"];
+$concentracion = $_POST["concentracion"];
+$presentacion = $_POST["presentacion"];
+$nivelriesgo = $_POST["nivelriesgo"];
+$materialpcb = $_POST["materialpcb"];
+$comercializado = $_POST["comercializado"];
+$labelalemania = $_POST["labelalemania"];
+$exoneracioncm = $_POST["exoneracioncm"];
+$proyectoart = $_POST["proyectoart"];
+$barraun = $_POST["barraun"];
+$barracj = $_POST["barracj"];
+$ean13un = $_POST["ean13un"];
+$ean14cj = $_POST["ean14cj"];
+$gtinun = $_POST["gtinun"];
+$gtincj = $_POST["gtincj"];
+$gmdn = $_POST["gmdn"];
+$umdns = $_POST["umdns"];
+$proyecto = $_POST["proyecto"];
+$proveedor = $_POST["proveedor"];
+$proveedordes = $_POST["proveedordes"];
 
 $sql_update01 = 'UPDATE Sdt_RegistroSanitario SET RegNumero = :rs, RegResolucion = :resolucion, RegFechaEmision = :emision, '
-		. 'RegFechaAprobacion = :aprobacion, RegFechaVencimiento = :vencimiento, RegEstadoVencimiento = :estadors, '
-		. 'RegObservaciones = :observaciones, RegUsuarioModificacion = :usuariomod, RegFechaModificacion=getdate() where RegID= :modalID';
-				
+	. 'RegFechaAprobacion = :aprobacion, RegFechaVencimiento = :vencimiento, RegEstadoVencimiento = :estadors, '
+	. 'RegObservaciones = :observaciones, RegUsuarioModificacion = :usuariomod, RegFechaModificacion=getdate() where RegID= :modalID';
+
 // Preparar la sentencia
 $stmt = $conn->prepare($sql_update01);
 
@@ -76,8 +68,8 @@ if ($stmt === false) {
 
 // Ejecutar la sentencia
 if ($stmt->execute()) {
-    // Éxito al guardar los cambios en registrosanitario
-	
+	// Éxito al guardar los cambios en registrosanitario
+
 
 	$sql_update02 = 'UPDATE [dbo].[Sdt_Articulos]
 	   SET [ArtTipo] = :arttipo
@@ -107,8 +99,8 @@ if ($stmt->execute()) {
 		  ,[ArtProyectoRAAE] = :proyecto
 		  ,[ArtFechaModificacion] = getdate()
 		  ,[ArtUsuarioModificacion] = :usuariomod
-	WHERE [ArtID] = :ArtID';	
-	 
+	WHERE [ArtID] = :ArtID';
+
 	//echo($sql_update02);
 
 	// Preparar la sentencia
@@ -120,7 +112,7 @@ if ($stmt->execute()) {
 	$stmt1->bindParam(':fabricante', $fabricante);
 	$stmt1->bindParam(':origen', $origen);
 	$stmt1->bindParam(':lugarfab', $lugarfab);
-	$stmt1->bindParam(':formafarma', $formafarma );
+	$stmt1->bindParam(':formafarma', $formafarma);
 	$stmt1->bindParam(':concentracion', $concentracion);
 	$stmt1->bindParam(':presentacion', $presentacion);
 	$stmt1->bindParam(':nivelriesgo', $nivelriesgo);
@@ -142,7 +134,7 @@ if ($stmt->execute()) {
 	$stmt1->bindParam(':proyecto', $proyecto);
 	$stmt1->bindParam(':usuariomod', $usuariomod);
 	$stmt1->bindParam(':ArtID', $ArtID);
-		
+
 
 	// Verificar si la preparación de la sentencia fue exitosa
 	if ($stmt1 === false) {

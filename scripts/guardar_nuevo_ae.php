@@ -1,17 +1,9 @@
 <?php
-//require_once("cnx/cnx.php");
-
-$serverName = "pe01-wsqlprd01.bbmag.bbraun.com";
-$connectionOptions = array(
-	"Database" => "DP_BBRAUN_SAP",
-	"Uid" => "sa_bbmpe",
-	"PWD" => "ItPeru22$#"
-);
+require_once __DIR__ . '/../config/database.php';
 
 try {
 	//Establecer la conexión
-	$conn = new PDO("sqlsrv:server=$serverName; Database = $connectionOptions[Database]", $connectionOptions['Uid'], $connectionOptions['PWD']);
-	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	$conn = getDbConnection();
 
 	// Recoge los datos del formulario
 	$productos = json_decode($_POST["productos"], true);

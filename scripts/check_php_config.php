@@ -10,7 +10,7 @@ echo phpversion() . "<br><br>";
 
 echo "<h3>2. Extensiones cargadas:</h3>";
 $extensions = get_loaded_extensions();
-$sql_extensions = array_filter($extensions, function($ext) {
+$sql_extensions = array_filter($extensions, function ($ext) {
     return stripos($ext, 'sql') !== false || stripos($ext, 'pdo') !== false;
 });
 
@@ -47,10 +47,10 @@ if (extension_loaded('sqlsrv')) {
 
 echo "<h3>5. Test de conexión básica:</h3>";
 try {
-    $dsn = "sqlsrv:server=pe01-wsqlprd01.bbmag.bbraun.com;Database=DP_BBRAUN_SAP";
-    $pdo = new PDO($dsn, "sa_bbmpe", "ItPeru22$#");
+    require_once __DIR__ . '/../config/database.php';
+    $conn = getDbConnection();
     echo "<p style='color: green;'>✓ Conexión básica exitosa</p>";
-    $pdo = null;
+    $conn = null;
 } catch (Exception $e) {
     echo "<p style='color: red;'>✗ Error de conexión: " . $e->getMessage() . "</p>";
 }

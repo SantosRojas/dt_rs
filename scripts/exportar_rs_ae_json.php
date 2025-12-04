@@ -10,15 +10,16 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
-$serverName = "pe01-wsqlprd01.bbmag.bbraun.com";
+require_once __DIR__ . '/../config/database.php';
+
 $connectionOptions = array(
-    "Database" => "DP_BBRAUN_SAP",
-    "Uid" => "sa_bbmpe",
-    "PWD" => 'ItPeru22$#',
+    "Database" => DB_NAME,
+    "Uid" => DB_USER,
+    "PWD" => DB_PASSWORD,
     "CharacterSet" => "UTF-8"
 );
 
-$conn = sqlsrv_connect($serverName, $connectionOptions);
+$conn = sqlsrv_connect(DB_HOST, $connectionOptions);
 
 if ($conn === false) {
     header('Content-Type: application/json');

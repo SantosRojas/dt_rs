@@ -1,16 +1,8 @@
 <?php
-//require_once("cnx/cnx.php");
-
-$serverName = "pe01-wsqlprd01.bbmag.bbraun.com";
-$connectionOptions = array(
-        "Database" => "DP_BBRAUN_SAP",
-        "Uid" => "sa_bbmpe",
-        "PWD" => "ItPeru22$#"
-);
+require_once __DIR__ . '/../config/database.php';
 
 //Establecer la conexión
-$conn = new PDO("sqlsrv:server=$serverName; Database = $connectionOptions[Database]", $connectionOptions['Uid'], $connectionOptions['PWD']);
-$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+$conn = getDbConnection();
 
 // Recoge los datos del formulario
 $ArtID = $_POST["newArtID"];
@@ -21,11 +13,11 @@ $emision = $_POST["newemision"];
 $aprobacion = $_POST["newaprobacion"];
 $vencimiento = $_POST["newvencimiento"];
 $observaciones = $_POST["newobservaciones"];
-$estadors = $_POST["newestadors"];  
+$estadors = $_POST["newestadors"];
 $ucreacion = $_POST["newucreacion"];
 
 $sql_insert01 = "INSERT INTO Sdt_RegistroSanitario VALUES(:ArtID, :codigo, :rs, :resolucion, :emision, :aprobacion, :vencimiento, :estadors, :observaciones, getdate(), :ucreacion, null, null)";
-		
+
 // Preparar la sentencia
 $stmt = $conn->prepare($sql_insert01);
 
@@ -48,13 +40,13 @@ if ($stmt === false) {
 
 // Ejecutar la sentencia
 if ($stmt->execute()) {
-    // Éxito al guardar los cambios
-    // Obtener el ID del último registro insertado
-    $lastInsertId = $conn->lastInsertId();
+	// Éxito al guardar los cambios
+	// Obtener el ID del último registro insertado
+	$lastInsertId = $conn->lastInsertId();
 
-    // Preparar la sentencia para insertar en Std_RSDoc
-    $sql_insert02 = "INSERT INTO Std_RSDoc (RegID, Descripcion, Ruta, FechaCarga, UsuarioCarga, Estado) VALUES (:RegID, :Descripcion, :Ruta, getdate(), :UsuarioCarga, 'ACTIVO')";
-    $stmt2 = $conn->prepare($sql_insert02);
+	// Preparar la sentencia para insertar en Std_RSDoc
+	$sql_insert02 = "INSERT INTO Std_RSDoc (RegID, Descripcion, Ruta, FechaCarga, UsuarioCarga, Estado) VALUES (:RegID, :Descripcion, :Ruta, getdate(), :UsuarioCarga, 'ACTIVO')";
+	$stmt2 = $conn->prepare($sql_insert02);
 
 	// Manejar los archivos
 	if (isset($_FILES['archivos'])) {
@@ -79,10 +71,10 @@ if ($stmt->execute()) {
 		}
 	}
 
-    echo "success";
+	echo "success";
 } else {
-    // Error al guardar los cambios
-    echo "error" . $stmt->error;
+	// Error al guardar los cambios
+	echo "error" . $stmt->error;
 }
 
 // Cerrar las sentencias

@@ -1,22 +1,14 @@
 <?php
-//require_once("cnx/cnx.php");
-
-$serverName = "pe01-wsqlprd01.bbmag.bbraun.com";
-$connectionOptions = array(
-        "Database" => "DP_BBRAUN_SAP",
-        "Uid" => "sa_bbmpe",
-        "PWD" => "ItPeru22$#"
-);
+require_once __DIR__ . '/../config/database.php';
 
 //Establecer la conexión
-$conn = new PDO("sqlsrv:server=$serverName; Database = $connectionOptions[Database]", $connectionOptions['Uid'], $connectionOptions['PWD']);
-$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+$conn = getDbConnection();
 
 // Recoge los datos del formulario
 $rutadel = $_POST["rutadel"];
 
 $sql_delete01 = 'DELETE Std_RSDoc_AE where Ruta= :rutadel';
-		
+
 // Preparar la sentencia
 $stmt = $conn->prepare($sql_delete01);
 
@@ -30,7 +22,7 @@ if ($stmt === false) {
 
 // Ejecutar la sentencia
 if ($stmt->execute()) {
-    // Éxito al procesar los cambios
+	// Éxito al procesar los cambios
 
 	$old_directory = $rutadel;
 	$new_directory = str_replace('upload/rs/', 'upload/rs_trash/', $old_directory);

@@ -4,4 +4,9 @@ dist/
 *.pdf
 *.zip
 *.tar.gz
-.gitignore
+
+# Archivo de variables de entorno (contiene credenciales)
+.env
+
+# Logs
+logs/*.log

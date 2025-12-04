@@ -10,16 +10,13 @@ if (!isset($_SESSION['usuario'])) {
 
 // Cargar configuración
 $config_file = __DIR__ . '/../config/importaciones_config.php';
+require_once __DIR__ . '/../config/database.php';
+
 if (file_exists($config_file)) {
     $config = include $config_file;
-    $sql_details = $config['database'];
+    $sql_details = getDbConfigSSP();
 } else {
-    $sql_details = [
-        "user" => "sa_bbmpe",
-        "pass" => "ItPeru22$#",
-        "db" => "DP_BBRAUN_SAP",
-        "host" => "pe01-wsqlprd01.bbmag.bbraun.com",
-    ];
+    $sql_details = getDbConfigSSP();
 }
 
 header('Content-Type: application/json');
@@ -37,10 +34,10 @@ try {
     $stmt = $pdo->prepare($sql_estructura);
     $stmt->execute();
     $resultados = $stmt->fetchAll();
-    
+
     $columnas = [];
     $datos_muestra = [];
-    
+
     if (!empty($resultados)) {
         $columnas = array_keys($resultados[0]);
         $datos_muestra = $resultados;

@@ -44,7 +44,7 @@ $columns = [
         "db" => "RegFechaEmision",
         "dt" => "RegFechaEmision",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y", strtotime($d));
@@ -55,7 +55,7 @@ $columns = [
         "db" => "RegFechaAprobacion",
         "dt" => "RegFechaAprobacion",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y", strtotime($d));
@@ -66,7 +66,7 @@ $columns = [
         "db" => "RegFechaVencimiento",
         "dt" => "RegFechaVencimiento",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y", strtotime($d));
@@ -86,7 +86,7 @@ $columns = [
         "db" => "RegFechaModificacion",
         "dt" => "RegFechaModificacion",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y", strtotime($d));
@@ -123,58 +123,56 @@ $columns = [
         "db" => "ArtFechaCreacion",
         "dt" => "ArtFechaCreacion",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y H:i", strtotime($d));
             }
         },
     ],
-	["db" => "ArtUsuarioCreacion", "dt" => "ArtUsuarioCreacion"],
+    ["db" => "ArtUsuarioCreacion", "dt" => "ArtUsuarioCreacion"],
     [
         "db" => "ArtFechaModificacion",
         "dt" => "ArtFechaModificacion",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y H:i", strtotime($d));
             }
         },
     ],
-	["db" => "ArtUsuarioModificacion", "dt" => "ArtUsuarioModificacion"],
+    ["db" => "ArtUsuarioModificacion", "dt" => "ArtUsuarioModificacion"],
     [
         "db" => "RegFechaCreacion",
         "dt" => "RegFechaCreacion",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y H:i", strtotime($d));
             }
         },
     ],
-	["db" => "RegUsuarioCreacion", "dt" => "RegUsuarioCreacion"],
+    ["db" => "RegUsuarioCreacion", "dt" => "RegUsuarioCreacion"],
     [
         "db" => "RegFechaModificacion",
         "dt" => "RegFechaModificacion",
         "formatter" => function ($d, $row) {
-            if($d=="" || $d==null){
+            if ($d == "" || $d == null) {
                 return "";
             } else {
                 return date("d/m/Y H:i", strtotime($d));
             }
         },
     ],
-	["db" => "RegUsuarioModificacion", "dt" => "RegUsuarioModificacion"],	
+    ["db" => "RegUsuarioModificacion", "dt" => "RegUsuarioModificacion"],
     ["db" => "Rutas", "dt" => "Rutas"],
 ];
-$sql_details = [
-    "user" => "sa_bbmpe",
-    "pass" => "ItPeru22$#",
-    "db" => "DP_BBRAUN_SAP",
-    "host" => "pe01-wsqlprd01.bbmag.bbraun.com",
-];
+
+require_once __DIR__ . '/../config/database.php';
+$sql_details = getDbConfigSSP();
+
 $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 $filter2 = isset($_GET['filter2']) ? $_GET['filter2'] : '';
 

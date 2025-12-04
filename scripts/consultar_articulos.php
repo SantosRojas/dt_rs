@@ -38,12 +38,10 @@ $columns = [
     ["db" => "ArtDescripcion", "dt" => "ArtDescripcion"],
     ["db" => "ArtTipo", "dt" => "ArtTipo"],
 ];
-$sql_details = [
-    "user" => "sa_bbmpe",
-    "pass" => "ItPeru22$#",
-    "db" => "DP_BBRAUN_SAP",
-    "host" => "pe01-wsqlprd01.bbmag.bbraun.com",
-];
+
+require_once __DIR__ . '/../config/database.php';
+$sql_details = getDbConfigSSP();
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * If you just want to use the basic configuration for DataTables with PHP
  * server-side, there is no need to edit below this line.

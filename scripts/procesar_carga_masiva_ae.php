@@ -8,16 +8,10 @@ ini_set('display_errors', 0);
 
 header('Content-Type: application/json');
 
-$serverName = "pe01-wsqlprd01.bbmag.bbraun.com";
-$connectionOptions = array(
-    "Database" => "DP_BBRAUN_SAP",
-    "Uid" => "sa_bbmpe",
-    "PWD" => "ItPeru22$#"
-);
+require_once __DIR__ . '/../config/database.php';
 
 try {
-    $conn = new PDO("sqlsrv:server=$serverName;Database={$connectionOptions['Database']}", $connectionOptions['Uid'], $connectionOptions['PWD']);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn = getDbConnection();
 
     // Recibir datos
     $datosExcel = json_decode($_POST['datosExcel'], true);
