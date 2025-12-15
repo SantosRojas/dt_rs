@@ -388,17 +388,6 @@ $arttipo = "IMPORTACIONES_AE";
 										<i class="fas fa-search-plus mr-2"></i>
 										Resultados de la Búsqueda
 									</h3>
-									<div class="card-tools">
-										<button type="button" id="exportarBtn" class="btn btn-success btn-sm">
-											<i class="fas fa-file-excel mr-1"></i>
-											Exportar Vista Actual
-										</button>
-										<button type="button" id="exportarCompletoBtn"
-											class="btn btn-primary btn-sm ml-2">
-											<i class="fas fa-download mr-1"></i>
-											Exportar Todo
-										</button>
-									</div>
 								</div>
 								<div class="card-body">
 									<div class="row mb-3">
@@ -415,7 +404,7 @@ $arttipo = "IMPORTACIONES_AE";
 											<div class="info-box bg-success">
 												<span class="info-box-icon"><i class="fas fa-check"></i></span>
 												<div class="info-box-content">
-													<span class="info-box-text">Encontrados</span>
+													<span class="info-box-text">Articulos Encontrados</span>
 													<span class="info-box-number" id="totalEncontrados">0</span>
 												</div>
 											</div>
@@ -444,13 +433,17 @@ $arttipo = "IMPORTACIONES_AE";
 											class="table table-bordered table-striped table-hover w-100">
 											<thead class="thead-dark">
 												<tr>
-													<th>Código Buscado</th>
-													<th>ArtDescripcion</th>
-													<th>RegistroSanitario</th>
-													<th>FechaVencimiento</th>
+													<th>Código</th>
+													<th>Descripción</th>
+													<th>Registro Sanitario</th>
+													<th>Resolución</th>
+													<th>F. Emisión</th>
+													<th>F. Aprobación</th>
+													<th>F. Vencimiento</th>
 													<th>Estado</th>
-													<th>PaisFabricacion</th>
-													<th>FactoryLocation</th>
+													<th>Fabricante</th>
+													<th>País Origen</th>
+													<th>Factory Location</th>
 												</tr>
 											</thead>
 											<tbody id="resultadosBody">
@@ -470,6 +463,10 @@ $arttipo = "IMPORTACIONES_AE";
 										<span class="badge badge-light ml-2" id="badgeNoEncontrados">0</span>
 									</h3>
 									<div class="card-tools">
+										<button type="button" id="copiarCodigosBtn" class="btn btn-sm btn-light mr-2"
+											title="Copiar códigos">
+											<i class="fas fa-copy"></i> Copiar
+										</button>
 										<button type="button" class="btn btn-tool" data-card-widget="collapse">
 											<i class="fas fa-minus"></i>
 										</button>
@@ -478,10 +475,13 @@ $arttipo = "IMPORTACIONES_AE";
 								<div class="card-body">
 									<div class="alert alert-warning">
 										<i class="fas fa-info-circle mr-2"></i>
-										Los siguientes códigos no fueron encontrados en la base de datos:
+										Los siguientes códigos no fueron encontrados en la base de datos. Puede
+										copiarlos usando el botón o seleccionando del textarea.
 									</div>
-									<div id="listaCodigosNoEncontrados" class="row">
-										<!-- Los códigos se llenarán dinámicamente -->
+									<div class="form-group">
+										<textarea id="textareaCodigosNoEncontrados" class="form-control" rows="5"
+											readonly
+											style="font-family: monospace; background-color: #fff3cd;"></textarea>
 									</div>
 								</div>
 							</div>
@@ -563,7 +563,8 @@ $arttipo = "IMPORTACIONES_AE";
 			$('#codigosInput').on('input', function () {
 				const texto = $(this).val().trim();
 				const lineas = texto ? texto.split('\n').filter(line => line.trim() !== '') : [];
-				$('#contadorCodigos').text(lineas.length + ' códigos detectados');
+				const codigosSet = new Set(lineas.map(line => line.trim()));
+				$('#contadorCodigos').text(codigosSet.size + ' códigos detectados');
 			});
 
 			// Función para cargar información de la vista
@@ -705,22 +706,40 @@ $arttipo = "IMPORTACIONES_AE";
 				$('.processing-spinner').show();
 				$('#procesarBtn').prop('disabled', true);
 
-				// Guardar códigos para server-side processing
+				// Guardar códigos
 				window.codigosActuales = codigosArray;
 
-				// Enviar códigos al servidor y luego inicializar DataTable
+				// Enviar códigos al servidor
 				$.ajax({
-					url: 'scripts/server_side_processing_importaciones.php',
+					url: 'scripts/procesar_codigos_importaciones.php',
 					method: 'POST',
 					data: {
 						codigos: codigosArray
 					},
-					success: function () {
-						// Códigos enviados exitosamente, ahora inicializar DataTable
-						window.firstLoad = true; // Marcar como primera carga
-						inicializarDataTableServerSide();
-						$('#resultadosContainer').show();
-						toastr.success('Códigos procesados exitosamente.');
+					dataType: 'json',
+					success: function (response) {
+						if (response.success) {
+							// Guardar estadísticas
+							window.ultimasEstadisticas = response.estadisticas;
+							window.codigosNoEncontradosActuales = response.codigos_no_encontrados || [];
+
+							// Actualizar estadísticas en la UI
+							actualizarEstadisticas(response.estadisticas);
+
+							// Inicializar DataTable con los datos
+							inicializarDataTable(response.data);
+
+							// Mostrar códigos no encontrados
+							mostrarCodigosNoEncontrados(response.codigos_no_encontrados);
+
+							// Mostrar notificaciones
+							mostrarNotificacionesVencimiento(response.estadisticas);
+
+							$('#resultadosContainer').show();
+							toastr.success('Códigos procesados exitosamente.');
+						} else {
+							toastr.error('Error: ' + (response.error || 'Error desconocido'));
+						}
 					},
 					error: function (xhr, status, error) {
 						console.error('Error:', error);
@@ -738,23 +757,34 @@ $arttipo = "IMPORTACIONES_AE";
 				$('#codigosInput').val('');
 				$('#contadorCodigos').text('0 códigos detectados');
 				$('#resultadosContainer').hide();
+				$('#codigosNoEncontradosContainer').hide();
 				if (dataTable) {
 					dataTable.destroy();
 					dataTable = null;
 				}
-				// Limpiar códigos de la sesión
+				// Limpiar datos
 				window.codigosActuales = null;
 				window.ultimasEstadisticas = null;
+				window.codigosNoEncontradosActuales = null;
 
 				// Limpiar estadísticas
 				$('#totalProcesados').text('0');
 				$('#totalEncontrados').text('0');
 				$('#totalNoEncontrados').text('0');
 				$('#totalErrores').text('0');
+				$('#textareaCodigosNoEncontrados').val('');
 			});
 
-			// Función para inicializar DataTable con Server-Side Processing
-			function inicializarDataTableServerSide() {
+			// Copiar códigos no encontrados
+			$('#copiarCodigosBtn').on('click', function () {
+				const textarea = document.getElementById('textareaCodigosNoEncontrados');
+				textarea.select();
+				document.execCommand('copy');
+				toastr.success('Códigos copiados al portapapeles');
+			});
+
+			// Función para inicializar DataTable (sin server-side)
+			function inicializarDataTable(datos) {
 				// Limpiar tabla anterior si existe
 				if (dataTable) {
 					dataTable.destroy();
@@ -763,53 +793,20 @@ $arttipo = "IMPORTACIONES_AE";
 				// Limpiar contenido de la tabla
 				$('#resultadosBody').empty();
 
-				// Inicializar DataTable con server-side processing
+				// Inicializar DataTable
 				dataTable = $('#resultadosTable').DataTable({
-					dom: '<"top"f>rt<"bottom"lip><"clear">',
-					lengthMenu: [
-						[10, 25, 50, 100],
-						['10 filas', '25 filas', '50 filas', '100 filas']
-					],
-					processing: true,
-					serverSide: true,
-					ajax: {
-						url: 'scripts/server_side_processing_importaciones.php',
-						type: 'GET',
-						dataSrc: function (json) {
-							console.log('Respuesta del servidor:', json);
-							// Actualizar estadísticas cuando se reciban los datos
-							if (json.estadisticas) {
-								// Almacenar estadísticas para uso posterior
-								window.ultimasEstadisticas = json.estadisticas;
-
-								actualizarEstadisticas(json.estadisticas);
-								if (window.firstLoad !== false) {
-									mostrarNotificacionesVencimiento(json.estadisticas);
-									window.firstLoad = false;
-								}
-
-								// Siempre actualizar códigos no encontrados con los datos del servidor
-								setTimeout(() => mostrarCodigosNoEncontrados(json), 300);
-							}
-							if (json.error) {
-								console.error('Error del servidor:', json.error);
-								toastr.error('Error del servidor: ' + json.error);
-							}
-							return json.data || [];
-						},
-						error: function (xhr, error, code) {
-							console.error('Error AJAX:', error);
-							console.log('Respuesta completa:', xhr.responseText);
-							toastr.error('Error al cargar los datos de la tabla: ' + error);
-						}
-					},
+					data: datos,
 					columns: [
 						{ data: 'codigo_buscado' },
 						{ data: 'ArtDescripcion' },
 						{ data: 'RegistroSanitario' },
+						{ data: 'Resolucion' },
+						{ data: 'FechaEmision' },
+						{ data: 'FechaAprobacion' },
 						{ data: 'FechaVencimiento' },
 						{ data: 'Estado' },
-						{ data: 'PaisFabricacion' },
+						{ data: 'Fabricante' },
+						{ data: 'PaisOrigen' },
 						{ data: 'FactoryLocation' }
 					],
 					pageLength: 25,
@@ -841,7 +838,7 @@ $arttipo = "IMPORTACIONES_AE";
 							extend: 'excelHtml5',
 							text: '<i class="fas fa-file-excel"></i> Excel',
 							className: 'btn btn-success btn-sm',
-							title: 'Resultados_Importacion_' + new Date().toISOString().slice(0, 10),
+							title: 'Importaciones_AE_' + new Date().toISOString().slice(0, 10),
 							exportOptions: {
 								columns: ':visible'
 							}
@@ -857,13 +854,17 @@ $arttipo = "IMPORTACIONES_AE";
 					],
 					autoWidth: false,
 					columnDefs: [
-						{ width: "15%", targets: 0 }, // Código Buscado
-						{ width: "30%", targets: 1 }, // ArtDescripcion
-						{ width: "15%", targets: 2 }, // RegistroSanitario
-						{ width: "12%", targets: 3 }, // FechaVencimiento
-						{ width: "10%", targets: 4 }, // Estado
-						{ width: "10%", targets: 5 }, // PaisFabricacion
-						{ width: "8%", targets: 6 }   // FactoryLocation
+						{ width: "8%", targets: 0 },   // Código
+						{ width: "18%", targets: 1 },  // Descripción
+						{ width: "10%", targets: 2 },  // Registro Sanitario
+						{ width: "8%", targets: 3 },   // Resolución
+						{ width: "7%", targets: 4 },   // F. Emisión
+						{ width: "7%", targets: 5 },   // F. Aprobación
+						{ width: "8%", targets: 6 },   // F. Vencimiento
+						{ width: "8%", targets: 7 },   // Estado
+						{ width: "10%", targets: 8 },  // Fabricante
+						{ width: "8%", targets: 9 },   // País Origen
+						{ width: "8%", targets: 10 }   // Factory Location
 					],
 					createdRow: function (row, data, dataIndex) {
 						// Aplicar clases CSS basadas en DT_RowClass
@@ -896,85 +897,26 @@ $arttipo = "IMPORTACIONES_AE";
 				if (estadisticas.vigentes > 0) {
 					toastr.success(`${estadisticas.vigentes} producto(s) vigente(s) encontrado(s).`, 'Productos Vigentes');
 				}
-
-				// Mostrar códigos no encontrados
-				mostrarCodigosNoEncontrados();
 			}
 
-			// Función para mostrar códigos no encontrados
-			function mostrarCodigosNoEncontrados(dataFromServer = null) {
-				if (!window.codigosActuales || !window.ultimasEstadisticas) return;
-
-				// Evitar múltiples ejecuciones simultáneas
-				if (window.procesandoCodigosNoEncontrados) return;
-				window.procesandoCodigosNoEncontrados = true;
-
-				// Usar las estadísticas del servidor que ya calculan correctamente
-				const totalBuscados = window.ultimasEstadisticas.total;
-				const totalEncontrados = window.ultimasEstadisticas.encontrados;
-				const totalNoEncontrados = window.ultimasEstadisticas.no_encontrados;
-
-				// Actualizar badge
-				$('#badgeNoEncontrados').text(totalNoEncontrados);
-
-				if (totalNoEncontrados > 0) {
-					// Obtener códigos encontrados directamente de los datos del servidor
-					let codigosEncontrados = [];
-
-					if (dataFromServer && dataFromServer.data && dataFromServer.data.length > 0) {
-						// Usar los datos que vienen del servidor directamente
-						dataFromServer.data.forEach(row => {
-							if (row.codigo_buscado) {
-								// Extraer el código del HTML (quitar <strong> tags)
-								const codigo = $(row.codigo_buscado).text().trim();
-								codigosEncontrados.push(codigo);
-							}
-						});
-
-						console.log('Códigos buscados originales:', window.codigosActuales);
-						console.log('Códigos encontrados en datos del servidor:', codigosEncontrados);
-					}
-
-					// Encontrar códigos NO encontrados: los que están en los originales pero NO en la tabla
-					const codigosNoEncontrados = window.codigosActuales.filter(codigo => {
-						const codigoLimpio = codigo.trim();
-						const encontrado = codigosEncontrados.some(codigoEncontrado =>
-							codigoEncontrado === codigoLimpio
-						);
-						return !encontrado; // Retornar solo los que NO fueron encontrados
-					});
-
-					if (codigosNoEncontrados.length > 0) {
-						// Mostrar container
-						$('#codigosNoEncontradosContainer').show();
-
-						// Generar HTML para los códigos no encontrados
-						let html = '';
-						codigosNoEncontrados.forEach(codigo => {
-							html += `
-								<div class="col-md-2 col-sm-3 col-6 mb-2">
-									<span class="badge badge-danger p-2 d-block text-center">
-										<i class="fas fa-times mr-1"></i>
-										${codigo.trim()}
-									</span>
-								</div>
-							`;
-						});
-
-						$('#listaCodigosNoEncontrados').html(html);
-
-						console.log('Códigos NO encontrados (faltantes):', codigosNoEncontrados);
-						console.log('Total estadísticas:', window.ultimasEstadisticas);
-					}
-				} else {
-					// Ocultar container si no hay códigos no encontrados
+			// Función para mostrar códigos no encontrados en textarea
+			function mostrarCodigosNoEncontrados(codigosNoEncontrados) {
+				if (!codigosNoEncontrados || codigosNoEncontrados.length === 0) {
 					$('#codigosNoEncontradosContainer').hide();
+					$('#badgeNoEncontrados').text('0');
+					return;
 				}
 
-				// Liberar el flag
-				setTimeout(() => {
-					window.procesandoCodigosNoEncontrados = false;
-				}, 100);
+				// Actualizar badge
+				$('#badgeNoEncontrados').text(codigosNoEncontrados.length);
+
+				// Mostrar container
+				$('#codigosNoEncontradosContainer').show();
+
+				// Poner los códigos en el textarea (uno por línea)
+				$('#textareaCodigosNoEncontrados').val(codigosNoEncontrados.join('\n'));
+
+				console.log('Códigos NO encontrados:', codigosNoEncontrados);
 			}
 
 			// Función para mostrar estadísticas de vencimiento
@@ -1017,34 +959,6 @@ $arttipo = "IMPORTACIONES_AE";
 					toastr.success(`${totalVigentes} producto(s) vigente(s) encontrado(s).`, 'Productos Vigentes');
 				}
 			}
-
-			// Exportar vista actual (botón personalizado)
-			$('#exportarBtn').on('click', function () {
-				if (!window.codigosActuales || !window.ultimasEstadisticas) {
-					toastr.warning('No hay datos para exportar. Primero procese algunos códigos.');
-					return;
-				}
-
-				if (dataTable) {
-					// Usar la funcionalidad de exportación integrada de DataTables
-					dataTable.button('.buttons-excel').trigger();
-					toastr.success('Iniciando descarga del archivo Excel (vista actual)...');
-				} else {
-					toastr.warning('No hay tabla para exportar.');
-				}
-			});
-
-			// Exportar todos los datos completos
-			$('#exportarCompletoBtn').on('click', function () {
-				if (!window.codigosActuales || !window.ultimasEstadisticas) {
-					toastr.warning('No hay datos para exportar. Primero procese algunos códigos.');
-					return;
-				}
-
-				// Abrir en nueva ventana para descarga
-				window.open('scripts/exportar_completo.php', '_blank');
-				toastr.success('Iniciando descarga del archivo Excel completo...');
-			});
 
 			//Generación del avatar
 			generarAvatar('<?php echo $_SESSION['nombres']; ?>', '<?php echo $_SESSION['apellidos']; ?>');

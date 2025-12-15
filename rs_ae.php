@@ -1496,15 +1496,20 @@ $arttipo = $_GET['arttipo'];
 	<script>
 		let tablaModal; // definición global
 
-		// Función para obtener filtros de columnas
+		// Función para obtener filtros de columnas desde DataTable
 		function getColumnFilters() {
 			var filters = {};
-			$('#registrosanitario thead tr:eq(1) th').each(function (index) {
-				var searchValue = $(this).find('input').val();
-				if (searchValue) {
+			var table = $('#registrosanitario').DataTable();
+
+			// Recorrer todas las columnas del DataTable y obtener sus filtros
+			table.columns().every(function (index) {
+				var searchValue = this.search();
+				if (searchValue && searchValue.trim() !== '') {
 					filters[index] = searchValue;
 				}
 			});
+
+			console.log('Filtros obtenidos:', filters);
 			return filters;
 		}
 
@@ -1515,11 +1520,11 @@ $arttipo = $_GET['arttipo'];
 			var filter2 = urlParams.get('arttipo') || '';
 			var columnFilters = JSON.stringify(getColumnFilters());
 
-			var url = 'scripts/exportar_rs_ae_json.php?filter=' + encodeURIComponent(filter) +
+			var baseUrl = 'scripts/exportar_rs_ae_json.php?filter=' + encodeURIComponent(filter) +
 				'&filter2=' + encodeURIComponent(filter2) +
 				'&columnFilters=' + encodeURIComponent(columnFilters);
 
-			// Primero obtener el conteo
+			// Primero obtener solo el conteo (rápido)
 			Swal.fire({
 				title: 'Consultando...',
 				text: 'Obteniendo número de registros filtrados',
@@ -1530,23 +1535,15 @@ $arttipo = $_GET['arttipo'];
 			});
 
 			$.ajax({
-				url: url,
+				url: baseUrl + '&countOnly=1',
 				type: 'GET',
 				dataType: 'json',
 				success: function (response) {
 					if (response.error) {
-						var errorMsg = response.error;
-						if (response.details) {
-							errorMsg += '<br><br><small><b>Detalles técnicos:</b><br><pre>' + JSON.stringify(response.details, null, 2) + '</pre></small>';
-						}
-						if (response.sql) {
-							errorMsg += '<br><br><small><b>SQL:</b><br><code>' + response.sql + '</code></small>';
-						}
 						Swal.fire({
 							icon: 'error',
 							title: 'Error en la consulta',
-							html: errorMsg,
-							width: '800px'
+							text: response.error
 						});
 						return;
 					}
@@ -1572,60 +1569,66 @@ $arttipo = $_GET['arttipo'];
 						cancelButtonText: 'Cancelar'
 					}).then((result) => {
 						if (result.isConfirmed) {
-							// Proceder con la exportación
+							// Proceder con la exportación - obtener todos los datos
 							Swal.fire({
 								title: 'Exportando...',
-								text: 'Generando archivo Excel',
+								text: 'Obteniendo ' + response.total + ' registros...',
 								allowOutsideClick: false,
 								didOpen: () => {
 									Swal.showLoading();
 								}
 							});
 
-							// Crear workbook con XLSX.js
-							var wb = XLSX.utils.book_new();
-							var ws = XLSX.utils.json_to_sheet(response.data);
+							// Segunda llamada para obtener los datos
+							$.ajax({
+								url: baseUrl,
+								type: 'GET',
+								dataType: 'json',
+								success: function (dataResponse) {
+									if (dataResponse.error) {
+										Swal.fire({
+											icon: 'error',
+											title: 'Error al obtener datos',
+											text: dataResponse.error
+										});
+										return;
+									}
 
-							// Ajustar anchos de columna
-							var colWidths = [
-								{ wch: 15 }, // Código
-								{ wch: 50 }, // Descripción
-								{ wch: 15 }, // RS
-								{ wch: 15 }, // Resolución
-								{ wch: 12 }, // Emisión
-								{ wch: 12 }, // Aprobación
-								{ wch: 12 }, // Vencimiento
-								{ wch: 20 }, // Estado
-								{ wch: 30 }, // Fabricante
-								{ wch: 15 }, // País Origen
-								{ wch: 30 }, // Lugar Fabricación
-								{ wch: 15 }, // Nivel Riesgo
-								{ wch: 15 }, // Exoneración CM
-								{ wch: 15 }, // EAN-14
-								{ wch: 15 }, // EAN-13
-								{ wch: 15 }, // GTIN
-								{ wch: 10 }, // Es Estéril
-								{ wch: 30 }, // Etiqueta
-								{ wch: 15 }, // Número IFU
-								{ wch: 20 }, // GMDN/UMDNS
-								{ wch: 30 }, // Cambios
-								{ wch: 20 }, // Problema Dimensiones
-								{ wch: 40 }  // Observación
-							];
-							ws['!cols'] = colWidths;
+									// Crear workbook con XLSX.js
+									var wb = XLSX.utils.book_new();
+									var ws = XLSX.utils.json_to_sheet(dataResponse.data);
 
-							XLSX.utils.book_append_sheet(wb, ws, 'Registros Sanitarios AE');
+									// Ajustar anchos de columna
+									var colWidths = [
+										{ wch: 15 }, { wch: 50 }, { wch: 15 }, { wch: 15 },
+										{ wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 20 },
+										{ wch: 30 }, { wch: 15 }, { wch: 30 }, { wch: 15 },
+										{ wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
+										{ wch: 10 }, { wch: 30 }, { wch: 15 }, { wch: 20 },
+										{ wch: 30 }, { wch: 20 }, { wch: 40 }
+									];
+									ws['!cols'] = colWidths;
 
-							// Generar y descargar el archivo
-							var fileName = 'RS_Aesculap_' + new Date().toISOString().slice(0, 10) + '.xlsx';
-							XLSX.writeFile(wb, fileName);
+									XLSX.utils.book_append_sheet(wb, ws, 'Registros Sanitarios AE');
 
-							Swal.fire({
-								icon: 'success',
-								title: 'Exportación completada',
-								text: 'Se exportaron ' + response.total + ' registros.',
-								timer: 2000,
-								showConfirmButton: false
+									var fileName = 'RS_Aesculap_' + new Date().toISOString().slice(0, 10) + '.xlsx';
+									XLSX.writeFile(wb, fileName);
+
+									Swal.fire({
+										icon: 'success',
+										title: 'Exportación completada',
+										text: 'Se exportaron ' + dataResponse.total + ' registros.',
+										timer: 2000,
+										showConfirmButton: false
+									});
+								},
+								error: function (xhr, status, error) {
+									Swal.fire({
+										icon: 'error',
+										title: 'Error de conexión',
+										text: 'No se pudo obtener los datos: ' + error
+									});
+								}
 							});
 						}
 					});
@@ -1634,7 +1637,7 @@ $arttipo = $_GET['arttipo'];
 					Swal.fire({
 						icon: 'error',
 						title: 'Error de conexión',
-						text: 'No se pudo obtener los datos: ' + error
+						text: 'No se pudo obtener el conteo: ' + error
 					});
 				}
 			});
@@ -1647,11 +1650,11 @@ $arttipo = $_GET['arttipo'];
 			var filter2 = urlParams.get('arttipo') || '';
 			var columnFilters = JSON.stringify(getColumnFilters());
 
-			var url = 'scripts/exportar_rs_ae_json.php?filter=' + encodeURIComponent(filter) +
+			var baseUrl = 'scripts/exportar_rs_ae_json.php?filter=' + encodeURIComponent(filter) +
 				'&filter2=' + encodeURIComponent(filter2) +
 				'&columnFilters=' + encodeURIComponent(columnFilters);
 
-			// Primero obtener el conteo
+			// Primero obtener solo el conteo (rápido)
 			Swal.fire({
 				title: 'Consultando...',
 				text: 'Obteniendo número de registros filtrados',
@@ -1662,23 +1665,15 @@ $arttipo = $_GET['arttipo'];
 			});
 
 			$.ajax({
-				url: url,
+				url: baseUrl + '&countOnly=1',
 				type: 'GET',
 				dataType: 'json',
 				success: function (response) {
 					if (response.error) {
-						var errorMsg = response.error;
-						if (response.details) {
-							errorMsg += '<br><br><small><b>Detalles técnicos:</b><br><pre>' + JSON.stringify(response.details, null, 2) + '</pre></small>';
-						}
-						if (response.sql) {
-							errorMsg += '<br><br><small><b>SQL:</b><br><code>' + response.sql + '</code></small>';
-						}
 						Swal.fire({
 							icon: 'error',
 							title: 'Error en la consulta',
-							html: errorMsg,
-							width: '800px'
+							text: response.error
 						});
 						return;
 					}
@@ -1704,50 +1699,84 @@ $arttipo = $_GET['arttipo'];
 						cancelButtonText: 'Cancelar'
 					}).then((result) => {
 						if (result.isConfirmed) {
-							// Crear ventana de impresión
-							var printWindow = window.open('', '_blank');
-							printWindow.document.write('<html><head><title>Registros Sanitarios Aesculap</title>');
-							printWindow.document.write('<style>');
-							printWindow.document.write('body { font-family: Arial, sans-serif; font-size: 10px; }');
-							printWindow.document.write('table { width: 100%; border-collapse: collapse; margin-top: 20px; }');
-							printWindow.document.write('th, td { border: 1px solid #ddd; padding: 4px; text-align: left; }');
-							printWindow.document.write('th { background-color: #4CAF50; color: white; }');
-							printWindow.document.write('h1 { text-align: center; }');
-							printWindow.document.write('@media print { @page { size: landscape; } }');
-							printWindow.document.write('</style>');
-							printWindow.document.write('</head><body>');
-							printWindow.document.write('<h1>Registros Sanitarios Aesculap</h1>');
-							printWindow.document.write('<p>Total de registros: ' + response.total + '</p>');
-							printWindow.document.write('<table>');
-							printWindow.document.write('<thead><tr>');
-							printWindow.document.write('<th>Código</th><th>Descripción</th><th>RS</th><th>Resolución</th>');
-							printWindow.document.write('<th>Emisión</th><th>Aprobación</th><th>Vencimiento</th><th>Estado</th>');
-							printWindow.document.write('<th>Fabricante</th><th>Etiqueta</th>');
-							printWindow.document.write('</tr></thead><tbody>');
-
-							response.data.forEach(function (row) {
-								printWindow.document.write('<tr>');
-								printWindow.document.write('<td>' + (row['Código'] || '') + '</td>');
-								printWindow.document.write('<td>' + (row['Descripción'] || '') + '</td>');
-								printWindow.document.write('<td>' + (row['RS'] || '') + '</td>');
-								printWindow.document.write('<td>' + (row['Resolución'] || '') + '</td>');
-								printWindow.document.write('<td>' + (row['Emisión'] || '') + '</td>');
-								printWindow.document.write('<td>' + (row['Aprobación'] || '') + '</td>');
-								printWindow.document.write('<td>' + (row['Vencimiento'] || '') + '</td>');
-								printWindow.document.write('<td>' + (row['Estado'] || '') + '</td>');
-								printWindow.document.write('<td>' + (row['Fabricante'] || '') + '</td>');
-								printWindow.document.write('<td>' + (row['Etiqueta'] || '') + '</td>');
-								printWindow.document.write('</tr>');
+							// Obtener los datos
+							Swal.fire({
+								title: 'Preparando...',
+								text: 'Obteniendo ' + response.total + ' registros...',
+								allowOutsideClick: false,
+								didOpen: () => {
+									Swal.showLoading();
+								}
 							});
 
-							printWindow.document.write('</tbody></table>');
-							printWindow.document.write('</body></html>');
-							printWindow.document.close();
+							$.ajax({
+								url: baseUrl,
+								type: 'GET',
+								dataType: 'json',
+								success: function (dataResponse) {
+									if (dataResponse.error) {
+										Swal.fire({
+											icon: 'error',
+											title: 'Error',
+											text: dataResponse.error
+										});
+										return;
+									}
 
-							// Esperar a que se cargue e imprimir
-							setTimeout(function () {
-								printWindow.print();
-							}, 500);
+									Swal.close();
+
+									// Crear ventana de impresión
+									var printWindow = window.open('', '_blank');
+									printWindow.document.write('<html><head><title>Registros Sanitarios Aesculap</title>');
+									printWindow.document.write('<style>');
+									printWindow.document.write('body { font-family: Arial, sans-serif; font-size: 10px; }');
+									printWindow.document.write('table { width: 100%; border-collapse: collapse; margin-top: 20px; }');
+									printWindow.document.write('th, td { border: 1px solid #ddd; padding: 4px; text-align: left; }');
+									printWindow.document.write('th { background-color: #4CAF50; color: white; }');
+									printWindow.document.write('h1 { text-align: center; }');
+									printWindow.document.write('@media print { @page { size: landscape; } }');
+									printWindow.document.write('</style>');
+									printWindow.document.write('</head><body>');
+									printWindow.document.write('<h1>Registros Sanitarios Aesculap</h1>');
+									printWindow.document.write('<p>Total de registros: ' + dataResponse.total + '</p>');
+									printWindow.document.write('<table>');
+									printWindow.document.write('<thead><tr>');
+									printWindow.document.write('<th>Código</th><th>Descripción</th><th>RS</th><th>Resolución</th>');
+									printWindow.document.write('<th>Emisión</th><th>Aprobación</th><th>Vencimiento</th><th>Estado</th>');
+									printWindow.document.write('<th>Fabricante</th><th>Etiqueta</th>');
+									printWindow.document.write('</tr></thead><tbody>');
+
+									dataResponse.data.forEach(function (row) {
+										printWindow.document.write('<tr>');
+										printWindow.document.write('<td>' + (row['Código'] || '') + '</td>');
+										printWindow.document.write('<td>' + (row['Descripción'] || '') + '</td>');
+										printWindow.document.write('<td>' + (row['RS'] || '') + '</td>');
+										printWindow.document.write('<td>' + (row['Resolución'] || '') + '</td>');
+										printWindow.document.write('<td>' + (row['Emisión'] || '') + '</td>');
+										printWindow.document.write('<td>' + (row['Aprobación'] || '') + '</td>');
+										printWindow.document.write('<td>' + (row['Vencimiento'] || '') + '</td>');
+										printWindow.document.write('<td>' + (row['Estado'] || '') + '</td>');
+										printWindow.document.write('<td>' + (row['Fabricante'] || '') + '</td>');
+										printWindow.document.write('<td>' + (row['Etiqueta'] || '') + '</td>');
+										printWindow.document.write('</tr>');
+									});
+
+									printWindow.document.write('</tbody></table>');
+									printWindow.document.write('</body></html>');
+									printWindow.document.close();
+
+									setTimeout(function () {
+										printWindow.print();
+									}, 500);
+								},
+								error: function (xhr, status, error) {
+									Swal.fire({
+										icon: 'error',
+										title: 'Error de conexión',
+										text: 'No se pudo obtener los datos: ' + error
+									});
+								}
+							});
 						}
 					});
 				},
@@ -1755,7 +1784,7 @@ $arttipo = $_GET['arttipo'];
 					Swal.fire({
 						icon: 'error',
 						title: 'Error de conexión',
-						text: 'No se pudo obtener los datos: ' + error
+						text: 'No se pudo obtener el conteo: ' + error
 					});
 				}
 			});
@@ -1805,22 +1834,22 @@ $arttipo = $_GET['arttipo'];
 				],
 				buttons: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
-																																							{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
-																				text: '<i class="fas fa-file-excel"></i>&nbsp;Carga Masiva									',
-																				className: 'btn btn-info',
-																				action: function (e, dt, node, config) {
-																					document.getElementById("btnCargaMasivaModal").click();
-																				}
-																			},
-																			'spacer',
-																			{
-																				text: '<i class="fas fa-edit"></i>&nbsp;Editar Registros',
-																				className: 'btn btn-warning',
-																				action: function (e, dt, node, config) {
-																					document.getElementById("btn-edit-several").click();
-																				},
-																			},
-																			'spacer',
+																																									{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
+																						text: '<i class="fas fa-file-excel"></i>&nbsp;Carga Masiva									',
+																						className: 'btn btn-info',
+																						action: function (e, dt, node, config) {
+																							document.getElementById("btnCargaMasivaModal").click();
+																						}
+																					},
+																					'spacer',
+																					{
+																						text: '<i class="fas fa-edit"></i>&nbsp;Editar Registros',
+																						className: 'btn btn-warning',
+																						action: function (e, dt, node, config) {
+																							document.getElementById("btn-edit-several").click();
+																						},
+																					},
+																					'spacer',
 					<?php } ?>
 						{
 						text: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">  <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1"/>  <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/></svg>',
@@ -1866,12 +1895,12 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																																					{
-																				data: null,
-																				render: function (data, type, row) {
-																					return `<input type="checkbox" class="selectRow" value="${row.id}">`;
-																				}
-																			},
+																																							{
+																						data: null,
+																						render: function (data, type, row) {
+																							return `<input type="checkbox" class="selectRow" value="${row.id}">`;
+																						}
+																					},
 					<?php } ?>
 					{ data: 'ArtCodigo_AE' },
 					{ data: 'ArtDescripcion_AE', className: 'copy-etiqueta' },
@@ -1897,23 +1926,23 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'ProblemaDimensiones_AE' },
 					{ data: 'RegObservacion_AE' }
 						<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																			, {
-																				// Columna adicional para los botones de edición y eliminación
-																				data: null,
-																				className: "center",
-																				defaultContent: '<div class="btn-group" role="group"><button type="button" class="btn btn-success btn-sm editbtn" title="Editar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg></button><button type="button" class="btn btn-danger btn-sm deletebtn" title="Eliminar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16"><path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/></svg></button></div>'
-																			}
+																					, {
+																						// Columna adicional para los botones de edición y eliminación
+																						data: null,
+																						className: "center",
+																						defaultContent: '<div class="btn-group" role="group"><button type="button" class="btn btn-success btn-sm editbtn" title="Editar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg></button><button type="button" class="btn btn-danger btn-sm deletebtn" title="Eliminar"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16"><path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/></svg></button></div>'
+																					}
 						<?php } ?>
 				],
 
 				columnDefs: [
 					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																																					{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
-																			{
-																				targets: -1, // Última columna (botones de acción)
-																				className: "text-center",
-																				width: "80px"
-																			}
+																																							{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
+																					{
+																						targets: -1, // Última columna (botones de acción)
+																						className: "text-center",
+																						width: "80px"
+																					}
 					<?php } ?>
 				]
 				,
@@ -1980,11 +2009,11 @@ $arttipo = $_GET['arttipo'];
 			});
 
 			<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
-																	// Evento para seleccionar/deseleccionar todos
-																	$('#selectAll').on('click', function () {
-																		const isChecked = $(this).is(':checked');
-																		$('.selectRow').prop('checked', isChecked);
-																	});
+																			// Evento para seleccionar/deseleccionar todos
+																			$('#selectAll').on('click', function () {
+																				const isChecked = $(this).is(':checked');
+																				$('.selectRow').prop('checked', isChecked);
+																			});
 			<?php } ?>
 
 			//Evento para cambiar el estado del selector de estado
