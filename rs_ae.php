@@ -751,6 +751,7 @@ $arttipo = $_GET['arttipo'];
 										<option value="DESCONTINUADO">DESCONTINUADO</option>
 										<option value="NO APLICA">NO APLICA</option>
 										<option value="NO SE USA PARA IMPORTAR">NO SE USA PARA IMPORTAR</option>
+										<option value="NO SE RENUEVA">NO SE RENUEVA</option>
 									</select>
 								</div>
 							</div>
@@ -989,6 +990,7 @@ $arttipo = $_GET['arttipo'];
 									<option value="DESCONTINUADO">DESCONTINUADO</option>
 									<option value="NO APLICA">NO APLICA</option>
 									<option value="NO SE USA PARA IMPORTAR">NO SE USA PARA IMPORTAR</option>
+									<option value="NO SE RENUEVA">NO SE RENUEVA</option>
 								</select>
 							</div>
 						</div>

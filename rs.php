@@ -752,6 +752,7 @@ $arttipo = $_GET['arttipo'];
 										<option value="VENCE 2 MESES">VENCE 2 MESES</option>
 										<option value="VENCE 3 MESES">VENCE 3 MESES</option>
 										<option value="VIGENTE">VIGENTE</option>
+										<option value="NO SE RENUEVA">NO SE RENUEVA</option>
 									</select>
 								</div>
 							</div>

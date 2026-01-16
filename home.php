@@ -413,7 +413,8 @@ if (!isset($_SESSION['usuario'])) {
 				'RENOVACION': 'bg-teal',
 				'TRAMITE': 'bg-lightblue',
 				'DESCONTINUADO': 'bg-secondary',
-				'NO APLICA': 'bg-gray'
+				'NO APLICA': 'bg-gray',
+				'NO SE RENUEVA': 'bg-dark'
 			};
 
 			var iconosEstados = {
@@ -426,7 +427,8 @@ if (!isset($_SESSION['usuario'])) {
 				'RENOVACION': 'fa-sync-alt',
 				'TRAMITE': 'fa-hourglass-half',
 				'DESCONTINUADO': 'fa-ban',
-				'NO APLICA': 'fa-minus-circle'
+				'NO APLICA': 'fa-minus-circle',
+				'NO SE RENUEVA': 'fa-hand-paper'
 			};
 
 			if (Object.keys(estados).length === 0) {
