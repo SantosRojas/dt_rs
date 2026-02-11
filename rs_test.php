@@ -185,6 +185,15 @@
 									</li-->
 								</ul>
 							</li>
+							<?php if ($_SESSION['nivel'] == 'ADMIN'): ?>
+							<li class="nav-header">ADMINISTRACI&Oacute;N</li>
+							<li class="nav-item">
+								<a href="usuarios.php" class="nav-link">
+									<i class="nav-icon fas fa-users-cog"></i>
+									<p>Gesti&oacute;n de Usuarios</p>
+								</a>
+							</li>
+							<?php endif; ?>
 							<li class="nav-header">USUARIO</li>
 							<!--li class="nav-item">
 								<a href="#" class="nav-link">
@@ -288,7 +297,7 @@
 													<th class="text-center">PROVEEDOR</th>
 													<th class="text-center">PROYECTO RA AE</th>
 													<th class="text-center">OBSERVACIONES</th>
-													<?php if($_SESSION['nivel']==='EDITOR'){ ?><th class="text-center">OPCI&Oacute;N</th><?php } ?>
+													<?php if(in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])){ ?><th class="text-center">OPCI&Oacute;N</th><?php } ?>
 												</tr>
 											</thead>
 										</table>
@@ -662,7 +671,7 @@
 											<button onclick="agregarArchivoEdit()" class="btn btn-outline-secondary" type="button" id="inputFileEditAdd" <?php if($_SESSION['nivel']==='VISOR'){ ?> disabled <?php } ?> >Agregar archivo</button>
 										</div>
 									</div>
-									<?php if($_SESSION['nivel']==='EDITOR'){ ?><ul id="listaArchivosEdit"></ul><?php } ?> 
+									<?php if(in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])){ ?><ul id="listaArchivosEdit"></ul><?php } ?> 
 								</div>
 							</div>					
 							<div class="row">
@@ -724,7 +733,7 @@
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
 						<div>
 							<button type="button" class="btn-close" data-dismiss="modal" data-target="#editModal" aria-label="Close" id="modeditcierra" hidden></button>
-							<?php if($_SESSION['nivel']==='EDITOR'){ ?><button type="button" class="btn btn-success" onclick="guardar()">Actualizar Registro</button><?php } ?>
+							<?php if(in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])){ ?><button type="button" class="btn btn-success" onclick="guardar()">Actualizar Registro</button><?php } ?>
 						</div>
 					</div>
 				</div>
@@ -1049,7 +1058,7 @@
 						[ '20 filas', '50 filas', '100 filas', '200 filas' ]
 					],
 					buttons: [
-					<?php if($_SESSION['nivel']==='EDITOR'){ ?>	
+					<?php if(in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])){ ?>	
 						{
 							text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto',
 							className: 'btn btn-success',
@@ -1091,7 +1100,7 @@
 					//responsive: true,
 					fixedColumns: {
 						left: 2
-						<?php if($_SESSION['nivel']==='EDITOR'){ ?>,right: 1<?php } ?>
+						<?php if(in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])){ ?>,right: 1<?php } ?>
 					},					
 					scrollX: true,
 					scrollCollapse: true,
@@ -1143,7 +1152,7 @@
 						{ data: 'ArtProveedorDes'},
 						{ data: 'ArtProyectoRAAE'},
 						{ data: 'RegObservaciones'}
-						<?php if($_SESSION['nivel']==='EDITOR'){ ?>
+						<?php if(in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])){ ?>
 						,{
 							// Columna adicional para el botón de edición
 							data: null,
@@ -1153,7 +1162,7 @@
 						<?php } ?>
 					],
 					columnDefs: [
-					<?php if($_SESSION['nivel']==='EDITOR'){ ?>
+					<?php if(in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])){ ?>
 						{
 							"targets": 32, // your case first column
 							"className": "text-center",

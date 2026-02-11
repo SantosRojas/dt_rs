@@ -291,6 +291,15 @@ $arttipo = "IMPORTACIONES_AE";
 
 							</ul>
 						</li>
+						<?php if ($_SESSION['nivel'] == 'ADMIN'): ?>
+						<li class="nav-header">ADMINISTRACI&Oacute;N</li>
+						<li class="nav-item">
+							<a href="usuarios.php" class="nav-link">
+								<i class="nav-icon fas fa-users-cog"></i>
+								<p>Gesti&oacute;n de Usuarios</p>
+							</a>
+						</li>
+						<?php endif; ?>
 						<li class="nav-header">USUARIO</li>
 						<li class="nav-item">
 							<a href="cnx/logout.php" class="nav-link">

@@ -8,8 +8,8 @@ if (!isset($_SESSION['usuario'])) {
     exit;
 }
 
-// Verifica si el usuario tiene permisos de EDITOR
-if ($_SESSION['nivel'] !== 'EDITOR') {
+// Verifica si el usuario tiene permisos de EDITOR o ADMIN
+if (!in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) {
     header('Location: home.php');
     exit;
 }
@@ -100,6 +100,15 @@ if ($_SESSION['nivel'] !== 'EDITOR') {
                                 <p>Registros Sanitarios AE</p>
                             </a>
                         </li>
+                        <?php if ($_SESSION['nivel'] == 'ADMIN'): ?>
+                        <li class="nav-header">ADMINISTRACI&Oacute;N</li>
+                        <li class="nav-item">
+                            <a href="usuarios.php" class="nav-link">
+                                <i class="nav-icon fas fa-users-cog"></i>
+                                <p>Gesti&oacute;n de Usuarios</p>
+                            </a>
+                        </li>
+                        <?php endif; ?>
                     </ul>
                 </nav>
             </div>

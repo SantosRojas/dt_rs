@@ -354,6 +354,15 @@ $arttipo = $_GET['arttipo'];
 
 							</ul>
 						</li>
+						<?php if ($_SESSION['nivel'] == 'ADMIN'): ?>
+						<li class="nav-header">ADMINISTRACI&Oacute;N</li>
+						<li class="nav-item">
+							<a href="usuarios.php" class="nav-link">
+								<i class="nav-icon fas fa-users-cog"></i>
+								<p>Gesti&oacute;n de Usuarios</p>
+							</a>
+						</li>
+						<?php endif; ?>
 						<li class="nav-header">USUARIO</li>
 						<li class="nav-item">
 							<a href="cnx/logout.php" class="nav-link">
@@ -410,7 +419,7 @@ $arttipo = $_GET['arttipo'];
 											<tr>
 												<th class="text-center">ID</th>
 												<th class="text-center">ARTID</th>
-												<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+												<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?>
 													<th><input type="checkbox" id="selectAll"></th>
 												<?php } ?>
 												<th class="text-center">C&Oacute;DIGO</th>
@@ -436,13 +445,13 @@ $arttipo = $_GET['arttipo'];
 												<th class="text-center">CAMBIOS_AE</th>
 												<th class="text-center">PROBLEMA_DIMENCIONES</th>
 												<th class="text-center">OBSERVACIONES</th>
-												<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+												<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?>
 													<th class="text-center">OPCI&Oacute;N</th><?php } ?>
 											</tr>
 											<tr class="filters">
 												<th></th>
 												<th></th>
-												<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+												<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?>
 													<th></th>
 												<?php } ?>
 												<th><input type="text" class="form-control form-control-sm"
@@ -491,7 +500,7 @@ $arttipo = $_GET['arttipo'];
 														placeholder="Problemas"></th>
 												<th><input type="text" class="form-control form-control-sm"
 														placeholder="Observaciones"></th>
-												<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+												<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?>
 													<th></th><?php } ?>
 											</tr>
 										</thead>
@@ -788,7 +797,7 @@ $arttipo = $_GET['arttipo'];
 											archivo</button>
 									</div>
 								</div>
-								<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+								<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?>
 									<ul id="listaArchivosEdit"></ul><?php } ?>
 							</div>
 						</div>
@@ -852,7 +861,7 @@ $arttipo = $_GET['arttipo'];
 					<div>
 						<button type="button" class="btn-close" data-dismiss="modal" data-target="#editModal"
 							aria-label="Close" id="modeditcierra" hidden></button>
-						<?php if ($_SESSION['nivel'] === 'EDITOR') { ?><button type="button" class="btn btn-success"
+						<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?><button type="button" class="btn btn-success"
 								onclick="guardar()">Actualizar Registro</button><?php } ?>
 					</div>
 				</div>
@@ -1289,7 +1298,7 @@ $arttipo = $_GET['arttipo'];
 										archivo</button>
 								</div>
 							</div>
-							<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+							<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?>
 								<ul id="list-files"></ul><?php } ?>
 						</div>
 					</div>
@@ -1835,7 +1844,7 @@ $arttipo = $_GET['arttipo'];
 					['20 filas', '50 filas', '100 filas', '200 filas']
 				],
 				buttons: [
-					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>	
+					<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?>	
 																																									{ text: '<i class="fas fa-box"></i>&nbsp;Nuevo Producto', className: 'btn btn-success', action: function (e, dt, node, config) { document.getElementById("btncreamodal").click(); } }, 'spacer', { text: '<i class="fas fa-plus"></i>&nbsp;Nuevo Registro Sanitario', className: 'btn btn-dark', action: function (e, dt, node, config) { document.getElementById("btnnewmodal").click(); } }, 'spacer', {
 																						text: '<i class="fas fa-file-excel"></i>&nbsp;Carga Masiva									',
 																						className: 'btn btn-info',
@@ -1874,7 +1883,7 @@ $arttipo = $_GET['arttipo'];
 				//responsive: true,
 				fixedColumns: {
 					left: 3
-						<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>, right: 1<?php } ?>
+						<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?>, right: 1<?php } ?>
 				},
 				scrollX: true,
 				scrollCollapse: true,
@@ -1896,7 +1905,7 @@ $arttipo = $_GET['arttipo'];
 				columns: [
 					{ data: 'DT_RowId', "visible": false },
 					{ data: 'ArtID_AE', "visible": false },
-					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+					<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?>
 																																							{
 																						data: null,
 																						render: function (data, type, row) {
@@ -1927,7 +1936,7 @@ $arttipo = $_GET['arttipo'];
 					{ data: 'Cambios_AE' },
 					{ data: 'ProblemaDimensiones_AE' },
 					{ data: 'RegObservacion_AE' }
-						<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+						<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?>
 																					, {
 																						// Columna adicional para los botones de edición y eliminación
 																						data: null,
@@ -1938,7 +1947,7 @@ $arttipo = $_GET['arttipo'];
 				],
 
 				columnDefs: [
-					<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+					<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?>
 																																							{ orderable: false, targets: 2 }, // La columna 3 (checkbox) no será ordenable
 																					{
 																						targets: -1, // Última columna (botones de acción)
@@ -2010,7 +2019,7 @@ $arttipo = $_GET['arttipo'];
 				}
 			});
 
-			<?php if ($_SESSION['nivel'] === 'EDITOR') { ?>
+			<?php if (in_array($_SESSION['nivel'], ['EDITOR', 'ADMIN'])) { ?>
 																			// Evento para seleccionar/deseleccionar todos
 																			$('#selectAll').on('click', function () {
 																				const isChecked = $(this).is(':checked');
